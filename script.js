@@ -146,4 +146,8 @@ function drawMap() {
         for (let x = 0; x < MAP_WIDTH; x++) {
             const tileType = map[y][x];
             if (tiles[tileType]) {
-                ctx.drawImage
+                ctx.drawImage(tiles[tileType], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+        }
+    }
+}
