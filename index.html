@@ -1,52 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caleb's Pokémon Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
-  </head>
-  <body>
-    <!-- Start Screen -->
+</head>
+<body>
     <div id="start-screen">
-      <h1>Caleb's Trainer Profile</h1>
-      <button id="start-btn">Press Start</button>
+        <h1>Caleb's Trainer Profile</h1>
+        <button id="start-btn">Press Start</button>
     </div>
 
-    <!-- Main Game Map -->
     <div id="game-map" style="display: none;">
-      <!-- NPCs -->
-      <div class="npc" id="resume-trainer">
-        <img src="assets/npc-resume.png" alt="Resume Trainer">
-      </div>
-      <div class="npc" id="skills-trainer">
-        <img src="assets/npc-skills.png" alt="Skills Trainer">
-      </div>
-      <div class="npc" id="experience-trainer">
-        <img src="assets/npc-experience.png" alt="Experience Trainer">
-      </div>
+        <canvas id="gameCanvas" width="640" height="480"></canvas>
 
-      <!-- PC for Projects -->
-      <div id="pc">
-        <img src="assets/pc.png" alt="Projects PC">
-      </div>
+        <div class="npc" id="resume-trainer">
+            <img src="assets/npc-resume.png" alt="Resume Trainer">
+        </div>
+        <div class="npc" id="skills-trainer">
+            <img src="assets/npc-skills.png" alt="Skills Trainer">
+        </div>
+        <div class="npc" id="experience-trainer">
+            <img src="assets/npc-experience.png" alt="Experience Trainer">
+        </div>
 
-      <!-- Mailbox for Contact -->
-      <div id="mailbox">
-        <img src="assets/mailbox.png" alt="Mailbox">
-      </div>
+        <div id="pc">
+            <img src="assets/pc.png" alt="Projects PC">
+        </div>
 
-      <!-- Trainer Sprite -->
-      <div id="trainer">
-        <img src="assets/trainer-sprite.png" alt="Your Trainer">
-      </div>
+        <div id="mailbox">
+            <img src="assets/mailbox.png" alt="Mailbox">
+        </div>
+
+        <div id="trainer">
+            <img src="assets/trainer-sprite.png" alt="Your Trainer">
+        </div>
     </div>
 
-    <!-- Dialog Box -->
     <div id="dialog-box" style="display: none;">
-      <p id="dialog-text"></p>
-      <button id="close-dialog">Close</button>
+        <p id="dialog-text"></p>
+        <button id="close-dialog">Close</button>
     </div>
-  </body>
+</body>
 </html>
