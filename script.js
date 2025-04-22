@@ -1,8 +1,24 @@
 // Start Screen Transition
-document.getElementById("start-btn").addEventListener("click", function() {
-    document.getElementById("start-screen").style.display = "none";
-    document.getElementById("game-map").style.display = "block";
+const startScreen = document.getElementById("start-screen");
+const startBtn = document.getElementById("start-btn");
+const gameMap = document.getElementById("game-map");
+const gameCanvas = document.getElementById("gameCanvas");
+const ctx = gameCanvas.getContext("2d");
+const dialogBox = document.getElementById("dialog-box");
+const dialogText = document.getElementById("dialog-text");
+const closeDialogButton = document.getElementById("close-dialog");
+
+startBtn.addEventListener('click', () => {
+    startScreen.style.display = 'none';
+    gameMap.style.display = 'block';
+
+    init(); // Call the init function
 });
+
+async function init() {
+    await loadTileImages(); // Wait for images to load
+    drawMap();             // Then draw the map
+}
 
 // NPC Interaction (Resume Trainer)
 document.getElementById("resume-trainer").addEventListener("click", function() {
@@ -28,7 +44,7 @@ document.getElementById("pc").addEventListener("click", function() {
 
     if (choice) {
         // Redirect to Lacrosse Legends Roblox page
-        window.open("https://www.roblox.com/games/113892368479986/Lacrosse-Legends", "_blank");
+        window.open("https://www.roblox.com/games/<YOUR_GAME_ID>/Lacrosse-Legends", "_blank");
     } else {
         // Redirect to Stat Lab website
         window.open("https://your-stat-lab-website-url.com", "_blank");
@@ -48,11 +64,9 @@ document.getElementById("close-dialog").addEventListener("click", function() {
 
 // Player Movement Logic
 let player = { x: 200, y: 200 }; // Initial trainer position
-const trainerElement = document.getElementById("trainer"); // Get the trainer element
-const gameCanvas = document.getElementById('gameCanvas'); // Get the canvas
-const ctx = gameCanvas.getContext('2d'); // Get the 2D context
 
 document.addEventListener("keydown", function(event) {
+    const trainerElement = document.getElementById("trainer");
     switch (event.key) {
         case "ArrowUp":
         case "w": // For WASD controls
@@ -71,7 +85,65 @@ document.addEventListener("keydown", function(event) {
             player.x += 10;
             break;
     }
-    trainerElement.style.transform = `translate(${player.x}px, ${player.y}px)`; // Update the DOM element
-    //  ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height); // Clear the canvas
-    //  ctx.drawImage(trainerElement.querySelector('img'), player.x, player.y, 100, 100); // Draw the image on the canvas
+    trainerElement.style.transform = `translate(${player.x}px, ${player.y}px)`;
 });
+
+// TILE SIZE and MAP DATA
+const TILE_SIZE = 32; // Define tile size
+const MAP_WIDTH = 20;  // Map width in tiles
+const MAP_HEIGHT = 15; // Map height in tiles
+
+const map = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+];
+
+const tileTypes = {
+    0: "grass",
+    1: "wall",
+    2: "path",
+    3: "water",
+    4: "door",
+    5: "roof"
+};
+
+const tiles = {};
+
+function loadTileImages() {
+    return new Promise((resolve) => {
+        let imagesLoaded = 0;
+        const totalImages = Object.keys(tileTypes).length;
+
+        for (const key in tileTypes) {
+            const img = new Image();
+            img.src = `assets/tiles/${tileTypes[key]}.png`;
+            img.onload = () => {
+                imagesLoaded++;
+                tiles[key] = img;
+                if (imagesLoaded === totalImages) {
+                    resolve();
+                }
+            };
+        }
+    });
+}
+
+function drawMap() {
+    for (let y = 0; y < MAP_HEIGHT; y++) {
+        for (let x = 0; x < MAP_WIDTH; x++) {
+            const tileType = map[y][x];
+            if (tiles[tileType]) {
+                ctx.drawImage
