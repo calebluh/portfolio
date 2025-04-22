@@ -7,7 +7,6 @@ body {
     text-align: center;
 }
 
-/* Start Screen */
 #start-screen {
     background: url('start-bg.png') no-repeat center center;
     background-size: cover;
@@ -18,7 +17,6 @@ body {
     align-items: center;
 }
 
-/* Game Container */
 #game-container {
     background-color: #cfe2f3;
     height: 100vh;
@@ -26,6 +24,27 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#game-map {
+    background: url('assets/map-bg.png') no-repeat center;
+    background-size: cover;
+    height: 100vh;
+    position: relative;
+}
+
+.npc {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+}
+
+#pc, #mailbox {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
 }
 
 #trainer img {
