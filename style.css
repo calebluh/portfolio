@@ -1,16 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
+/* General Styles */
 body {
-    font-family: 'Press Start 2P', sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
     text-align: center;
 }
 
+/* Start Screen */
 #start-screen {
-    background: url('start-bg.png') no-repeat center;
+    background: url('start-bg.png') no-repeat center center;
+    background-size: cover;
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+/* Game Container */
+#game-container {
+    background-color: #cfe2f3;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#trainer img {
+    width: 150px;
 }
