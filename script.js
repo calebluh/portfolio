@@ -28,7 +28,7 @@ document.getElementById("pc").addEventListener("click", function() {
 
     if (choice) {
         // Redirect to Lacrosse Legends Roblox page
-        window.open("https://www.roblox.com/games/<YOUR_GAME_ID>/Lacrosse-Legends", "_blank");
+        window.open("https://www.roblox.com/games/113892368479986/Lacrosse-Legends", "_blank");
     } else {
         // Redirect to Stat Lab website
         window.open("https://your-stat-lab-website-url.com", "_blank");
@@ -48,9 +48,11 @@ document.getElementById("close-dialog").addEventListener("click", function() {
 
 // Player Movement Logic
 let player = { x: 200, y: 200 }; // Initial trainer position
+const trainerElement = document.getElementById("trainer"); // Get the trainer element
+const gameCanvas = document.getElementById('gameCanvas'); // Get the canvas
+const ctx = gameCanvas.getContext('2d'); // Get the 2D context
 
 document.addEventListener("keydown", function(event) {
-    const trainerElement = document.getElementById("trainer");
     switch (event.key) {
         case "ArrowUp":
         case "w": // For WASD controls
@@ -69,5 +71,7 @@ document.addEventListener("keydown", function(event) {
             player.x += 10;
             break;
     }
-    trainerElement.style.transform = `translate(${player.x}px, ${player.y}px)`;
+    trainerElement.style.transform = `translate(${player.x}px, ${player.y}px)`; // Update the DOM element
+    //  ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height); // Clear the canvas
+    //  ctx.drawImage(trainerElement.querySelector('img'), player.x, player.y, 100, 100); // Draw the image on the canvas
 });
