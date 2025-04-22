@@ -2,16 +2,29 @@
 <html>
   <head>
     <title>Caleb Luh's Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
   </head>
-  <div id="start-screen">
-    <h1>Caleb's Trainer Profile</h1>
-    <button id="start-btn">Press Start</button>
-  </div>
-  <div id="game-container">
-    <div id="trainer">
-      <img src="trainer-sprite.png" alt="Trainer Sprite">
-      <p id="dialog">Trainer: "Are you ready to battle? Check out my projects!"</p>
-      <button id="next-btn">Next</button>
+  <body>
+    <!-- Start Screen -->
+    <div id="start-screen">
+      <h1>Caleb's Trainer Profile</h1>
+      <button id="start-btn">Press Start</button>
     </div>
-  </div>
+
+    <!-- Main Game World -->
+    <div id="game-container" style="display:none;">
+      <div id="trainer">
+        <img src="trainer-sprite.png" alt="Trainer Sprite">
+        <p id="dialog">Trainer: "Are you ready to battle? Check out my projects!"</p>
+        <button id="next-btn">Next</button>
+      </div>
+    </div>
+
+    <!-- Dialog Box -->
+    <div id="dialog-box" style="display:none;">
+      <p id="dialog-text"></p>
+      <button id="close-dialog">Close</button>
+    </div>
+  </body>
 </html>
