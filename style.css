@@ -1,52 +1,118 @@
 /* General Styles */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa;
+    font-family: 'Press Start 2P', sans-serif;
     margin: 0;
     padding: 0;
-    text-align: center;
+    background-color: #f8f9fa;
 }
 
+/* Start Screen */
 #start-screen {
-    background: url('start-bg.png') no-repeat center center;
+    background: url('assets/start-bg.png') no-repeat center center;
     background-size: cover;
     height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-#game-container {
-    background-color: #cfe2f3;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+#start-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 3px solid #000;
+    background-color: #4CAF50;
+    color: white;
+    text-transform: uppercase;
 }
 
+/* Game Map */
 #game-map {
-    background: url('assets/map-bg.png') no-repeat center;
+    background: url('assets/map-bg.png') no-repeat center center;
     background-size: cover;
     height: 100vh;
+    width: 100vw;
     position: relative;
 }
 
+/* NPCs */
 .npc {
     position: absolute;
-    width: 100px;
+    width: 100px; 
     height: 100px;
     cursor: pointer;
 }
 
-#pc, #mailbox {
+/* NPC Specific Positioning */
+#resume-trainer {
+    top: 50px; 
+    left: 100px;
+}
+
+#skills-trainer {
+    top: 150px;
+    left: 300px;
+}
+
+#experience-trainer {
+    top: 300px;
+    left: 500px;
+}
+
+/* PC (Project Terminal) */
+#pc {
     position: absolute;
+    top: 400px;
+    left: 200px;
     width: 120px;
     height: 120px;
     cursor: pointer;
 }
 
-#trainer img {
-    width: 150px;
+/* Mailbox */
+#mailbox {
+    position: absolute;
+    top: 500px;
+    left: 600px;
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+}
+
+/* Trainer Sprite */
+#trainer {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    transform: translate(200px, 200px);
+}
+
+/* Dialog Box */
+#dialog-box {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    border: 3px solid black;
+    padding: 15px;
+    width: 300px;
+    display: none;
+    text-align: center;
+}
+
+#dialog-text {
+    font-size: 14px;
+    color: #000;
+}
+
+#close-dialog {
+    margin-top: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 2px solid #000;
+    background-color: #4CAF50;
+    color: white;
 }
