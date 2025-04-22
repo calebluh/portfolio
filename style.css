@@ -37,17 +37,26 @@ body {
     position: relative;
 }
 
+#gameCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
 /* NPCs */
 .npc {
     position: absolute;
-    width: 100px; 
+    width: 100px;
     height: 100px;
     cursor: pointer;
 }
 
 /* NPC Specific Positioning */
 #resume-trainer {
-    top: 50px; 
+    top: 50px;
     left: 100px;
 }
 
