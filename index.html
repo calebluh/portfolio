@@ -1,7 +1,9 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <title>Caleb Luh's Portfolio</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caleb's Pokémon Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
   </head>
@@ -12,17 +14,37 @@
       <button id="start-btn">Press Start</button>
     </div>
 
-    <!-- Main Game World -->
-    <div id="game-container" style="display:none;">
+    <!-- Main Game Map -->
+    <div id="game-map" style="display: none;">
+      <!-- NPCs -->
+      <div class="npc" id="resume-trainer">
+        <img src="assets/npc-resume.png" alt="Resume Trainer">
+      </div>
+      <div class="npc" id="skills-trainer">
+        <img src="assets/npc-skills.png" alt="Skills Trainer">
+      </div>
+      <div class="npc" id="experience-trainer">
+        <img src="assets/npc-experience.png" alt="Experience Trainer">
+      </div>
+
+      <!-- PC for Projects -->
+      <div id="pc">
+        <img src="assets/pc.png" alt="Projects PC">
+      </div>
+
+      <!-- Mailbox for Contact -->
+      <div id="mailbox">
+        <img src="assets/mailbox.png" alt="Mailbox">
+      </div>
+
+      <!-- Trainer Sprite -->
       <div id="trainer">
-        <img src="trainer-sprite.png" alt="Trainer Sprite">
-        <p id="dialog">Trainer: "Are you ready to battle? Check out my projects!"</p>
-        <button id="next-btn">Next</button>
+        <img src="assets/trainer-sprite.png" alt="Your Trainer">
       </div>
     </div>
 
     <!-- Dialog Box -->
-    <div id="dialog-box" style="display:none;">
+    <div id="dialog-box" style="display: none;">
       <p id="dialog-text"></p>
       <button id="close-dialog">Close</button>
     </div>
