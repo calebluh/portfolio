@@ -199,10 +199,6 @@ function showDialog(text) {
     dialogBox.style.display = "block";
 }
 
-// Player Movement
-let playerTileX = 3;
-let playerTileY = 3;
-
 function movePlayer(event) {
     let nextX = playerTileX;
     let nextY = playerTileY;
