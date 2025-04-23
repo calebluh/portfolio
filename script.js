@@ -347,6 +347,13 @@ function setupInteractions() {
 }
 
 function checkForWaterProximity() {
+    if (dialogBox.style.display === 'block' || fishingGameDisplay.style.display === 'block' || 
+    initialsPrompt.style.display === 'block' || scoreboardDialog.style.display === 'block') {
+            canFishHere = false;
+            hideFishingPrompt();
+            return;
+    }
+    
     if (isFishingActive) {
         canFishHere = false;
         hideFishingPrompt();
@@ -416,6 +423,8 @@ function stopFishing(reason) {
 
     isFishingActive = false;
     fishingGameDisplay.style.display = 'none';
+    hideFishingPrompt();
+
     biteTimeout = null;
     gameLoopInterval = null;
     isReeling = false;
@@ -431,15 +440,13 @@ function stopFishing(reason) {
             break;
         case 'lost_tension':
             showDialog("Snap! The line broke!");
-             currentFishScore = 0;
+            currentFishScore = 0;
             break;
     }
 
     fishingState = 'idle';
-    checkForWaterProximity();
 
     document.addEventListener("keydown", movePlayer);
-    // Re-enable joystick if needed
 }
 
 function castLine() {

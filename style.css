@@ -6,7 +6,8 @@ body {
     overflow: hidden;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; 
+    padding-top: 5vh;
     min-height: 100vh;
 }
 
@@ -23,6 +24,14 @@ body {
     top: 0;
     left: 0;
     z-index: 200;
+}
+
+#start-screen .start-instructions {
+    font-size: 0.8em; 
+    color: #f0f0f0; 
+    margin: 4px auto;
+    max-width: 90%;
+    line-height: 1.4;
 }
 
 #start-btn {
@@ -186,23 +195,6 @@ body {
 
 #bookshelf-dialog li {
      margin-bottom: 8px;
- }
-
-#instructions {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    font-size: 0.7em;
-    color: #555;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 5px 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    z-index: 50;
-}
-
-#instructions p:nth-child(2) {
-    display: none;
 }
 
 #joystick-zone {
