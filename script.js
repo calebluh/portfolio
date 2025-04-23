@@ -77,18 +77,18 @@ function drawMap() {
 
 function positionElements() {
     // Inside Elements
-    positionElement('pc', 2, 0);
-    positionElement('bookshelf', 2, 1);
+    positionElement('pc', 4, 1);
+    positionElement('bookshelf', 1, 1);
     positionElement('vinyl-shelf', 6, 1);
     positionElement('trainer', 3, 3);
 
     // Outside Elements
-    positionElement('mailbox', 6, 10);
+    positionElement('mailbox', 6, 14);
 
     // Spaced-out Trainers on Path/Grass
-    positionElement('resume-trainer', 2, 10);
+    positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 11, 11);
-    positionElement('experience-trainer', 16, 14);
+    positionElement('experience-trainer', 20, 8);
 }
 
 function positionElement(elementId, tileX, tileY) {
