@@ -29,6 +29,7 @@ const joystickZone = document.getElementById('joystick-zone');
 const projectChoiceDialog = document.getElementById('project-choice-dialog');
 const contactFormDialog = document.getElementById("contact-form-dialog");
 const pcElement = document.getElementById("pc");
+const joystickToggleCheckbox = document.getElementById('joystick-toggle-checkbox');
 
 // -=-=-=- Firebase Initialization -=-=-=-
 const firebaseConfig = {
@@ -526,23 +527,35 @@ function movePlayer(event) {
 }
 
 function setupJoystick() {
-    console.log("Attempting joystick setup...");  
-    if (typeof nipplejs === 'undefined') { console.warn("nipplejs library not found."); hideJoystick(); return; }
+    console.log("Attempting joystick setup...");
+    // Check if the toggle is checked
+    const joystickEnabled = joystickToggleCheckbox ? joystickToggleCheckbox.checked : true; // Default to true if element not found
+
+    if (!joystickEnabled) {
+        console.log("Joystick explicitly disabled by user.");
+        hideJoystick();
+        return;
+    }
+
+    if (typeof nipplejs === 'undefined') {
+         console.warn("nipplejs library not found.");
+         hideJoystick();
+         return;
+    }
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    console.log("Is touch device?", isTouchDevice);  
+    console.log("Is touch device?", isTouchDevice);
     if (isTouchDevice && joystickZone) {
         const options = { zone: joystickZone, mode: 'static', position: { left: '50%', top: '50%' }, color: 'rgba(128, 128, 128, 0.7)', size: 100, threshold: 0.1, fadeTime: 250 };
         if (!joystick) {
-             console.log("Creating joystick instance...");  
-             joystick = nipplejs.create(options);
-             console.log("Joystick object:", joystick);  
-             setupJoystickEvents();
-        }
-        showJoystickIfNeeded();
-    } else {
-        console.log("Hiding joystick (not touch or no zone)");  
-        hideJoystick();
-    }
+            console.log("Creating joystick instance...");
+            joystick = nipplejs.create(options);
+            console.log("Joystick object:", joystick);
+            setupJoystickEvents();
+       }
+       showJoystickIfNeeded();
+       console.log("Hiding joystick (not touch or no zone)");
+       hideJoystick();
+   }
 }
 
 function setupJoystickEvents() {
