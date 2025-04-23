@@ -170,7 +170,7 @@ function setupInteractions() {
 
     // Vinyl Shelf Interaction
     document.getElementById('vinyl-shelf').addEventListener('click', () => {
-        window.open('https://www.discogs.com/user/calebluh/', '_blank');
+        window.open('https://www.discogs.com/user/calebluh/collection', '_blank');
     });
 
     // Bookshelf Interaction
@@ -194,7 +194,7 @@ function showDialog(text) {
 }
 
 // Player Movement - Simple example, needs collision detection etc.
-let playerTileX = 3; // Initial position tile matching positionElements
+let playerTileX = 3;
 let playerTileY = 3;
 
 function movePlayer(event) {
