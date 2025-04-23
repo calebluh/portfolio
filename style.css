@@ -4,6 +4,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f8f9fa;
+    overflow: hidden;
 }
 
 /* Start Screen */
@@ -20,7 +21,7 @@ body {
 
 #start-btn {
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 1em;
     cursor: pointer;
     border: 3px solid #000;
     background-color: #4CAF50;
@@ -30,9 +31,10 @@ body {
 
 /* Game Map */
 #game-map {
-    height: 100vh;
-    width: 100vw;
+    width: 80vw;
+    height: 80vh;
     position: relative;
+    overflow: hidden;
 }
 
 #gameCanvas {
@@ -44,56 +46,47 @@ body {
     z-index: -1;
 }
 
-/* NPCs */
-.npc {
+/* Elements */
+.npc,
+#pc,
+#mailbox,
+#trainer,
+#bookshelf,
+#vinyl-shelf {
     position: absolute;
     width: 32px;
     height: 32px;
     cursor: pointer;
 }
 
-/* NPC Specific Positioning */
-#resume-trainer {
-    top: 50px;
-    left: 100px;
+/* Bookshelf */
+#bookshelf {
+    background-color: #8B4513;
+    border: 2px solid #000;
+    padding: 5px;
+    text-align: center;
 }
 
-#skills-trainer {
-    top: 150px;
-    left: 300px;
+#bookshelf ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 5px 0;
+    font-size: 0.6em;
+    color: white;
 }
 
-#experience-trainer {
-    top: 300px;
-    left: 500px;
+#bookshelf li {
+    margin: 2px 0;
 }
 
-/* PC (Project Terminal) */
-#pc {
-    position: absolute;
-    top: 400px;
-    left: 200px;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-}
-
-/* Mailbox */
-#mailbox {
-    position: absolute;
-    top: 500px;
-    left: 600px;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-}
-
-/* Trainer Sprite */
-#trainer {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    transform: translate(200px, 200px);
+/* Vinyl Shelf */
+#vinyl-shelf {
+    background-color: #4682B4;
+    border: 2px solid #000;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Dialog Box */
@@ -111,7 +104,7 @@ body {
 }
 
 #dialog-text {
-    font-size: 14px;
+    font-size: 0.8em;
     color: #000;
 }
 
@@ -140,7 +133,7 @@ body {
 #project-choice-dialog button {
     margin: 10px;
     padding: 8px 16px;
-    font-size: 14px;
+    font-size: 0.8em;
     cursor: pointer;
 }
 
@@ -157,9 +150,15 @@ body {
     text-align: center;
 }
 
+#contact-form-dialog h2 {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
 #contact-form-dialog label {
     display: block;
     margin-top: 10px;
+    font-size: 0.8em;
 }
 
 #contact-form-dialog input,
@@ -169,11 +168,44 @@ body {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     box-sizing: border-box;
+    font-size: 0.8em;
 }
 
 #contact-form-dialog button {
     padding: 8px 16px;
-    font-size: 14px;
+    font-size: 0.8em;
     cursor: pointer;
     margin: 5px;
+}
+
+/* Mobile Styles */
+@media screen and (max-width: 600px) {
+    #game-map {
+        width: 100vw;
+        height: 60vh;
+    }
+
+    #start-screen h1 {
+        font-size: 1.5em;
+    }
+
+    #start-btn {
+        font-size: 1em;
+    }
+
+    .npc,
+    #pc,
+    #mailbox,
+    #trainer,
+    #bookshelf,
+    #vinyl-shelf {
+        width: 16px;
+        height: 16px;
+    }
+
+    #dialog-box {
+        width: 90%;
+        left: 5%;
+        transform: none;
+    }
 }
