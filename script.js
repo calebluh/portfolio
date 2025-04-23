@@ -28,7 +28,7 @@ const toggleScoreboardButton = document.getElementById('toggle-scoreboard-btn');
 const joystickZone = document.getElementById('joystick-zone');
 const projectChoiceDialog = document.getElementById('project-choice-dialog');
 const contactFormDialog = document.getElementById("contact-form-dialog");
-const pcElement = document.getElementById("pc"); // <<< ADDED GLOBAL DECLARATION
+const pcElement = document.getElementById("pc");
 
 // -=-=-=- Firebase Initialization -=-=-=-
 const firebaseConfig = {
@@ -103,14 +103,14 @@ function showJoystickIfNeeded() {
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     const anyDialogOpen = isAnyDialogOpen();
     console.log(`showJoystickIfNeeded: isTouch=${isTouchDevice}, joystickObjExists=${!!joystick}, dialogOpen=${anyDialogOpen}`);
-    
+
     if (joystickZone && isTouchDevice && joystick) {
         if (!anyDialogOpen) {
-            joystickZone.style.display = 'block';
-            console.log("--> Joystick Shown");
+             joystickZone.style.display = 'block';
+             console.log("--> Joystick Shown");
         } else {
-            joystickZone.style.display = 'none';
-            console.log("--> Joystick Hidden (Dialog Open)");
+             joystickZone.style.display = 'none';
+             console.log("--> Joystick Hidden (Dialog Open)");
         }
     } else {
         hideJoystick();
@@ -130,25 +130,24 @@ async function init() {
     await loadTileImages();
     drawMap();
     positionElements();
-    setupInteractions(); // Now pcElement should be defined when this runs
+    setupInteractions();
     setupJoystick();
     window.addEventListener('resize', () => {
         positionElements();
-        checkForWaterProximity();
+        checkForWaterProximity();  
     });
-    checkForWaterProximity();
+    checkForWaterProximity();  
     showJoystickIfNeeded();
 }
 
 function loadTileImages() {
     return new Promise((resolve) => {
         let imagesLoaded = 0;
-        const totalImages = Object.keys(tileTypes).length;
-        if (totalImages === 0) { // Handle case with no tiles defined
-             resolve();
-             return;
-        }
-        for (const key in tileTypes) {
+        const tileKeys = Object.keys(tileTypes); // Store keys
+        const totalImages = tileKeys.length;
+        if (totalImages === 0) { resolve(); return; }
+
+        tileKeys.forEach(key => { // Use forEach for clarity
             const img = new Image();
             img.src = `assets/tiles/${tileTypes[key]}.png`;
             img.onload = () => {
@@ -161,7 +160,7 @@ function loadTileImages() {
                 imagesLoaded++;
                  if (imagesLoaded === totalImages) resolve();
             }
-        }
+        });
     });
 }
 
@@ -171,7 +170,7 @@ function drawMap() {
     gameCanvas.height = MAP_HEIGHT * TILE_SIZE;
     for (let y = 0; y < MAP_HEIGHT; y++) {
         for (let x = 0; x < MAP_WIDTH; x++) {
-            const tileType = map[y]?.[x]; // Added safe navigation
+            const tileType = map[y]?.[x];
             if (tileType !== undefined && tiles[tileType]) {
                 ctx.drawImage(tiles[tileType], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             } else {
@@ -207,6 +206,54 @@ function positionElement(elementId, tileX, tileY) {
     element.style.height = actualTileHeight + 'px';
 }
 
+function startFishing() {
+    hideFishingPrompt();
+    isFishingActive = true;
+    if (fishingGameDisplay) fishingGameDisplay.style.display = 'block';
+    hideJoystick();
+    fishingState = 'cast_ready';
+    tension = 0;
+    fishDistance = 0;
+    updateTensionBar();
+    if (fishingStatus) fishingStatus.textContent = "Press 'Cast / Reel' to cast!";
+    if (reelButton) { reelButton.textContent = "Cast"; reelButton.disabled = false; }
+    document.removeEventListener("keydown", movePlayer);
+}
+
+function checkForWaterProximity() {
+    // Check if any potentially interfering dialog is already open
+    if (isAnyDialogOpen() || isFishingActive) {
+        canFishHere = false;
+        hideFishingPrompt();
+        return;
+    }
+
+    const waterTileType = 3;
+    canFishHere = false;
+    const tilesToCheck = [
+        { x: playerTileX, y: playerTileY - 1 }, // North
+        { x: playerTileX, y: playerTileY + 1 }, // South
+        { x: playerTileX + 1, y: playerTileY }, // East
+        { x: playerTileX - 1, y: playerTileY }  // West
+    ];
+
+    for (const tile of tilesToCheck) {
+        if (tile.y >= 0 && tile.y < MAP_HEIGHT && tile.x >= 0 && tile.x < MAP_WIDTH) {
+            if (map[tile.y]?.[tile.x] === waterTileType) {
+                canFishHere = true;
+                break;
+            }
+        }
+    }
+
+    if (canFishHere) {
+        if (fishingPrompt) fishingPrompt.style.display = 'block';
+        hideJoystick(); // Hide joystick when prompt appears
+    } else {
+        hideFishingPrompt();
+    }
+}
+
 function setupInteractions() {
     document.removeEventListener("keydown", movePlayer);
     document.addEventListener("keydown", movePlayer);
@@ -214,7 +261,6 @@ function setupInteractions() {
     const setupListener = (id, action) => {
         const element = document.getElementById(id);
         if (element) element.addEventListener("click", action);
-        // else console.warn(`Listener setup failed: Element not found - #${id}`); // Optional warning
     };
 
     setupListener("resume-trainer", () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank'));
@@ -222,11 +268,9 @@ function setupInteractions() {
     setupListener("experience-trainer", () => window.open('https://www.linkedin.com/in/calebluh/', '_blank'));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
 
-    // Use the globally defined pcElement here
     if (pcElement && projectChoiceDialog) {
         const closeBtn = document.getElementById('close-btn');
-        // pcElement is already defined globally
-        setupListener("pc", () => { projectChoiceDialog.style.display = 'block'; hideJoystick(); });
+        setupListener("pc", () => { if(projectChoiceDialog) projectChoiceDialog.style.display = 'block'; hideJoystick(); });
         setupListener("roblox-btn", () => { window.open("https://www.roblox.com/games/113892368479986/Lacrosse-Legends", "_blank"); if(projectChoiceDialog) projectChoiceDialog.style.display = 'none'; showJoystickIfNeeded(); });
         setupListener("statlab-btn", () => { window.open("https://calebluh.github.io/stat-lab", "_blank"); if(projectChoiceDialog) projectChoiceDialog.style.display = 'none'; showJoystickIfNeeded(); });
         setupListener("linkedin-btn", () => { window.open("https://www.linkedin.com/in/calebluh/", "_blank"); if(projectChoiceDialog) projectChoiceDialog.style.display = 'none'; showJoystickIfNeeded(); });
@@ -241,17 +285,19 @@ function setupInteractions() {
         setupListener("close-dialog", () => { if(dialogBox) dialogBox.style.display = "none"; showJoystickIfNeeded(); checkForWaterProximity(); });
     }
     if (bookshelfElement && bookshelfDialog) {
-        const closeBookshelfButton = document.getElementById('close-bookshelf-dialog'); // Define here if not global
+        const closeBookshelfButton = document.getElementById('close-bookshelf-dialog');
         setupListener("bookshelf", () => { if(bookshelfDialog) bookshelfDialog.style.display = 'block'; hideJoystick(); });
         if (closeBookshelfButton) setupListener("close-bookshelf-dialog", () => { if(bookshelfDialog) bookshelfDialog.style.display = 'none'; showJoystickIfNeeded(); });
     }
+
+    // Setup fishing listeners
     if (startFishingButton) setupListener("start-fishing-btn", startFishing);
     if (cancelFishingButton) setupListener("cancel-fishing-btn", () => { hideFishingPrompt(); showJoystickIfNeeded(); });
     if (stopFishingButton) setupListener("stop-fishing-btn", () => stopFishing('stopped'));
     if (submitInitialsButton) setupListener("submit-initials-btn", submitScore);
     if (closeScoreboardButton) setupListener("close-scoreboard-btn", () => { if(scoreboardDialog) scoreboardDialog.style.display = 'none'; showJoystickIfNeeded(); });
     if (toggleScoreboardButton) toggleScoreboardButton.addEventListener('click', async () => {
-        console.log("Dialog check for scores btn:", isAnyDialogOpen());
+        console.log("Dialog check for scores btn:", isAnyDialogOpen()); // Keep debug log
         if (scoreboardDialog?.style.display === 'block') {
             scoreboardDialog.style.display = 'none'; showJoystickIfNeeded();
         } else {
@@ -277,68 +323,19 @@ function setupInteractions() {
     document.body.addEventListener('touchend', () => { if (isReeling) isReeling = false; });
 }
 
-function checkForWaterProximity() {
-    if (isFishingActive) {
-        canFishHere = false;
-        hideFishingPrompt();
-        return;
-    }
-    const waterTileType = 3;
-    canFishHere = false;
-
-    const tilesToCheck = [
-        { x: playerTileX, y: playerTileY - 1 }, // North
-        { x: playerTileX, y: playerTileY + 1 }, // South
-        { x: playerTileX + 1, y: playerTileY }, // East
-        { x: playerTileX - 1, y: playerTileY }  // West
-    ];
-
-    for (const tile of tilesToCheck) {
-        if (tile.y >= 0 && tile.y < MAP_HEIGHT && tile.x >= 0 && tile.x < MAP_WIDTH) {
-            if (map[tile.y][tile.x] === waterTileType) {
-                canFishHere = true;
-                break;
-            }
-        }
-    }
-
-    if (canFishHere) {
-        fishingPrompt.style.display = 'block';
-    } else {
-        hideFishingPrompt();
-    }
-}
-
 function hideFishingPrompt() {
-    fishingPrompt.style.display = 'none';
+    if (fishingPrompt) {
+         fishingPrompt.style.display = 'none';
+    }
 }
 
 function updateTensionBar() {
+    if (!tensionBar) return;
     const percentage = Math.max(0, Math.min(MAX_TENSION, tension)) / MAX_TENSION * 100;
     tensionBar.style.width = `${percentage}%`;
-
-    if (percentage > 85) {
-        tensionBar.style.backgroundColor = 'red';
-    } else if (percentage > 60) {
-        tensionBar.style.backgroundColor = 'orange';
-    } else {
-        tensionBar.style.backgroundColor = 'lightgreen';
-    }
-}
-
-function startFishing() {
-    hideFishingPrompt();
-    isFishingActive = true;
-    fishingGameDisplay.style.display = 'block';
-    fishingState = 'cast_ready';
-    tension = 0;
-    fishDistance = 0;
-    updateTensionBar();
-    fishingStatus.textContent = "Press 'Cast / Reel' to cast!";
-    reelButton.textContent = "Cast";
-    reelButton.disabled = false;
-
-    document.removeEventListener("keydown", movePlayer);
+    if (percentage > 85) tensionBar.style.backgroundColor = 'red';
+    else if (percentage > 60) tensionBar.style.backgroundColor = 'orange';
+    else tensionBar.style.backgroundColor = 'lightgreen';
 }
 
 function stopFishing(reason) {
@@ -353,14 +350,14 @@ function stopFishing(reason) {
     document.removeEventListener("keydown", movePlayer);
     document.addEventListener("keydown", movePlayer);
 
-    let showRegularDialogFlag = false; // Renamed to avoid conflict
+    let showRegularDialogFlag = false;
     let promptWasShown = false;
 
     if (reason === 'caught') {
         currentFishScore = Math.max(10, Math.round(START_FISH_DISTANCE * (1 - tension / MAX_TENSION / 2) * 10));
         promptWasShown = checkAndPromptForHighScore(currentFishScore);
         if (!promptWasShown) {
-            showRegularDialogFlag = true; // Flag the regular dialog if prompt wasn't shown
+            showRegularDialogFlag = true;
         }
     } else if (reason === 'stopped') {
         showRegularDialogFlag = true;
@@ -371,35 +368,68 @@ function stopFishing(reason) {
 
     fishingState = 'idle';
 
-    // Now, show the appropriate dialog AFTER setting state
     if (showRegularDialogFlag) {
         if (reason === 'stopped') showDialog("You stopped fishing.");
         else if (reason === 'lost_tension') showDialog("Snap! The line broke!");
-        else if (reason === 'caught') showDialog(`You caught a fish! Score: ${currentFishScore}`); // Only shown if not high score
+        else if (reason === 'caught') showDialog(`You caught a fish! Score: ${currentFishScore}`);
     }
 
-    // Only explicitly show joystick if NO dialog/prompt ended up being shown
-    // Let the close handlers trigger showJoystickIfNeeded otherwise
     if (!promptWasShown && !showRegularDialogFlag) {
         showJoystickIfNeeded();
     }
 }
 
-// ... (castLine, fishBites, fishingLoop unchanged) ...
+function castLine() {
+    if (fishingState !== 'cast_ready') return;
+    fishingState = 'casting';
+    if (fishingStatus) fishingStatus.textContent = "Casting...";
+    if (reelButton) reelButton.disabled = true;
+    setTimeout(() => {
+        if (fishingState !== 'casting') return;
+        fishingState = 'waiting';
+        fishDistance = START_FISH_DISTANCE;
+        if (fishingStatus) fishingStatus.textContent = "Waiting for a bite...";
+        if (reelButton) { reelButton.disabled = false; reelButton.textContent = "Reel"; }
+        const waitTime = Math.random() * (BITE_MAX_WAIT - BITE_MIN_WAIT) + BITE_MIN_WAIT;
+        biteTimeout = setTimeout(fishBites, waitTime);
+    }, CAST_TIME);
+}
+
+function fishBites() {
+    if (fishingState !== 'waiting') return;
+    biteTimeout = null;
+    fishingState = 'reeling';
+    if (fishingStatus) fishingStatus.textContent = "Fish On! Hold 'Reel' to reel it in!";
+    gameLoopInterval = setInterval(fishingLoop, 100);
+}
+
+function fishingLoop() {
+    if (fishingState !== 'reeling') { clearInterval(gameLoopInterval); gameLoopInterval = null; return; }
+    let tensionChange = 0;
+    if (isReeling) { tensionChange += TENSION_INCREASE_RATE / 10; fishDistance -= REEL_SPEED; if (fishingStatus) fishingStatus.textContent = "Reeling..."; }
+    else { tensionChange -= TENSION_DECREASE_RATE / 10; if (fishingStatus) fishingStatus.textContent = "Hold 'Reel'!"; }
+    if (Math.random() < FISH_FIGHT_CHANCE) {
+        tensionChange += FISH_FIGHT_STRENGTH / 10; if (fishingStatus) fishingStatus.textContent = "It's fighting back!";
+        if (tensionBarContainer) { tensionBarContainer.style.animation = 'shake 0.2s'; requestAnimationFrame(() => { setTimeout(() => { if (tensionBarContainer) tensionBarContainer.style.animation = ''; }, 200); }); }
+    }
+    tension = Math.max(0, Math.min(MAX_TENSION, tension + tensionChange));
+    updateTensionBar();
+    if (tension >= MAX_TENSION) { stopFishing('lost_tension'); return; }
+    if (fishDistance <= 0) { stopFishing('caught'); return; }
+}
 
 async function loadHighScores() {
     highScores = [];
-    console.log("Fetching scores...");
+    console.log("Fetching scores..."); 
     try {
-        const q = firebase.firestore().collection("leaderboard").orderBy("score", "desc").limit(10);
+        const q = db.collection("leaderboard").orderBy("score", "desc").limit(10);
         const querySnapshot = await q.get();
         querySnapshot.forEach((doc) => highScores.push({ id: doc.id, ...doc.data() }));
-        // updateScoreboardDisplay(); // Call this AFTER scores are loaded if needed immediately
     } catch (error) {
         console.error("Error loading high scores:", error);
         if (scoreList) scoreList.innerHTML = '<li>Error loading scores</li>';
     }
-    updateScoreboardDisplay(); // Update display after fetch attempt (success or fail)
+    updateScoreboardDisplay();
 }
 
 function updateScoreboardDisplay() {
@@ -415,26 +445,21 @@ function updateScoreboardDisplay() {
     });
 }
 
-// UPDATED: Returns true if initials prompt was shown, false otherwise
 function checkAndPromptForHighScore(score) {
-    // Sort locally just before checking (Firestore query already orders)
     highScores.sort((a, b) => b.score - a.score);
     const isTopScore = highScores.length < 10 || (highScores.length > 0 && score > (highScores[highScores.length - 1]?.score ?? 0));
-
     if (isTopScore && score > 0) {
         scoreToSave = score;
         const scoreDisplay = document.getElementById('initials-score-display');
-        if (scoreDisplay) scoreDisplay.textContent = `You caught a fish! Score: ${score}`; // Set score text
+        if (scoreDisplay) scoreDisplay.textContent = `You caught a fish! Score: ${score}`;
         if (initialsInput) initialsInput.value = '';
         if (initialsPrompt) {
             initialsPrompt.style.display = 'block';
-            hideJoystick(); // Hide joystick because prompt is showing
-            return true; // Indicate prompt shown
+            hideJoystick();
+            return true;
         }
     }
-    // If not showing prompt, joystick visibility isn't changed here;
-    // showJoystickIfNeeded will be called by the caller (stopFishing) if needed.
-    return false; // Indicate prompt not shown
+    return false;
 }
 
 async function submitScore() {
@@ -450,20 +475,20 @@ async function submitScore() {
                 initials: initials, score: scoreToSave,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-            if (initialsPrompt) initialsPrompt.style.display = 'none'; // Hide prompt FIRST
+            if (initialsPrompt) initialsPrompt.style.display = 'none';
             scoreToSave = 0;
-            await loadHighScores(); // Reload scores
-            if (scoreboardDialog) scoreboardDialog.style.display = 'block'; // Show scoreboard
-            hideJoystick(); // Hide joystick (scoreboard shown)
+            await loadHighScores();
+            if (scoreboardDialog) scoreboardDialog.style.display = 'block';
+            hideJoystick();
         } catch (error) {
             console.error("Error saving score:", error);
             alert("Could not save score.");
             if (initialsPrompt) initialsPrompt.style.display = 'none';
-            showJoystickIfNeeded(); // Show joystick on error
+            showJoystickIfNeeded();
         }
     } else {
         if (initialsPrompt) initialsPrompt.style.display = 'none';
-        showJoystickIfNeeded(); // Show joystick if prompt closed weirdly
+        showJoystickIfNeeded();
     }
 }
 
@@ -478,7 +503,8 @@ function showDialog(text) {
 }
 
 function movePlayer(event) {
-    if (isFishingActive || isAnyDialogOpen()) return; // Use helper function
+    console.log("Checking dialogs in movePlayer:", isAnyDialogOpen());  
+    if (isFishingActive || isAnyDialogOpen()) return;
     let nextX = playerTileX, nextY = playerTileY, moved = false;
     switch (event.key) {
         case "ArrowUp": case "w": nextY -= 1; break;
@@ -493,37 +519,28 @@ function movePlayer(event) {
     if (targetTileType !== undefined && !impassableTiles.includes(targetTileType)) {
         playerTileX = nextX; playerTileY = nextY; moved = true;
     }
-    if (moved) { positionElement('trainer', playerTileX, playerTileY); checkForWaterProximity(); }
+    if (moved) {
+        positionElement('trainer', playerTileX, playerTileY);
+        checkForWaterProximity(); // Call the correctly defined function
+    }
 }
 
 function setupJoystick() {
-    console.log("Attempting joystick setup...");
-    if (typeof nipplejs === 'undefined') { 
-        console.warn("nipplejs library not found."); 
-        hideJoystick(); 
-        return; 
-    }
+    console.log("Attempting joystick setup...");  
+    if (typeof nipplejs === 'undefined') { console.warn("nipplejs library not found."); hideJoystick(); return; }
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    console.log("Is touch device?", isTouchDevice);
+    console.log("Is touch device?", isTouchDevice);  
     if (isTouchDevice && joystickZone) {
-        const options = { 
-            zone: joystickZone, 
-            mode: 'static', 
-            position: { left: '50%', top: '50%' }, 
-            color: 'rgba(128, 128, 128, 0.7)', 
-            size: 100, 
-            threshold: 0.1, 
-            fadeTime: 250 
-        };
+        const options = { zone: joystickZone, mode: 'static', position: { left: '50%', top: '50%' }, color: 'rgba(128, 128, 128, 0.7)', size: 100, threshold: 0.1, fadeTime: 250 };
         if (!joystick) {
-            console.log("Creating joystick instance...");
-            joystick = nipplejs.create(options);
-            console.log("Joystick object:", joystick);
-            setupJoystickEvents();
+             console.log("Creating joystick instance...");  
+             joystick = nipplejs.create(options);
+             console.log("Joystick object:", joystick);  
+             setupJoystickEvents();
         }
         showJoystickIfNeeded();
     } else {
-        console.log("Hiding joystick (not touch or no zone)");
+        console.log("Hiding joystick (not touch or no zone)");  
         hideJoystick();
     }
 }
@@ -542,8 +559,7 @@ function setupJoystickEvents() {
         else if (angle > 225 && angle <= 315) newDirection = 'down';
         else newDirection = 'right';
 
-        // Keep the debug log for joystick direction issue
-        console.log(`Joystick Move: Angle=${angle?.toFixed(1)}, Dir=${data.direction?.angle}, Calc=${newDirection}`);
+        console.log(`Joystick Move: Angle=${angle?.toFixed(1)}, Dir=${data.direction?.angle}, Calc=${newDirection}`);  
 
         if (newDirection !== joystickDirection || !moveInterval) {
             joystickDirection = newDirection;
@@ -556,7 +572,8 @@ function setupJoystickEvents() {
 }
 
 function triggerMovement(direction) {
-     if (isFishingActive || isAnyDialogOpen()) return; // Use helper function
+     console.log("Checking dialogs in triggerMovement:", isAnyDialogOpen());  
+     if (isFishingActive || isAnyDialogOpen()) return;
      if (!direction) return;
      let key;
      switch (direction) { case 'up': key = 'w'; break; case 'down': key = 's'; break; case 'left': key = 'a'; break; case 'right': key = 'd'; break; default: return; }
