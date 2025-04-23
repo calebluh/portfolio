@@ -1,13 +1,15 @@
-/* General Styles */
 body {
     font-family: 'Press Start 2P', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f8f9fa;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
-/* Start Screen */
 #start-screen {
     background: url('assets/start-bg.png') no-repeat center center;
     background-size: cover;
@@ -17,25 +19,34 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
 }
 
 #start-btn {
-    padding: 10px 20px;
-    font-size: 1em;
+    padding: 15px 30px;
+    font-size: 1.2em;
     cursor: pointer;
-    border: 3px solid #000;
+    border: 4px solid #000;
     background-color: #4CAF50;
     color: white;
     text-transform: uppercase;
+    margin-top: 20px; 
 }
 
-/* Game Map */
 #game-map {
-    width: 80vw;
-    height: 80vh;
+    width: 90vw;
+    height: 70vh;
+    max-width: 1000px;
+    max-height: 750px;
     position: relative;
     overflow: hidden;
+    border: 3px solid black;
+    display: none;
 }
+
 
 #gameCanvas {
     position: absolute;
@@ -43,10 +54,11 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    display: block;
+    image-rendering: pixelated;
+    z-index: 1;
 }
 
-/* Elements */
 .npc,
 #pc,
 #mailbox,
@@ -54,158 +66,171 @@ body {
 #bookshelf,
 #vinyl-shelf {
     position: absolute;
-    width: 32px;
-    height: 32px;
     cursor: pointer;
-}
-
-/* Bookshelf */
-#bookshelf {
-    background-color: #8B4513;
-    border: 2px solid #000;
-    padding: 5px;
-    text-align: center;
-}
-
-#bookshelf ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 5px 0;
-    font-size: 0.6em;
-    color: white;
-}
-
-#bookshelf li {
-    margin: 2px 0;
-}
-
-/* Vinyl Shelf */
-#vinyl-shelf {
-    background-color: #4682B4;
-    border: 2px solid #000;
-    padding: 5px;
+    z-index: 2;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* Dialog Box */
-#dialog-box {
+.npc img,
+#pc img,
+#mailbox img,
+#trainer img,
+#bookshelf img,
+#vinyl-shelf img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+
+#dialog-box,
+#project-choice-dialog,
+#contact-form-dialog,
+#bookshelf-dialog {
     position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
     background-color: white;
     border: 3px solid black;
     padding: 15px;
-    width: 300px;
+    z-index: 100;
+    box-shadow: 5px 5px 0px black;
     display: none;
     text-align: center;
 }
 
-#dialog-text {
-    font-size: 0.8em;
-    color: #000;
+/* Specific Dialog Positioning */
+#dialog-box {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 400px;
 }
 
-#close-dialog {
-    margin-top: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-    border: 2px solid #000;
-    background-color: #4CAF50;
-    color: white;
-}
-
-/* Project Choice Dialog */
-#project-choice-dialog {
-    position: absolute;
+#project-choice-dialog,
+#contact-form-dialog,
+#bookshelf-dialog {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
-    border: 3px solid black;
-    padding: 20px;
-    z-index: 100;
-    text-align: center;
+    width: 80%;
+    max-width: 450px;
 }
 
-#project-choice-dialog button {
-    margin: 10px;
+#dialog-text {
+    font-size: 0.9em;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+#close-dialog,
+#project-choice-dialog button,
+#contact-form-dialog button,
+#bookshelf-dialog button {
+    margin: 5px;
     padding: 8px 16px;
     font-size: 0.8em;
     cursor: pointer;
+    border: 2px solid #000;
+    background-color: #ddd;
+    color: black;
+    text-transform: uppercase;
 }
 
-/* Contact Form Dialog */
-#contact-form-dialog {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    border: 3px solid black;
-    padding: 20px;
-    z-index: 100;
-    text-align: center;
+#close-dialog:hover,
+#project-choice-dialog button:hover,
+#contact-form-dialog button:hover,
+#bookshelf-dialog button:hover {
+    background-color: #ccc;
 }
 
-#contact-form-dialog h2 {
-    font-size: 1em;
-    margin-bottom: 10px;
+/* Form Specific Styles */
+#contact-form-dialog h2,
+#bookshelf-dialog h2 {
+    font-size: 1.1em;
+    margin-bottom: 15px;
 }
 
 #contact-form-dialog label {
     display: block;
     margin-top: 10px;
     font-size: 0.8em;
+    text-align: left;
 }
 
 #contact-form-dialog input,
 #contact-form-dialog textarea {
     width: 100%;
     padding: 8px;
+    margin-top: 5px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 2px solid #000;
     box-sizing: border-box;
     font-size: 0.8em;
+    font-family: 'Press Start 2P', sans-serif;
 }
 
-#contact-form-dialog button {
-    padding: 8px 16px;
+#contact-form-dialog button[type="submit"] {
+     background-color: #4CAF50;
+     color: white;
+}
+#contact-form-dialog button[type="submit"]:hover {
+     background-color: #45a049;
+}
+
+/* Bookshelf Dialog Specific */
+#bookshelf-dialog ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 15px;
     font-size: 0.8em;
-    cursor: pointer;
-    margin: 5px;
+    text-align: left;
 }
 
-/* Mobile Styles */
-@media screen and (max-width: 600px) {
-    #game-map {
-        width: 100vw;
-        height: 60vh;
-    }
+ #bookshelf-dialog li {
+     margin-bottom: 8px;
+ }
 
+
+/* Mobile Styles Adjustments */
+@media screen and (max-width: 600px) {
     #start-screen h1 {
         font-size: 1.5em;
     }
 
     #start-btn {
         font-size: 1em;
+        padding: 10px 20px;
     }
 
-    .npc,
-    #pc,
-    #mailbox,
-    #trainer,
-    #bookshelf,
-    #vinyl-shelf {
-        width: 16px;
-        height: 16px;
+    /* Dialogs take more width on small screens */
+    #dialog-box,
+    #project-choice-dialog,
+    #contact-form-dialog,
+    #bookshelf-dialog {
+       width: 90%;
+       padding: 10px;
     }
 
-    #dialog-box {
-        width: 90%;
-        left: 5%;
-        transform: none;
+     #dialog-box {
+        bottom: 10px;
+     }
+
+    #dialog-text,
+    #contact-form-dialog label,
+    #contact-form-dialog input,
+    #contact-form-dialog textarea,
+    #bookshelf-dialog ul {
+        font-size: 0.7em;
+    }
+
+     #close-dialog,
+    #project-choice-dialog button,
+    #contact-form-dialog button,
+    #bookshelf-dialog button {
+        padding: 6px 12px;
+        font-size: 0.7em;
     }
 }
