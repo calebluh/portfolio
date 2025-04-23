@@ -277,9 +277,70 @@ function setupInteractions() {
     document.body.addEventListener('touchend', () => { if (isReeling) isReeling = false; });
 }
 
-// ... (rest of functions: checkForWaterProximity, hideFishingPrompt, updateTensionBar, startFishing unchanged) ...
+function checkForWaterProximity() {
+    if (isFishingActive) {
+        canFishHere = false;
+        hideFishingPrompt();
+        return;
+    }
+    const waterTileType = 3;
+    canFishHere = false;
 
-// UPDATED stopFishing and checkAndPromptForHighScore
+    const tilesToCheck = [
+        { x: playerTileX, y: playerTileY - 1 }, // North
+        { x: playerTileX, y: playerTileY + 1 }, // South
+        { x: playerTileX + 1, y: playerTileY }, // East
+        { x: playerTileX - 1, y: playerTileY }  // West
+    ];
+
+    for (const tile of tilesToCheck) {
+        if (tile.y >= 0 && tile.y < MAP_HEIGHT && tile.x >= 0 && tile.x < MAP_WIDTH) {
+            if (map[tile.y][tile.x] === waterTileType) {
+                canFishHere = true;
+                break;
+            }
+        }
+    }
+
+    if (canFishHere) {
+        fishingPrompt.style.display = 'block';
+    } else {
+        hideFishingPrompt();
+    }
+}
+
+function hideFishingPrompt() {
+    fishingPrompt.style.display = 'none';
+}
+
+function updateTensionBar() {
+    const percentage = Math.max(0, Math.min(MAX_TENSION, tension)) / MAX_TENSION * 100;
+    tensionBar.style.width = `${percentage}%`;
+
+    if (percentage > 85) {
+        tensionBar.style.backgroundColor = 'red';
+    } else if (percentage > 60) {
+        tensionBar.style.backgroundColor = 'orange';
+    } else {
+        tensionBar.style.backgroundColor = 'lightgreen';
+    }
+}
+
+function startFishing() {
+    hideFishingPrompt();
+    isFishingActive = true;
+    fishingGameDisplay.style.display = 'block';
+    fishingState = 'cast_ready';
+    tension = 0;
+    fishDistance = 0;
+    updateTensionBar();
+    fishingStatus.textContent = "Press 'Cast / Reel' to cast!";
+    reelButton.textContent = "Cast";
+    reelButton.disabled = false;
+
+    document.removeEventListener("keydown", movePlayer);
+}
+
 function stopFishing(reason) {
     if (biteTimeout) clearTimeout(biteTimeout);
     if (gameLoopInterval) clearInterval(gameLoopInterval);
