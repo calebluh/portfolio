@@ -88,7 +88,7 @@ function positionElements() {
     // Spaced-out Trainers on Path/Grass
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 11, 11);
-    positionElement('experience-trainer', 19, 8);
+    positionElement('experience-trainer', 18, 8);
 }
 
 function positionElement(elementId, tileX, tileY) {
@@ -112,7 +112,7 @@ function positionElement(elementId, tileX, tileY) {
 function setupInteractions() {
     // Resume Trainer
     document.getElementById("resume-trainer").addEventListener("click", function() {
-        window.open('https://calebluh.github.io/resume/', '_blank');
+        window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank');
     });
 
     // Certs Trainer
