@@ -33,7 +33,7 @@ body {
     background-color: #4CAF50;
     color: white;
     text-transform: uppercase;
-    margin-top: 20px; 
+    margin-top: 20px;
 }
 
 #game-map {
@@ -46,7 +46,6 @@ body {
     border: 3px solid black;
     display: none;
 }
-
 
 #gameCanvas {
     position: absolute;
@@ -85,7 +84,6 @@ body {
     image-rendering: pixelated;
 }
 
-
 #dialog-box,
 #project-choice-dialog,
 #contact-form-dialog,
@@ -100,9 +98,8 @@ body {
     text-align: center;
 }
 
-/* Specific Dialog Positioning */
 #dialog-box {
-    bottom: 20px;
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
@@ -146,7 +143,6 @@ body {
     background-color: #ccc;
 }
 
-/* Form Specific Styles */
 #contact-form-dialog h2,
 #bookshelf-dialog h2 {
     font-size: 1.1em;
@@ -180,7 +176,6 @@ body {
      background-color: #45a049;
 }
 
-/* Bookshelf Dialog Specific */
 #bookshelf-dialog ul {
     list-style-type: none;
     padding: 0;
@@ -189,12 +184,51 @@ body {
     text-align: left;
 }
 
- #bookshelf-dialog li {
+#bookshelf-dialog li {
      margin-bottom: 8px;
  }
 
+#instructions {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-size: 0.7em;
+    color: #555;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    z-index: 50;
+}
 
-/* Mobile Styles Adjustments */
+#instructions p:nth-child(2) {
+    display: none;
+}
+
+#joystick-zone {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(128, 128, 128, 0.3);
+    border-radius: 50%;
+    display: none;
+    z-index: 150;
+}
+
+@media (hover: none) and (pointer: coarse) {
+     #instructions p:nth-child(1) {
+        display: none;
+    }
+     #instructions p:nth-child(2) {
+        display: block;
+    }
+     #joystick-zone {
+        display: block;
+    }
+}
+
 @media screen and (max-width: 600px) {
     #start-screen h1 {
         font-size: 1.5em;
@@ -205,7 +239,6 @@ body {
         padding: 10px 20px;
     }
 
-    /* Dialogs take more width on small screens */
     #dialog-box,
     #project-choice-dialog,
     #contact-form-dialog,
@@ -215,8 +248,8 @@ body {
     }
 
      #dialog-box {
-        bottom: 10px;
-     }
+       bottom: 40px;
+    }
 
     #dialog-text,
     #contact-form-dialog label,
@@ -232,5 +265,18 @@ body {
     #bookshelf-dialog button {
         padding: 6px 12px;
         font-size: 0.7em;
+    }
+
+    #instructions {
+        font-size: 0.6em;
+        bottom: 5px;
+        left: 5px;
+    }
+
+    #joystick-zone {
+        width: 80px;
+        height: 80px;
+        bottom: 10px;
+        right: 10px;
     }
 }
