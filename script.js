@@ -26,6 +26,22 @@ const initialsInput = document.getElementById('initials-input');
 const submitInitialsButton = document.getElementById('submit-initials-btn');
 const toggleScoreboardButton = document.getElementById('toggle-scoreboard-btn');
 
+// -=-=-=- Firebase Initialization -=-=-=-
+const firebaseConfig = {
+    apiKey: "AIzaSyD8mwbaU7Jgakj-OtH92BzAXDIIzGRIZk0",
+    authDomain: "portfolio-game-484a5.firebaseapp.com",
+    projectId: "portfolio-game-484a5",
+    storageBucket: "portfolio-game-484a5.firebasestorage.app",
+    messagingSenderId: "278366782389",
+    appId: "1:278366782389:web:a78354d13f36ec1656cffc",
+    measurementId: "G-6YDSCNH0NM"
+};
+  
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// -=-=-=- Map and player initialization -=-=-=-
 const TILE_SIZE = 16;
 const MAP_WIDTH = 20;
 const MAP_HEIGHT = 15;
@@ -315,14 +331,13 @@ function setupInteractions() {
     if (closeScoreboardButton) closeScoreboardButton.addEventListener('click', () => {
         scoreboardDialog.style.display = 'none';
     });
-    if (toggleScoreboardButton) toggleScoreboardButton.addEventListener('click', () => {
+    if (toggleScoreboardButton) toggleScoreboardButton.addEventListener('click', async () => { // Make async
         if (scoreboardDialog.style.display === 'block') {
-            scoreboardDialog.style.display = 'none';
+             scoreboardDialog.style.display = 'none';
         } else {
-            loadHighScores();
+            await loadHighScores();
             updateScoreboardDisplay();
             scoreboardDialog.style.display = 'block';
-            // Hide others just in case
             initialsPrompt.style.display = 'none';
             fishingGameDisplay.style.display = 'none';
             fishingPrompt.style.display = 'none';
@@ -498,22 +513,25 @@ function fishingLoop() {
     }
 }
 
-function loadHighScores() {
-    const storedScores = localStorage.getItem(SCOREBOARD_KEY);
-    if (storedScores) {
-        try { // Add error handling for potentially corrupt JSON
-            highScores = JSON.parse(storedScores);
-            if (!Array.isArray(highScores)) { 
-                highScores = [];
-            }
-        } catch (e) {
-            console.error("Error parsing high scores from localStorage:", e);
-            highScores = [];
-        }
-    } else {
+async function loadHighScores() {
+    highScores = [];
+    console.log("Attempting to fetch scores from Firestore...");
+    try {
+        const leaderboardCol = db.collection("leaderboard");
+        const q = leaderboardCol.orderBy("score", "desc").limit(10);
+        const querySnapshot = await q.get();
+
         highScores = [];
+        querySnapshot.forEach((doc) => {
+            highScores.push({ id: doc.id, ...doc.data() });
+        });
+        console.log("Fetched scores:", highScores); 
+        updateScoreboardDisplay();
+
+    } catch (error) {
+        console.error("Error loading high scores:", error);
+        scoreList.innerHTML = '<li>Error loading scores</li>';
     }
-    highScores.sort((a, b) => b.score - a.score);
 }
 
 function saveHighScores() {
@@ -554,26 +572,42 @@ function checkAndPromptForHighScore(score) {
     }
 }
 
-function submitScore() {
+async function submitScore() {
     let initials = initialsInput.value.toUpperCase().replace(/[^A-Z]/g, '');
     if (initials.length > 3) {
         initials = initials.substring(0, 3);
     } else if (initials.length === 0) {
-         alert("Please enter 1-3 initials.");
-         return;
+        alert("Please enter 1-3 initials.");
+        return;
     } else {
-         initials = initials.padEnd(3, ' ');
+        initials = initials.padEnd(3, ' ');
     }
 
     if (scoreToSave > 0) {
-        highScores.push({ initials: initials, score: scoreToSave });
-        saveHighScores();
-        updateScoreboardDisplay();
-        initialsPrompt.style.display = 'none';
-        scoreToSave = 0;
-        scoreboardDialog.style.display = 'block';
+        try {
+            console.log(`Attempting to save score: ${initials} - ${scoreToSave}`);
+            const leaderboardCol = db.collection("leaderboard");
+            await leaderboardCol.add({
+                initials: initials,
+                score: scoreToSave,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log("Score saved successfully!");
+
+            initialsPrompt.style.display = 'none';
+            scoreToSave = 0;
+
+            await loadHighScores();
+            scoreboardDialog.style.display = 'block';
+
+        } catch (error) {
+            console.error("Error saving score:", error);
+            alert("Could not save score. Please try again.");
+            initialsPrompt.style.display = 'none'; 
+        }
+
     } else {
-        console.warn("Attempted to save score, but scoreToSave was 0 or initials were invalid.");
+        console.warn("Attempted to save score, but scoreToSave was 0.");
         initialsPrompt.style.display = 'none';
     }
 }
@@ -651,14 +685,14 @@ function setupJoystick() {
     const zone = document.getElementById('joystick-zone');
 
     if (isTouchDevice && zone) {
-         zone.style.display = 'block';
+        zone.style.display = 'block';
 
         const options = {
             zone: zone,
             mode: 'static',
             position: { left: '50%', top: '50%' },
             color: 'rgba(128, 128, 128, 0.7)',
-            size: 100,
+            size: 120,
             threshold: 0.1,
             fadeTime: 250
         };

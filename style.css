@@ -207,10 +207,11 @@ body {
 
 #joystick-zone {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 100px;
-    height: 100px;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 150px;
     background-color: rgba(128, 128, 128, 0.3);
     border-radius: 50%;
     display: none;
