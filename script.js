@@ -1,4 +1,3 @@
-// Start Screen Transition
 const startScreen = document.getElementById("start-screen");
 const startBtn = document.getElementById("start-btn");
 const gameMap = document.getElementById("game-map");
@@ -7,11 +6,17 @@ const ctx = gameCanvas.getContext("2d");
 const dialogBox = document.getElementById("dialog-box");
 const dialogText = document.getElementById("dialog-text");
 const closeDialogButton = document.getElementById("close-dialog");
+const bookshelfDialog = document.getElementById('bookshelf-dialog');
+const closeBookshelfButton = document.getElementById('close-bookshelf-dialog');
+const bookshelfElement = document.getElementById('bookshelf');
+
+const TILE_SIZE = 16;
+const MAP_WIDTH = 20;
+const MAP_HEIGHT = 15;
 
 startBtn.addEventListener('click', () => {
     startScreen.style.display = 'none';
     gameMap.style.display = 'block';
-
     init();
 });
 
@@ -20,9 +25,9 @@ async function init() {
     drawMap();
     positionElements();
     setupInteractions();
+    window.addEventListener('resize', positionElements);
 }
 
-// Load tile images
 function loadTileImages() {
     return new Promise((resolve) => {
         let imagesLoaded = 0;
@@ -38,24 +43,37 @@ function loadTileImages() {
                     resolve();
                 }
             };
+            img.onerror = () => {
+                console.error(`Failed to load image: assets/tiles/${tileTypes[key]}.png`);
+                imagesLoaded++; 
+                 if (imagesLoaded === totalImages) {
+                    resolve();
+                }
+            }
         }
     });
 }
 
-// Draw the map
 function drawMap() {
+    // Set canvas logical size based on map dimensions and original tile size
+    gameCanvas.width = MAP_WIDTH * TILE_SIZE;
+    gameCanvas.height = MAP_HEIGHT * TILE_SIZE;
+
+    // Draw the map using the logical TILE_SIZE
     for (let y = 0; y < MAP_HEIGHT; y++) {
         for (let x = 0; x < MAP_WIDTH; x++) {
             const tileType = map[y][x];
             if (tiles[tileType]) {
                 ctx.drawImage(tiles[tileType], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            } else {
+                 // Draw a fallback color if tile image is missing
+                ctx.fillStyle = 'grey';
+                ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
     }
 }
 
-// Position interactive elements
-const TILE_SIZE = 32;
 
 function positionElements() {
     positionElement('pc', 5, 3);
@@ -70,23 +88,36 @@ function positionElements() {
 
 function positionElement(elementId, tileX, tileY) {
     const element = document.getElementById(elementId);
-    element.style.left = tileX * TILE_SIZE + 'px';
-    element.style.top = tileY * TILE_SIZE + 'px';
+    if (!element) return;
+    const canvas = document.getElementById('gameCanvas');
+
+    const actualTileWidth = canvas.offsetWidth / MAP_WIDTH;
+    const actualTileHeight = canvas.offsetHeight / MAP_HEIGHT;
+
+    element.style.left = tileX * actualTileWidth + 'px';
+    element.style.top = tileY * actualTileHeight + 'px';
+
+    // Adjust sprite size dynamically based on calculated tile size
+    // This makes sprite size consistent with the visual grid
+    element.style.width = actualTileWidth + 'px';
+    element.style.height = actualTileHeight + 'px';
 }
 
-// Set up event listeners
+
 function setupInteractions() {
-    // NPC Interactions
+    // Resume Trainer - Link to PDF (replace with your URL)
     document.getElementById("resume-trainer").addEventListener("click", function() {
-        showDialog("Resume Trainer: 'Check out my resume here!'");
+        window.open('path/to/your/resume.pdf', '_blank');
     });
 
+    // Skills Trainer - Show skills in dialog (replace with your skills)
     document.getElementById("skills-trainer").addEventListener("click", function() {
-        showDialog("Skills Trainer: 'Here are the skills I've mastered!'");
+        showDialog("Skills Trainer: JavaScript, HTML, CSS, React, Node.js...");
     });
 
+    // Experience Trainer - Link to LinkedIn (replace with your URL)
     document.getElementById("experience-trainer").addEventListener("click", function() {
-        showDialog("Experience Trainer: 'Explore my professional experience!'");
+        window.open('https://www.linkedin.com/in/your-profile/', '_blank');
     });
 
     // PC Interaction
@@ -133,8 +164,8 @@ function setupInteractions() {
     });
 
     // Dialog Box Close
-    document.getElementById("close-dialog").addEventListener("click", function() {
-        document.getElementById("dialog-box").style.display = "none";
+    closeDialogButton.addEventListener("click", function() {
+        dialogBox.style.display = "none";
     });
 
     // Vinyl Shelf Interaction
@@ -143,8 +174,12 @@ function setupInteractions() {
     });
 
     // Bookshelf Interaction
-    document.getElementById('bookshelf').addEventListener('click', () => {
-        showDialog("Bookshelf: Explore my current reads!");
+    bookshelfElement.addEventListener('click', () => {
+        bookshelfDialog.style.display = 'block';
+    });
+
+    closeBookshelfButton.addEventListener('click', () => {
+        bookshelfDialog.style.display = 'none';
     });
 
     // Player Movement
@@ -153,61 +188,69 @@ function setupInteractions() {
     });
 }
 
-// Display dialog box
 function showDialog(text) {
     dialogText.textContent = text;
     dialogBox.style.display = "block";
 }
 
-// Player Movement
-let player = {
-    x: 200,
-    y: 200
-};
+// Player Movement - Simple example, needs collision detection etc.
+let playerTileX = 3; // Initial position tile matching positionElements
+let playerTileY = 3;
 
 function movePlayer(event) {
-    const trainerElement = document.getElementById("trainer");
+    let moved = false;
     switch (event.key) {
         case "ArrowUp":
         case "w":
-            player.y -= TILE_SIZE;
+            playerTileY -= 1;
+            moved = true;
             break;
         case "ArrowDown":
         case "s":
-            player.y += TILE_SIZE;
+            playerTileY += 1;
+            moved = true;
             break;
         case "ArrowLeft":
         case "a":
-            player.x -= TILE_SIZE;
+            playerTileX -= 1;
+            moved = true;
             break;
         case "ArrowRight":
         case "d":
-            player.x += TILE_SIZE;
+            playerTileX += 1;
+            moved = true;
             break;
     }
-    trainerElement.style.transform = `translate(${player.x}px, ${player.y}px)`;
+
+    // Basic boundary check (replace with proper collision logic)
+    if (playerTileX < 0) playerTileX = 0;
+    if (playerTileY < 0) playerTileY = 0;
+    if (playerTileX >= MAP_WIDTH) playerTileX = MAP_WIDTH - 1;
+    if (playerTileY >= MAP_HEIGHT) playerTileY = MAP_HEIGHT - 1;
+
+    if(moved) {
+        // Reposition the player sprite based on new tile coordinates
+        positionElement('trainer', playerTileX, playerTileY);
+    }
 }
 
-// TILE SIZE and MAP DATA
-const MAP_WIDTH = 20;
-const MAP_HEIGHT = 15;
 
 const map = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
-    [1, 1, 1, 1, 4, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 3],
-    [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 3, 3, 3, 3, 3, 3],
-    [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 2, 2, 2, 3, 3, 3, 3, 3, 3],
-    [0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3],
-    [0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3],
-    [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3, 3],
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
+    [1, 1, 1, 1, 4, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 3],
+    [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 3, 3, 3, 3, 3, 3],
+    [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 2, 2, 2, 3, 3, 3, 3, 3, 3],
+    [0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3],
+    [0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3],
+    [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3, 3],
 ];
 
 const tileTypes = {
