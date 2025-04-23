@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
+
 <body>
     <div id="start-screen">
         <h1>Caleb's Trainer Profile</h1>
@@ -30,6 +32,14 @@
             <img src="assets/pc.png" alt="Projects PC">
         </div>
 
+        <div id="mailbox">
+            <img src="assets/mailbox.png" alt="Mailbox">
+        </div>
+
+        <div id="trainer">
+            <img src="assets/trainer-sprite.png" alt="Your Trainer">
+        </div>
+
         <div id="project-choice-dialog" style="display: none;">
             <p>Which project would you like to view?</p>
             <button id="roblox-btn">Lacrosse Legends (Roblox)</button>
@@ -37,12 +47,18 @@
             <button id="linkedin-btn">LinkedIn</button>
         </div>
 
-        <div id="mailbox">
-            <img src="assets/mailbox.png" alt="Mailbox">
-        </div>
-
-        <div id="trainer">
-            <img src="assets/trainer-sprite.png" alt="Your Trainer">
+        <div id="contact-form-dialog" style="display: none;">
+            <h2>Contact Me</h2>
+            <form id="contact-form" action="https://formspree.io/f/xjkwvwaa" method="POST">
+                <label for="name">Name:</label><br>
+                <input type="text" id="name" name="name" required><br>
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" required><br>
+                <label for="message">Message:</label><br>
+                <textarea id="message" name="message" rows="4" cols="30" required></textarea><br><br>
+                <button type="submit">Send</button>
+                <button type="button" id="close-contact-form">Close</button>
+            </form>
         </div>
     </div>
 
@@ -51,4 +67,5 @@
         <button id="close-dialog">Close</button>
     </div>
 </body>
+
 </html>
