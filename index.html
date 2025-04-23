@@ -92,6 +92,45 @@
         <button id="close-dialog">Close</button>
     </div>
 
-     <div id="joystick-zone"></div>
+    <div id="joystick-zone"></div>
+
+    <div id="fishing-prompt" class="game-dialog" style="display: none;">
+        <p>You sense something in the water...</p>
+        <button id="start-fishing-btn">Cast Line</button>
+        <button id="cancel-fishing-btn">Leave</button>
+    </div>
+      
+    <div id="fishing-game" class="game-dialog" style="display: none;">
+        <h4>Fishing Time!</h4>
+        <div id="fishing-area">
+            <p id="fishing-status">Cast your line!</p>
+        </div>
+        <div id="tension-meter">
+            <label for="tension-bar">Tension:</label>
+            <div id="tension-bar-container">
+            <div id="tension-bar"></div>
+        </div>
+        </div>
+        <button id="reel-button">Cast / Reel</button>
+        <button id="stop-fishing-btn">Stop Fishing</button>
+      </div>
+      
+      <div id="scoreboard-dialog" class="game-dialog" style="display: none;">
+        <h4>Fishing High Scores</h4>
+        <ol id="score-list">
+          </ol>
+        <button id="close-scoreboard-btn">Close</button>
+        <button id="show-scoreboard-btn">Show High Scores</button> </div>
+      
+      
+      <div id="initials-prompt" class="game-dialog" style="display: none;">
+        <h4>New High Score!</h4>
+        <p>Enter your initials (3 letters):</p>
+        <input type="text" id="initials-input" maxlength="3" size="3">
+        <button id="submit-initials-btn">Save Score</button>
+      </div>
+      
+      <button id="toggle-scoreboard-btn" style="position: absolute; top: 10px; right: 10px; z-index: 10;">Scores</button>
+     
 </body>
 </html>

@@ -9,6 +9,22 @@ const closeDialogButton = document.getElementById("close-dialog");
 const bookshelfDialog = document.getElementById('bookshelf-dialog');
 const closeBookshelfButton = document.getElementById('close-bookshelf-dialog');
 const bookshelfElement = document.getElementById('bookshelf');
+const fishingPrompt = document.getElementById('fishing-prompt');
+const startFishingButton = document.getElementById('start-fishing-btn');
+const cancelFishingButton = document.getElementById('cancel-fishing-btn');
+const fishingGameDisplay = document.getElementById('fishing-game');
+const fishingStatus = document.getElementById('fishing-status');
+const tensionBarContainer = document.getElementById('tension-bar-container');
+const tensionBar = document.getElementById('tension-bar');
+const reelButton = document.getElementById('reel-button');
+const stopFishingButton = document.getElementById('stop-fishing-btn');
+const scoreboardDialog = document.getElementById('scoreboard-dialog');
+const scoreList = document.getElementById('score-list');
+const closeScoreboardButton = document.getElementById('close-scoreboard-btn');
+const initialsPrompt = document.getElementById('initials-prompt');
+const initialsInput = document.getElementById('initials-input');
+const submitInitialsButton = document.getElementById('submit-initials-btn');
+const toggleScoreboardButton = document.getElementById('toggle-scoreboard-btn');
 
 const TILE_SIZE = 16;
 const MAP_WIDTH = 20;
@@ -19,6 +35,33 @@ let playerTileY = 3;
 let joystick = null;
 let joystickDirection = null;
 
+// -=-=-=- Fishing Game State -=-=-=-
+let isFishingActive = false;
+let canFishHere = false;
+let fishingState = 'idle';
+let tension = 0;
+const MAX_TENSION = 100;
+const TENSION_INCREASE_RATE = 15;
+const TENSION_DECREASE_RATE = 5;
+const FISH_FIGHT_CHANCE = 0.15;
+const FISH_FIGHT_STRENGTH = 25;
+const CAST_TIME = 500;
+const BITE_MIN_WAIT = 1000;
+const BITE_MAX_WAIT = 5000;
+const REEL_SPEED = 3;
+const START_FISH_DISTANCE = 100;
+let fishDistance = 0;
+let currentFishScore = 0;
+
+let gameLoopInterval = null;
+let biteTimeout = null;
+let isReeling = false;
+
+// -=-=-=- Scoreboard State -=-=-=-
+const SCOREBOARD_KEY = 'fishingHighScores';
+let highScores = [];
+let scoreToSave = 0;
+
 startBtn.addEventListener('click', () => {
     startScreen.style.display = 'none';
     gameMap.style.display = 'block';
@@ -26,12 +69,18 @@ startBtn.addEventListener('click', () => {
 });
 
 async function init() {
+    loadHighScores();
+    updateScoreboardDisplay();
     await loadTileImages();
     drawMap();
     positionElements();
     setupInteractions();
     setupJoystick();
-    window.addEventListener('resize', positionElements);
+    window.addEventListener('resize', () => {
+        positionElements();
+        checkForWaterProximity();
+    });
+    checkForWaterProximity();
 }
 
 function loadTileImages() {
@@ -218,6 +267,315 @@ function setupInteractions() {
     }
 
     document.addEventListener("keydown", movePlayer);
+
+    // --- Add Fishing & Scoreboard Listeners ---
+    if (startFishingButton) startFishingButton.addEventListener('click', startFishing);
+    if (cancelFishingButton) cancelFishingButton.addEventListener('click', hideFishingPrompt);
+    if (stopFishingButton) stopFishingButton.addEventListener('click', () => stopFishing('stopped'));
+
+    // Reel Button (Hold detection)
+    if (reelButton) {
+        reelButton.addEventListener('mousedown', () => {
+            if (fishingState === 'cast_ready') {
+                castLine();
+            } else if (fishingState === 'reeling') {
+                isReeling = true;
+            }
+        });
+        reelButton.addEventListener('mouseup', () => {
+            if (fishingState === 'reeling') {
+                isReeling = false;
+            }
+        });
+        // Touch equivalents
+        reelButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (fishingState === 'cast_ready') {
+                castLine();
+            } else if (fishingState === 'reeling') {
+                isReeling = true;
+            }
+        }, { passive: false }); 
+        reelButton.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (fishingState === 'reeling') {
+                isReeling = false;
+            }
+        });
+    }
+    // Stop reeling if touch leaves the screen anywhere
+    document.body.addEventListener('touchend', (e) => {
+        if (isReeling) {
+            isReeling = false;
+        }
+    });
+
+    // Scoreboard Listeners
+    if (submitInitialsButton) submitInitialsButton.addEventListener('click', submitScore);
+    if (closeScoreboardButton) closeScoreboardButton.addEventListener('click', () => {
+        scoreboardDialog.style.display = 'none';
+    });
+    if (toggleScoreboardButton) toggleScoreboardButton.addEventListener('click', () => {
+        if (scoreboardDialog.style.display === 'block') {
+            scoreboardDialog.style.display = 'none';
+        } else {
+            loadHighScores();
+            updateScoreboardDisplay();
+            scoreboardDialog.style.display = 'block';
+            // Hide others just in case
+            initialsPrompt.style.display = 'none';
+            fishingGameDisplay.style.display = 'none';
+            fishingPrompt.style.display = 'none';
+        }
+    });
+
+}
+
+function checkForWaterProximity() {
+    if (isFishingActive) {
+        canFishHere = false;
+        hideFishingPrompt();
+        return;
+    }
+    const waterTileType = 3;
+    canFishHere = false;
+
+    const tilesToCheck = [
+        { x: playerTileX, y: playerTileY - 1 }, // North
+        { x: playerTileX, y: playerTileY + 1 }, // South
+        { x: playerTileX + 1, y: playerTileY }, // East
+        { x: playerTileX - 1, y: playerTileY }  // West
+    ];
+
+    for (const tile of tilesToCheck) {
+        if (tile.y >= 0 && tile.y < MAP_HEIGHT && tile.x >= 0 && tile.x < MAP_WIDTH) {
+            if (map[tile.y][tile.x] === waterTileType) {
+                canFishHere = true;
+                break;
+            }
+        }
+    }
+
+    if (canFishHere) {
+        fishingPrompt.style.display = 'block';
+    } else {
+        hideFishingPrompt();
+    }
+}
+
+function hideFishingPrompt() {
+    fishingPrompt.style.display = 'none';
+}
+
+function updateTensionBar() {
+    const percentage = Math.max(0, Math.min(MAX_TENSION, tension)) / MAX_TENSION * 100;
+    tensionBar.style.width = `${percentage}%`;
+
+    if (percentage > 85) {
+        tensionBar.style.backgroundColor = 'red';
+    } else if (percentage > 60) {
+        tensionBar.style.backgroundColor = 'orange';
+    } else {
+        tensionBar.style.backgroundColor = 'lightgreen';
+    }
+}
+
+function startFishing() {
+    hideFishingPrompt();
+    isFishingActive = true;
+    fishingGameDisplay.style.display = 'block';
+    fishingState = 'cast_ready';
+    tension = 0;
+    fishDistance = 0;
+    updateTensionBar();
+    fishingStatus.textContent = "Press 'Cast / Reel' to cast!";
+    reelButton.textContent = "Cast";
+    reelButton.disabled = false;
+
+    document.removeEventListener("keydown", movePlayer);
+}
+
+function stopFishing(reason) {
+    if (biteTimeout) clearTimeout(biteTimeout);
+    if (gameLoopInterval) clearInterval(gameLoopInterval);
+
+    isFishingActive = false;
+    fishingGameDisplay.style.display = 'none';
+    biteTimeout = null;
+    gameLoopInterval = null;
+    isReeling = false;
+
+    switch (reason) {
+        case 'stopped':
+            showDialog("You stopped fishing.");
+            break;
+        case 'caught':
+            currentFishScore = Math.max(10, Math.round(START_FISH_DISTANCE * (1 - tension / MAX_TENSION / 2) * 10));
+            showDialog(`You caught a fish! Score: ${currentFishScore}`);
+            checkAndPromptForHighScore(currentFishScore);
+            break;
+        case 'lost_tension':
+            showDialog("Snap! The line broke!");
+             currentFishScore = 0;
+            break;
+    }
+
+    fishingState = 'idle';
+    checkForWaterProximity();
+
+    document.addEventListener("keydown", movePlayer);
+    // Re-enable joystick if needed
+}
+
+function castLine() {
+    if (fishingState !== 'cast_ready') return;
+
+    fishingState = 'casting';
+    fishingStatus.textContent = "Casting...";
+    reelButton.disabled = true;
+
+    setTimeout(() => {
+        if (fishingState !== 'casting') return;
+
+        fishingState = 'waiting';
+        fishDistance = START_FISH_DISTANCE;
+        fishingStatus.textContent = "Waiting for a bite...";
+        reelButton.disabled = false;
+        reelButton.textContent = "Reel";
+
+        const waitTime = Math.random() * (BITE_MAX_WAIT - BITE_MIN_WAIT) + BITE_MIN_WAIT;
+        biteTimeout = setTimeout(fishBites, waitTime);
+
+    }, CAST_TIME);
+}
+
+function fishBites() {
+    if (fishingState !== 'waiting') return;
+
+    biteTimeout = null;
+    fishingState = 'reeling';
+    fishingStatus.textContent = "Fish On! Hold 'Reel' to reel it in!";
+
+    gameLoopInterval = setInterval(fishingLoop, 100);
+}
+
+function fishingLoop() {
+    if (fishingState !== 'reeling') {
+        clearInterval(gameLoopInterval);
+        gameLoopInterval = null;
+        return;
+    }
+
+    let tensionChange = 0;
+
+    if (isReeling) {
+        tensionChange += TENSION_INCREASE_RATE / 10;
+        fishDistance -= REEL_SPEED;
+        fishingStatus.textContent = "Reeling...";
+    } else {
+        tensionChange -= TENSION_DECREASE_RATE / 10;
+        fishingStatus.textContent = "Hold 'Reel'!";
+    }
+
+    if (Math.random() < FISH_FIGHT_CHANCE) {
+        tensionChange += FISH_FIGHT_STRENGTH / 10;
+        fishingStatus.textContent = "It's fighting back!";
+         tensionBarContainer.style.animation = 'shake 0.2s';
+         setTimeout(() => { tensionBarContainer.style.animation = ''; }, 200);
+    }
+
+    tension = Math.max(0, Math.min(MAX_TENSION, tension + tensionChange));
+    updateTensionBar();
+
+    if (tension >= MAX_TENSION) {
+        stopFishing('lost_tension');
+        return;
+    }
+
+    if (fishDistance <= 0) {
+        stopFishing('caught');
+        return;
+    }
+}
+
+function loadHighScores() {
+    const storedScores = localStorage.getItem(SCOREBOARD_KEY);
+    if (storedScores) {
+        try { // Add error handling for potentially corrupt JSON
+            highScores = JSON.parse(storedScores);
+            if (!Array.isArray(highScores)) { 
+                highScores = [];
+            }
+        } catch (e) {
+            console.error("Error parsing high scores from localStorage:", e);
+            highScores = [];
+        }
+    } else {
+        highScores = [];
+    }
+    highScores.sort((a, b) => b.score - a.score);
+}
+
+function saveHighScores() {
+    highScores.sort((a, b) => b.score - a.score);
+    highScores = highScores.slice(0, 10);
+    localStorage.setItem(SCOREBOARD_KEY, JSON.stringify(highScores));
+}
+
+function updateScoreboardDisplay() {
+    scoreList.innerHTML = '';
+    if (highScores.length === 0) {
+        scoreList.innerHTML = '<li>No scores yet!</li>';
+    } else {
+        highScores.forEach((scoreEntry) => { 
+            const li = document.createElement('li');
+            const initials = scoreEntry.initials ? scoreEntry.initials.padEnd(3, ' ') : '???'; // Handle missing initials
+            const score = scoreEntry.score !== undefined ? scoreEntry.score.toString().padStart(8, '.') : '0'.padStart(8, '.'); // Handle missing score
+            li.textContent = `${initials} ${score}`;
+            scoreList.appendChild(li);
+        });
+    }
+}
+
+
+function checkAndPromptForHighScore(score) {
+    highScores.sort((a, b) => b.score - a.score);
+    const isTopScore = highScores.length < 10 || (highScores.length > 0 && score > highScores[highScores.length - 1].score);
+
+
+    if (isTopScore && score > 0) {
+        scoreToSave = score;
+        initialsInput.value = '';
+        initialsPrompt.style.display = 'block';
+    } else {
+        if (initialsPrompt.style.display === 'none') {
+            updateScoreboardDisplay();
+        }
+    }
+}
+
+function submitScore() {
+    let initials = initialsInput.value.toUpperCase().replace(/[^A-Z]/g, '');
+    if (initials.length > 3) {
+        initials = initials.substring(0, 3);
+    } else if (initials.length === 0) {
+         alert("Please enter 1-3 initials.");
+         return;
+    } else {
+         initials = initials.padEnd(3, ' ');
+    }
+
+    if (scoreToSave > 0) {
+        highScores.push({ initials: initials, score: scoreToSave });
+        saveHighScores();
+        updateScoreboardDisplay();
+        initialsPrompt.style.display = 'none';
+        scoreToSave = 0;
+        scoreboardDialog.style.display = 'block';
+    } else {
+        console.warn("Attempted to save score, but scoreToSave was 0 or initials were invalid.");
+        initialsPrompt.style.display = 'none';
+    }
 }
 
 function showDialog(text) {
@@ -230,6 +588,8 @@ function showDialog(text) {
 }
 
 function movePlayer(event) {
+    if (isFishingActive) return;
+
     let nextX = playerTileX;
     let nextY = playerTileY;
     let moved = false;
@@ -275,6 +635,7 @@ function movePlayer(event) {
 
     if (moved) {
         positionElement('trainer', playerTileX, playerTileY);
+        checkForWaterProximity();
     }
 }
 

@@ -259,7 +259,7 @@ body {
         font-size: 0.7em;
     }
 
-     #close-dialog,
+    #close-dialog,
     #project-choice-dialog button,
     #contact-form-dialog button,
     #bookshelf-dialog button {
@@ -279,4 +279,90 @@ body {
         bottom: 10px;
         right: 10px;
     }
+}
+
+/* Style for game dialogs/popups */
+.game-dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(230, 230, 230, 0.9);
+    border: 2px solid #555;
+    padding: 20px;
+    z-index: 100; /* Ensure it's above the canvas */
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    border-radius: 8px;
+    min-width: 250px; /* Adjust as needed */
+  }
+  
+.game-dialog h4 {
+    margin-top: 0;
+}
+  
+.game-dialog button {
+    padding: 8px 15px;
+    margin: 5px;
+    cursor: pointer;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background-color: #ddd;
+}
+  
+.game-dialog button:hover {
+    background-color: #ccc;
+}
+  
+  /* Tension Bar Styling */
+#tension-meter {
+    margin-top: 15px;
+}
+  
+#tension-bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #ccc;
+    border: 1px solid #333;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+  
+#tension-bar {
+    width: 0%;
+    height: 100%;
+    background-color: lightgreen;
+    transition: width 0.1s linear, background-color 0.2s ease;
+}
+  
+  /* Scoreboard Styling */
+#score-list {
+    list-style-type: decimal;
+    padding-left: 30px;
+    text-align: left;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+  
+#score-list li {
+    margin-bottom: 5px;
+    font-family: monospace;
+}
+  
+#initials-input {
+    text-transform: uppercase;
+    font-family: monospace;
+    font-size: 1.1em;
+    padding: 5px;
+    margin: 10px 0;
+}
+
+@keyframes shake {
+    0% { transform: translate(0); }
+    25% { transform: translate(-5px, 0); }
+    50% { transform: translate(5px, 0); }
+    75% { transform: translate(-5px, 0); }
+    100% { transform: translate(0); }
 }
