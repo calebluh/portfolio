@@ -25,18 +25,19 @@ const initialsPrompt = document.getElementById('initials-prompt');
 const initialsInput = document.getElementById('initials-input');
 const submitInitialsButton = document.getElementById('submit-initials-btn');
 const toggleScoreboardButton = document.getElementById('toggle-scoreboard-btn');
+const joystickZone = document.getElementById('joystick-zone');
 
 // -=-=-=- Firebase Initialization -=-=-=-
 const firebaseConfig = {
     apiKey: "AIzaSyD8mwbaU7Jgakj-OtH92BzAXDIIzGRIZk0",
     authDomain: "portfolio-game-484a5.firebaseapp.com",
     projectId: "portfolio-game-484a5",
-    storageBucket: "portfolio-game-484a5.firebasestorage.app",
+    storageBucket: "portfolio-game-484a5.appspot.com",
     messagingSenderId: "278366782389",
     appId: "1:278366782389:web:a78354d13f36ec1656cffc",
     measurementId: "G-6YDSCNH0NM"
 };
-  
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -74,9 +75,36 @@ let biteTimeout = null;
 let isReeling = false;
 
 // -=-=-=- Scoreboard State -=-=-=-
-const SCOREBOARD_KEY = 'fishingHighScores';
 let highScores = [];
 let scoreToSave = 0;
+
+// --- Joystick Visibility Helpers ---
+function hideJoystick() {
+    if (joystickZone) {
+        joystickZone.style.display = 'none';
+    }
+}
+
+function showJoystickIfNeeded() {
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (joystickZone && isTouchDevice && joystick) {
+        // Only show if no dialogs are active
+        if (dialogBox.style.display !== 'block' &&
+            fishingPrompt.style.display !== 'block' &&
+            fishingGameDisplay.style.display !== 'block' &&
+            initialsPrompt.style.display !== 'block' &&
+            scoreboardDialog.style.display !== 'block' &&
+            projectChoiceDialog.style.display !== 'block' &&
+            contactFormDialog.style.display !== 'block' &&
+            bookshelfDialog.style.display !== 'block')
+        {
+             joystickZone.style.display = 'block';
+        }
+    } else if (joystickZone) {
+        joystickZone.style.display = 'none';
+    }
+}
+// -=-=- End Helpers -=-=-
 
 startBtn.addEventListener('click', () => {
     startScreen.style.display = 'none';
@@ -85,8 +113,7 @@ startBtn.addEventListener('click', () => {
 });
 
 async function init() {
-    loadHighScores();
-    updateScoreboardDisplay();
+    await loadHighScores();
     await loadTileImages();
     drawMap();
     positionElements();
@@ -126,6 +153,7 @@ function loadTileImages() {
 }
 
 function drawMap() {
+    if (!gameCanvas || !ctx) return;
     gameCanvas.width = MAP_WIDTH * TILE_SIZE;
     gameCanvas.height = MAP_HEIGHT * TILE_SIZE;
 
@@ -137,7 +165,6 @@ function drawMap() {
             } else {
                 ctx.fillStyle = 'grey';
                 ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                console.warn(`Tile image for type ${tileType} not loaded or missing.`);
             }
         }
     }
@@ -148,10 +175,8 @@ function positionElements() {
     positionElement('pc', 4, 1);
     positionElement('bookshelf', 1, 1);
     positionElement('vinyl-shelf', 6, 1);
-    positionElement('trainer', playerTileX, playerTileY); // Position player initially
-
+    positionElement('trainer', playerTileX, playerTileY);
     positionElement('mailbox', 6, 14);
-
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 11, 11);
     positionElement('experience-trainer', 19, 8);
@@ -159,26 +184,18 @@ function positionElements() {
 
 function positionElement(elementId, tileX, tileY) {
     const element = document.getElementById(elementId);
-    if (!element) {
-        console.warn(`Element with ID "${elementId}" not found.`);
-        return;
-    }
+    if (!element) return;
     const canvas = document.getElementById('gameCanvas');
-    if (!canvas) {
-         console.error(`Game canvas not found.`);
-         return;
-    }
+    if (!canvas) return;
 
     const canvasRect = canvas.getBoundingClientRect();
     const actualCanvasWidth = canvasRect.width;
     const actualCanvasHeight = canvasRect.height;
-
     const actualTileWidth = actualCanvasWidth / MAP_WIDTH;
     const actualTileHeight = actualCanvasHeight / MAP_HEIGHT;
 
     element.style.left = tileX * actualTileWidth + 'px';
     element.style.top = tileY * actualTileHeight + 'px';
-
     element.style.width = actualTileWidth + 'px';
     element.style.height = actualTileHeight + 'px';
 }
@@ -216,30 +233,30 @@ function setupInteractions() {
     if (pcElement && projectChoiceDialog && robloxBtn && statlabBtn && linkedinBtn && closeBtn) {
         pcElement.addEventListener("click", function() {
             projectChoiceDialog.style.display = 'block';
+            hideJoystick();
         });
-
         robloxBtn.addEventListener('click', () => {
             window.open("https://www.roblox.com/games/113892368479986/Lacrosse-Legends", "_blank");
             projectChoiceDialog.style.display = 'none';
+            showJoystickIfNeeded();
         });
-
         statlabBtn.addEventListener('click', () => {
             window.open("https://calebluh.github.io/stat-lab", "_blank");
             projectChoiceDialog.style.display = 'none';
+            showJoystickIfNeeded();
         });
-
         linkedinBtn.addEventListener('click', () => {
             window.open("https://www.linkedin.com/in/calebluh/", "_blank");
             projectChoiceDialog.style.display = 'none';
+            showJoystickIfNeeded();
         });
-
         closeBtn.addEventListener('click', () => {
             projectChoiceDialog.style.display = 'none';
+            showJoystickIfNeeded();
         });
     } else {
          console.warn("One or more PC interaction elements are missing.");
     }
-
 
     const mailbox = document.getElementById("mailbox");
     const contactFormDialog = document.getElementById("contact-form-dialog");
@@ -248,10 +265,11 @@ function setupInteractions() {
     if (mailbox && contactFormDialog && closeContactFormButton) {
         mailbox.addEventListener("click", function() {
             contactFormDialog.style.display = "block";
+            hideJoystick();
         });
-
         closeContactFormButton.addEventListener("click", function() {
             contactFormDialog.style.display = "none";
+            showJoystickIfNeeded();
         });
      } else {
          console.warn("One or more Mailbox interaction elements are missing.");
@@ -260,6 +278,8 @@ function setupInteractions() {
     if (closeDialogButton && dialogBox) {
         closeDialogButton.addEventListener("click", function() {
             dialogBox.style.display = "none";
+            showJoystickIfNeeded();
+            checkForWaterProximity();
         });
     }
 
@@ -273,10 +293,11 @@ function setupInteractions() {
     if (bookshelfElement && bookshelfDialog && closeBookshelfButton) {
         bookshelfElement.addEventListener('click', () => {
             bookshelfDialog.style.display = 'block';
+            hideJoystick();
         });
-
         closeBookshelfButton.addEventListener('click', () => {
             bookshelfDialog.style.display = 'none';
+            showJoystickIfNeeded();
         });
     } else {
         console.warn("One or more Bookshelf interaction elements are missing.");
@@ -284,12 +305,13 @@ function setupInteractions() {
 
     document.addEventListener("keydown", movePlayer);
 
-    // --- Add Fishing & Scoreboard Listeners ---
     if (startFishingButton) startFishingButton.addEventListener('click', startFishing);
-    if (cancelFishingButton) cancelFishingButton.addEventListener('click', hideFishingPrompt);
+    if (cancelFishingButton) cancelFishingButton.addEventListener('click', () => {
+        hideFishingPrompt();
+        showJoystickIfNeeded();
+    });
     if (stopFishingButton) stopFishingButton.addEventListener('click', () => stopFishing('stopped'));
 
-    // Reel Button (Hold detection)
     if (reelButton) {
         reelButton.addEventListener('mousedown', () => {
             if (fishingState === 'cast_ready') {
@@ -303,57 +325,65 @@ function setupInteractions() {
                 isReeling = false;
             }
         });
-        // Touch equivalents
         reelButton.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (fishingState === 'cast_ready') {
-                castLine();
-            } else if (fishingState === 'reeling') {
-                isReeling = true;
-            }
-        }, { passive: false }); 
-        reelButton.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            if (fishingState === 'reeling') {
-                isReeling = false;
-            }
-        });
+             e.preventDefault();
+             if (fishingState === 'cast_ready') {
+                 castLine();
+             } else if (fishingState === 'reeling') {
+                 isReeling = true;
+             }
+         }, { passive: false });
+         reelButton.addEventListener('touchend', (e) => {
+             e.preventDefault();
+             if (fishingState === 'reeling') {
+                 isReeling = false;
+             }
+         });
     }
-    // Stop reeling if touch leaves the screen anywhere
-    document.body.addEventListener('touchend', (e) => {
+     document.body.addEventListener('touchend', (e) => {
         if (isReeling) {
             isReeling = false;
         }
-    });
+     });
 
-    // Scoreboard Listeners
     if (submitInitialsButton) submitInitialsButton.addEventListener('click', submitScore);
     if (closeScoreboardButton) closeScoreboardButton.addEventListener('click', () => {
         scoreboardDialog.style.display = 'none';
+        showJoystickIfNeeded();
     });
-    if (toggleScoreboardButton) toggleScoreboardButton.addEventListener('click', async () => { // Make async
+    if (toggleScoreboardButton) toggleScoreboardButton.addEventListener('click', async () => {
         if (scoreboardDialog.style.display === 'block') {
              scoreboardDialog.style.display = 'none';
+             showJoystickIfNeeded();
         } else {
             await loadHighScores();
-            updateScoreboardDisplay();
             scoreboardDialog.style.display = 'block';
+            hideJoystick();
             initialsPrompt.style.display = 'none';
             fishingGameDisplay.style.display = 'none';
             fishingPrompt.style.display = 'none';
+            dialogBox.style.display = 'none';
+            projectChoiceDialog.style.display = 'none';
+            contactFormDialog.style.display = 'none';
+            bookshelfDialog.style.display = 'none';
         }
     });
-
 }
 
 function checkForWaterProximity() {
-    if (dialogBox.style.display === 'block' || fishingGameDisplay.style.display === 'block' || 
-    initialsPrompt.style.display === 'block' || scoreboardDialog.style.display === 'block') {
-            canFishHere = false;
-            hideFishingPrompt();
-            return;
+    if (dialogBox.style.display === 'block' ||
+        fishingGameDisplay.style.display === 'block' ||
+        initialsPrompt.style.display === 'block' ||
+        scoreboardDialog.style.display === 'block' ||
+        projectChoiceDialog.style.display === 'block' ||
+        contactFormDialog.style.display === 'block' ||
+        bookshelfDialog.style.display === 'block' )
+    {
+        canFishHere = false;
+        hideFishingPrompt();
+        return;
     }
-    
+
     if (isFishingActive) {
         canFishHere = false;
         hideFishingPrompt();
@@ -363,10 +393,10 @@ function checkForWaterProximity() {
     canFishHere = false;
 
     const tilesToCheck = [
-        { x: playerTileX, y: playerTileY - 1 }, // North
-        { x: playerTileX, y: playerTileY + 1 }, // South
-        { x: playerTileX + 1, y: playerTileY }, // East
-        { x: playerTileX - 1, y: playerTileY }  // West
+        { x: playerTileX, y: playerTileY - 1 },
+        { x: playerTileX, y: playerTileY + 1 },
+        { x: playerTileX + 1, y: playerTileY },
+        { x: playerTileX - 1, y: playerTileY }
     ];
 
     for (const tile of tilesToCheck) {
@@ -379,17 +409,21 @@ function checkForWaterProximity() {
     }
 
     if (canFishHere) {
-        fishingPrompt.style.display = 'block';
+        if (fishingPrompt) fishingPrompt.style.display = 'block';
+        hideJoystick();
     } else {
         hideFishingPrompt();
     }
 }
 
 function hideFishingPrompt() {
-    fishingPrompt.style.display = 'none';
+    if (fishingPrompt) {
+         fishingPrompt.style.display = 'none';
+    }
 }
 
 function updateTensionBar() {
+    if (!tensionBar) return;
     const percentage = Math.max(0, Math.min(MAX_TENSION, tension)) / MAX_TENSION * 100;
     tensionBar.style.width = `${percentage}%`;
 
@@ -405,15 +439,17 @@ function updateTensionBar() {
 function startFishing() {
     hideFishingPrompt();
     isFishingActive = true;
-    fishingGameDisplay.style.display = 'block';
+    if (fishingGameDisplay) fishingGameDisplay.style.display = 'block';
+    hideJoystick();
     fishingState = 'cast_ready';
     tension = 0;
     fishDistance = 0;
     updateTensionBar();
-    fishingStatus.textContent = "Press 'Cast / Reel' to cast!";
-    reelButton.textContent = "Cast";
-    reelButton.disabled = false;
-
+    if (fishingStatus) fishingStatus.textContent = "Press 'Cast / Reel' to cast!";
+    if (reelButton) {
+        reelButton.textContent = "Cast";
+        reelButton.disabled = false;
+    }
     document.removeEventListener("keydown", movePlayer);
 }
 
@@ -422,12 +458,14 @@ function stopFishing(reason) {
     if (gameLoopInterval) clearInterval(gameLoopInterval);
 
     isFishingActive = false;
-    fishingGameDisplay.style.display = 'none';
+    if (fishingGameDisplay) fishingGameDisplay.style.display = 'none';
     hideFishingPrompt();
 
     biteTimeout = null;
     gameLoopInterval = null;
     isReeling = false;
+
+    showJoystickIfNeeded();
 
     switch (reason) {
         case 'stopped':
@@ -445,7 +483,6 @@ function stopFishing(reason) {
     }
 
     fishingState = 'idle';
-
     document.addEventListener("keydown", movePlayer);
 }
 
@@ -453,18 +490,19 @@ function castLine() {
     if (fishingState !== 'cast_ready') return;
 
     fishingState = 'casting';
-    fishingStatus.textContent = "Casting...";
-    reelButton.disabled = true;
+    if (fishingStatus) fishingStatus.textContent = "Casting...";
+    if (reelButton) reelButton.disabled = true;
 
     setTimeout(() => {
         if (fishingState !== 'casting') return;
 
         fishingState = 'waiting';
         fishDistance = START_FISH_DISTANCE;
-        fishingStatus.textContent = "Waiting for a bite...";
-        reelButton.disabled = false;
-        reelButton.textContent = "Reel";
-
+        if (fishingStatus) fishingStatus.textContent = "Waiting for a bite...";
+        if (reelButton) {
+            reelButton.disabled = false;
+            reelButton.textContent = "Reel";
+        }
         const waitTime = Math.random() * (BITE_MAX_WAIT - BITE_MIN_WAIT) + BITE_MIN_WAIT;
         biteTimeout = setTimeout(fishBites, waitTime);
 
@@ -476,7 +514,7 @@ function fishBites() {
 
     biteTimeout = null;
     fishingState = 'reeling';
-    fishingStatus.textContent = "Fish On! Hold 'Reel' to reel it in!";
+    if (fishingStatus) fishingStatus.textContent = "Fish On! Hold 'Reel' to reel it in!";
 
     gameLoopInterval = setInterval(fishingLoop, 100);
 }
@@ -493,17 +531,21 @@ function fishingLoop() {
     if (isReeling) {
         tensionChange += TENSION_INCREASE_RATE / 10;
         fishDistance -= REEL_SPEED;
-        fishingStatus.textContent = "Reeling...";
+        if (fishingStatus) fishingStatus.textContent = "Reeling...";
     } else {
         tensionChange -= TENSION_DECREASE_RATE / 10;
-        fishingStatus.textContent = "Hold 'Reel'!";
+        if (fishingStatus) fishingStatus.textContent = "Hold 'Reel'!";
     }
 
     if (Math.random() < FISH_FIGHT_CHANCE) {
         tensionChange += FISH_FIGHT_STRENGTH / 10;
-        fishingStatus.textContent = "It's fighting back!";
-         tensionBarContainer.style.animation = 'shake 0.2s';
-         setTimeout(() => { tensionBarContainer.style.animation = ''; }, 200);
+        if (fishingStatus) fishingStatus.textContent = "It's fighting back!";
+        if (tensionBarContainer) {
+            tensionBarContainer.style.animation = 'shake 0.2s';
+            requestAnimationFrame(() => {
+                setTimeout(() => { if (tensionBarContainer) tensionBarContainer.style.animation = ''; }, 200);
+            });
+        }
     }
 
     tension = Math.max(0, Math.min(MAX_TENSION, tension + tensionChange));
@@ -528,34 +570,28 @@ async function loadHighScores() {
         const q = leaderboardCol.orderBy("score", "desc").limit(10);
         const querySnapshot = await q.get();
 
-        highScores = [];
         querySnapshot.forEach((doc) => {
             highScores.push({ id: doc.id, ...doc.data() });
         });
-        console.log("Fetched scores:", highScores); 
+        console.log("Fetched scores:", highScores);
         updateScoreboardDisplay();
 
     } catch (error) {
         console.error("Error loading high scores:", error);
-        scoreList.innerHTML = '<li>Error loading scores</li>';
+        if (scoreList) scoreList.innerHTML = '<li>Error loading scores</li>';
     }
 }
 
-function saveHighScores() {
-    highScores.sort((a, b) => b.score - a.score);
-    highScores = highScores.slice(0, 10);
-    localStorage.setItem(SCOREBOARD_KEY, JSON.stringify(highScores));
-}
-
 function updateScoreboardDisplay() {
+    if (!scoreList) return;
     scoreList.innerHTML = '';
     if (highScores.length === 0) {
         scoreList.innerHTML = '<li>No scores yet!</li>';
     } else {
-        highScores.forEach((scoreEntry) => { 
+        highScores.forEach((scoreEntry) => {
             const li = document.createElement('li');
-            const initials = scoreEntry.initials ? scoreEntry.initials.padEnd(3, ' ') : '???'; // Handle missing initials
-            const score = scoreEntry.score !== undefined ? scoreEntry.score.toString().padStart(8, '.') : '0'.padStart(8, '.'); // Handle missing score
+            const initials = scoreEntry.initials ? scoreEntry.initials.padEnd(3, ' ') : '   ';
+            const score = scoreEntry.score !== undefined ? scoreEntry.score.toString().padStart(8, '.') : '0'.padStart(8, '.');
             li.textContent = `${initials} ${score}`;
             scoreList.appendChild(li);
         });
@@ -564,17 +600,18 @@ function updateScoreboardDisplay() {
 
 
 function checkAndPromptForHighScore(score) {
-    highScores.sort((a, b) => b.score - a.score);
-    const isTopScore = highScores.length < 10 || (highScores.length > 0 && score > highScores[highScores.length - 1].score);
-
+    const isTopScore = highScores.length < 10 || (highScores.length > 0 && score > (highScores[highScores.length - 1]?.score ?? 0));
 
     if (isTopScore && score > 0) {
         scoreToSave = score;
-        initialsInput.value = '';
-        initialsPrompt.style.display = 'block';
+        if (initialsInput) initialsInput.value = '';
+        if (initialsPrompt) {
+            initialsPrompt.style.display = 'block';
+            hideJoystick();
+         }
     } else {
-        if (initialsPrompt.style.display === 'none') {
-            updateScoreboardDisplay();
+        if (initialsPrompt && initialsPrompt.style.display === 'none') {
+             showJoystickIfNeeded();
         }
     }
 }
@@ -601,21 +638,24 @@ async function submitScore() {
             });
             console.log("Score saved successfully!");
 
-            initialsPrompt.style.display = 'none';
+            if(initialsPrompt) initialsPrompt.style.display = 'none';
             scoreToSave = 0;
 
             await loadHighScores();
-            scoreboardDialog.style.display = 'block';
+            if (scoreboardDialog) scoreboardDialog.style.display = 'block';
+                hideJoystick();
 
         } catch (error) {
             console.error("Error saving score:", error);
             alert("Could not save score. Please try again.");
-            initialsPrompt.style.display = 'none'; 
+            if (initialsPrompt) initialsPrompt.style.display = 'none';
+                showJoystickIfNeeded();
         }
 
     } else {
         console.warn("Attempted to save score, but scoreToSave was 0.");
-        initialsPrompt.style.display = 'none';
+        if (initialsPrompt) initialsPrompt.style.display = 'none';
+            showJoystickIfNeeded();
     }
 }
 
@@ -623,6 +663,7 @@ function showDialog(text) {
     if (dialogText && dialogBox) {
         dialogText.textContent = text;
         dialogBox.style.display = "block";
+        hideJoystick();
     } else {
         console.error("Dialog elements (text or box) not found.");
     }
@@ -630,6 +671,17 @@ function showDialog(text) {
 
 function movePlayer(event) {
     if (isFishingActive) return;
+
+     if (dialogBox?.style.display === 'block' ||
+         fishingPrompt?.style.display === 'block' ||
+         fishingGameDisplay?.style.display === 'block' ||
+         initialsPrompt?.style.display === 'block' ||
+         scoreboardDialog?.style.display === 'block' ||
+         projectChoiceDialog?.style.display === 'block' ||
+         contactFormDialog?.style.display === 'block' ||
+         bookshelfDialog?.style.display === 'block') {
+         return;
+     }
 
     let nextX = playerTileX;
     let nextY = playerTileY;
@@ -662,11 +714,7 @@ function movePlayer(event) {
 
     const targetTileType = map[nextY][nextX];
 
-    // Define impassable tiles
-    const impassableTiles = [
-        1, // Wall tile type
-        3  // Water tile type
-    ];
+    const impassableTiles = [ 1, 3 ];
 
     if (!impassableTiles.includes(targetTileType)) {
         playerTileX = nextX;
@@ -683,90 +731,107 @@ function movePlayer(event) {
 function setupJoystick() {
     if (typeof nipplejs === 'undefined') {
         console.warn("nipplejs library not found. Joystick disabled.");
-        const zone = document.getElementById('joystick-zone');
-        if (zone) zone.style.display = 'none';
+        hideJoystick();
         return;
     }
 
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    const zone = document.getElementById('joystick-zone');
 
-    if (isTouchDevice && zone) {
-        zone.style.display = 'block';
-
+    if (isTouchDevice && joystickZone) {
         const options = {
-            zone: zone,
+            zone: joystickZone,
             mode: 'static',
             position: { left: '50%', top: '50%' },
             color: 'rgba(128, 128, 128, 0.7)',
-            size: 120,
+            size: 100,
             threshold: 0.1,
             fadeTime: 250
         };
 
-        joystick = nipplejs.create(options);
-        let moveInterval = null;
-        const moveDelay = 180;
+        if (!joystick) {
+             joystick = nipplejs.create(options);
+             setupJoystickEvents();
+        }
+        showJoystickIfNeeded();
 
-        joystick.on('start', function (evt, data) {
-             if (moveInterval) clearInterval(moveInterval);
-             joystickDirection = null;
-        });
-
-        joystick.on('move', function (evt, data) {
-            if (!data.direction) {
-                if (moveInterval) {
-                    clearInterval(moveInterval);
-                    moveInterval = null;
-                }
-                joystickDirection = null;
-                return;
-            }
-
-            const angle = data.angle.degree;
-            let newDirection = null;
-
-            if (angle > 45 && angle <= 135) {
-                newDirection = 'up';
-            } else if (angle > 135 && angle <= 225) {
-                newDirection = 'left';
-            } else if (angle > 225 && angle <= 315) {
-                newDirection = 'down';
-            } else {
-                newDirection = 'right';
-            }
-
-             if (newDirection !== joystickDirection || !moveInterval) {
-                joystickDirection = newDirection;
-                triggerMovement(joystickDirection);
-
-                if (moveInterval) clearInterval(moveInterval);
-
-                moveInterval = setInterval(() => {
-                    if (joystickDirection) {
-                         triggerMovement(joystickDirection);
-                    } else {
-                        clearInterval(moveInterval);
-                        moveInterval = null;
-                    }
-                }, moveDelay);
-             }
-        });
-
-        joystick.on('end', function (evt, data) {
-            joystickDirection = null;
-            if (moveInterval) {
-                clearInterval(moveInterval);
-                moveInterval = null;
-            }
-        });
-
-    } else if (zone) {
-        zone.style.display = 'none';
+    } else if (joystickZone) {
+        hideJoystick();
     }
 }
 
+function setupJoystickEvents() {
+    if (!joystick) return;
+
+    let moveInterval = null;
+    const moveDelay = 180;
+
+     joystick.on('start', function (evt, data) {
+         if (moveInterval) clearInterval(moveInterval);
+         joystickDirection = null;
+     });
+
+     joystick.on('move', function (evt, data) {
+         if (!data.direction) {
+             joystickDirection = null;
+             if (moveInterval) {
+                 clearInterval(moveInterval);
+                 moveInterval = null;
+             }
+             return;
+         }
+
+         const angle = data.angle.degree;
+         let newDirection = null;
+
+         if (angle > 45 && angle <= 135) {
+             newDirection = 'up';
+         } else if (angle > 135 && angle <= 225) {
+             newDirection = 'left';
+         } else if (angle > 225 && angle <= 315) {
+             newDirection = 'down';
+         } else {
+             newDirection = 'right';
+         }
+
+         if (newDirection !== joystickDirection || !moveInterval) {
+             joystickDirection = newDirection;
+             triggerMovement(joystickDirection);
+
+             if (moveInterval) clearInterval(moveInterval);
+
+             moveInterval = setInterval(() => {
+                 if (joystickDirection) {
+                      triggerMovement(joystickDirection);
+                 } else {
+                     clearInterval(moveInterval);
+                     moveInterval = null;
+                 }
+             }, moveDelay);
+          }
+     });
+
+     joystick.on('end', function (evt, data) {
+         joystickDirection = null;
+         if (moveInterval) {
+             clearInterval(moveInterval);
+             moveInterval = null;
+         }
+     });
+}
+
 function triggerMovement(direction) {
+     if (isFishingActive ||
+         dialogBox?.style.display === 'block' ||
+         fishingPrompt?.style.display === 'block' ||
+         fishingGameDisplay?.style.display === 'block' ||
+         initialsPrompt?.style.display === 'block' ||
+         scoreboardDialog?.style.display === 'block' ||
+         projectChoiceDialog?.style.display === 'block' ||
+         contactFormDialog?.style.display === 'block' ||
+         bookshelfDialog?.style.display === 'block') {
+         return;
+     }
+
     if (!direction) return;
 
     let key;
@@ -780,7 +845,7 @@ function triggerMovement(direction) {
     movePlayer({ key: key });
 }
 
-// 0: grass, 1: wall, 2: path, 3: water, 4: door, 5: floor
+// -=-=-=- Map Data & Tile Definitions -=-=-=-
 const map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
