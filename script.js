@@ -72,22 +72,21 @@ function drawMap() {
             } else {
                 ctx.fillStyle = 'grey';
                 ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                console.warn(`Tile image for type ${tileType} not loaded or missing.`);
             }
         }
     }
 }
 
+
 function positionElements() {
-    // Inside Elements
     positionElement('pc', 4, 1);
     positionElement('bookshelf', 1, 1);
     positionElement('vinyl-shelf', 6, 1);
-    positionElement('trainer', 3, 3);
+    positionElement('trainer', playerTileX, playerTileY); // Position player initially
 
-    // Outside Elements
     positionElement('mailbox', 6, 14);
 
-    // Spaced-out Trainers on Path/Grass
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 11, 11);
     positionElement('experience-trainer', 19, 8);
@@ -95,108 +94,139 @@ function positionElements() {
 
 function positionElement(elementId, tileX, tileY) {
     const element = document.getElementById(elementId);
-    if (!element) return;
+    if (!element) {
+        console.warn(`Element with ID "${elementId}" not found.`);
+        return;
+    }
     const canvas = document.getElementById('gameCanvas');
+    if (!canvas) {
+         console.error(`Game canvas not found.`);
+         return;
+    }
 
-    const actualTileWidth = canvas.offsetWidth / MAP_WIDTH;
-    const actualTileHeight = canvas.offsetHeight / MAP_HEIGHT;
+    const canvasRect = canvas.getBoundingClientRect();
+    const actualCanvasWidth = canvasRect.width;
+    const actualCanvasHeight = canvasRect.height;
+
+    const actualTileWidth = actualCanvasWidth / MAP_WIDTH;
+    const actualTileHeight = actualCanvasHeight / MAP_HEIGHT;
 
     element.style.left = tileX * actualTileWidth + 'px';
     element.style.top = tileY * actualTileHeight + 'px';
 
-    // Adjust sprite size dynamically based on calculated tile size
-    // This makes sprite size consistent with the visual grid
     element.style.width = actualTileWidth + 'px';
     element.style.height = actualTileHeight + 'px';
 }
 
+
 function setupInteractions() {
-    // Resume Trainer
-    document.getElementById("resume-trainer").addEventListener("click", function() {
-        window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank');
-    });
+    const resumeTrainer = document.getElementById("resume-trainer");
+    if (resumeTrainer) {
+        resumeTrainer.addEventListener("click", function() {
+            window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank');
+        });
+    }
 
-    // Certs Trainer
-    document.getElementById("skills-trainer").addEventListener("click", function() {
-        showDialog("Certifications: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt");
-    });
+    const skillsTrainer = document.getElementById("skills-trainer");
+    if (skillsTrainer) {
+        skillsTrainer.addEventListener("click", function() {
+            showDialog("Certifications: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt");
+        });
+    }
 
-    // Experience Trainer
-    document.getElementById("experience-trainer").addEventListener("click", function() {
-        window.open('https://www.linkedin.com/in/calebluh/', '_blank');
-    });
+    const experienceTrainer = document.getElementById("experience-trainer");
+    if (experienceTrainer) {
+        experienceTrainer.addEventListener("click", function() {
+            window.open('https://www.linkedin.com/in/calebluh/', '_blank');
+        });
+    }
 
-    // PC Interaction
+    const pcElement = document.getElementById("pc");
     const projectChoiceDialog = document.getElementById('project-choice-dialog');
     const robloxBtn = document.getElementById('roblox-btn');
     const statlabBtn = document.getElementById('statlab-btn');
     const linkedinBtn = document.getElementById('linkedin-btn');
     const closeBtn = document.getElementById('close-btn');
 
-    document.getElementById("pc").addEventListener("click", function() {
-        projectChoiceDialog.style.display = 'block';
-    });
+    if (pcElement && projectChoiceDialog && robloxBtn && statlabBtn && linkedinBtn && closeBtn) {
+        pcElement.addEventListener("click", function() {
+            projectChoiceDialog.style.display = 'block';
+        });
 
-    robloxBtn.addEventListener('click', () => {
-        window.open("https://www.roblox.com/games/113892368479986/Lacrosse-Legends", "_blank");
-        projectChoiceDialog.style.display = 'none';
-    });
+        robloxBtn.addEventListener('click', () => {
+            window.open("https://www.roblox.com/games/113892368479986/Lacrosse-Legends", "_blank");
+            projectChoiceDialog.style.display = 'none';
+        });
 
-    statlabBtn.addEventListener('click', () => {
-        window.open("https://calebluh.github.io/stat-lab", "_blank");
-        projectChoiceDialog.style.display = 'none';
-    });
+        statlabBtn.addEventListener('click', () => {
+            window.open("https://calebluh.github.io/stat-lab", "_blank");
+            projectChoiceDialog.style.display = 'none';
+        });
 
-    linkedinBtn.addEventListener('click', () => {
-        window.open("https://www.linkedin.com/in/calebluh/", "_blank");
-        projectChoiceDialog.style.display = 'none';
-    });
+        linkedinBtn.addEventListener('click', () => {
+            window.open("https://www.linkedin.com/in/calebluh/", "_blank");
+            projectChoiceDialog.style.display = 'none';
+        });
 
-    closeBtn.addEventListener('click', () => {
-        projectChoiceDialog.style.display = 'none';
-    });
+        closeBtn.addEventListener('click', () => {
+            projectChoiceDialog.style.display = 'none';
+        });
+    } else {
+         console.warn("One or more PC interaction elements are missing.");
+    }
 
-    // Mailbox Interaction
+
     const mailbox = document.getElementById("mailbox");
     const contactFormDialog = document.getElementById("contact-form-dialog");
     const closeContactFormButton = document.getElementById("close-contact-form");
 
-    mailbox.addEventListener("click", function() {
-        contactFormDialog.style.display = "block";
-    });
+    if (mailbox && contactFormDialog && closeContactFormButton) {
+        mailbox.addEventListener("click", function() {
+            contactFormDialog.style.display = "block";
+        });
 
-    closeContactFormButton.addEventListener("click", function() {
-        contactFormDialog.style.display = "none";
-    });
+        closeContactFormButton.addEventListener("click", function() {
+            contactFormDialog.style.display = "none";
+        });
+     } else {
+         console.warn("One or more Mailbox interaction elements are missing.");
+     }
 
-    // Dialog Box Close
-    closeDialogButton.addEventListener("click", function() {
-        dialogBox.style.display = "none";
-    });
+    if (closeDialogButton && dialogBox) {
+        closeDialogButton.addEventListener("click", function() {
+            dialogBox.style.display = "none";
+        });
+    }
 
-    // Vinyl Shelf Interaction
-    document.getElementById('vinyl-shelf').addEventListener('click', () => {
-        window.open('https://www.discogs.com/user/calebluh/collection', '_blank');
-    });
+    const vinylShelf = document.getElementById('vinyl-shelf');
+     if (vinylShelf) {
+        vinylShelf.addEventListener('click', () => {
+            window.open('https://www.discogs.com/user/calebluh/collection', '_blank');
+        });
+     }
 
-    // Bookshelf Interaction
-    bookshelfElement.addEventListener('click', () => {
-        bookshelfDialog.style.display = 'block';
-    });
+    if (bookshelfElement && bookshelfDialog && closeBookshelfButton) {
+        bookshelfElement.addEventListener('click', () => {
+            bookshelfDialog.style.display = 'block';
+        });
 
-    closeBookshelfButton.addEventListener('click', () => {
-        bookshelfDialog.style.display = 'none';
-    });
+        closeBookshelfButton.addEventListener('click', () => {
+            bookshelfDialog.style.display = 'none';
+        });
+    } else {
+        console.warn("One or more Bookshelf interaction elements are missing.");
+    }
 
-    // Player Movement
-    document.addEventListener("keydown", function(event) {
-        movePlayer(event);
-    });
+    document.addEventListener("keydown", movePlayer);
 }
 
 function showDialog(text) {
-    dialogText.textContent = text;
-    dialogBox.style.display = "block";
+    if (dialogText && dialogBox) {
+        dialogText.textContent = text;
+        dialogBox.style.display = "block";
+    } else {
+        console.error("Dialog elements (text or box) not found.");
+    }
 }
 
 function movePlayer(event) {
@@ -204,7 +234,6 @@ function movePlayer(event) {
     let nextY = playerTileY;
     let moved = false;
 
-    // Calculate proposed next position
     switch (event.key) {
         case "ArrowUp":
         case "w":
@@ -226,77 +255,100 @@ function movePlayer(event) {
             return;
     }
 
-    // Check boundaries
     if (nextX < 0 || nextX >= MAP_WIDTH || nextY < 0 || nextY >= MAP_HEIGHT) {
         return;
     }
 
-    // Get the type of the target tile
     const targetTileType = map[nextY][nextX];
 
-    // Define impassable tiles (add tile type numbers here)
+    // Define impassable tiles
     const impassableTiles = [
         1, // Wall tile type
         3  // Water tile type
     ];
 
-    // Check if the target tile type is in the impassable list
     if (!impassableTiles.includes(targetTileType)) {
-        // It's a valid move, update player's tile coordinates
         playerTileX = nextX;
         playerTileY = nextY;
         moved = true;
     }
 
-    if(moved) {
+    if (moved) {
         positionElement('trainer', playerTileX, playerTileY);
     }
 }
 
 function setupJoystick() {
-    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-
-    if (isTouchDevice) {
+    if (typeof nipplejs === 'undefined') {
+        console.warn("nipplejs library not found. Joystick disabled.");
         const zone = document.getElementById('joystick-zone');
-        if (!zone) return;
+        if (zone) zone.style.display = 'none';
+        return;
+    }
+
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const zone = document.getElementById('joystick-zone');
+
+    if (isTouchDevice && zone) {
+         zone.style.display = 'block';
 
         const options = {
             zone: zone,
             mode: 'static',
             position: { left: '50%', top: '50%' },
-            color: 'gray',
-            size: 80
+            color: 'rgba(128, 128, 128, 0.7)',
+            size: 100,
+            threshold: 0.1,
+            fadeTime: 250
         };
 
         joystick = nipplejs.create(options);
         let moveInterval = null;
+        const moveDelay = 180;
 
         joystick.on('start', function (evt, data) {
              if (moveInterval) clearInterval(moveInterval);
+             joystickDirection = null;
         });
 
         joystick.on('move', function (evt, data) {
             if (!data.direction) {
+                if (moveInterval) {
+                    clearInterval(moveInterval);
+                    moveInterval = null;
+                }
                 joystickDirection = null;
                 return;
             }
+
             const angle = data.angle.degree;
+            let newDirection = null;
+
             if (angle > 45 && angle <= 135) {
-                joystickDirection = 'up';
+                newDirection = 'up';
             } else if (angle > 135 && angle <= 225) {
-                joystickDirection = 'left';
+                newDirection = 'left';
             } else if (angle > 225 && angle <= 315) {
-                joystickDirection = 'down';
+                newDirection = 'down';
             } else {
-                joystickDirection = 'right';
+                newDirection = 'right';
             }
 
-            if (!moveInterval) {
+             if (newDirection !== joystickDirection || !moveInterval) {
+                joystickDirection = newDirection;
                 triggerMovement(joystickDirection);
+
+                if (moveInterval) clearInterval(moveInterval);
+
                 moveInterval = setInterval(() => {
-                    triggerMovement(joystickDirection);
-                }, 200);
-            }
+                    if (joystickDirection) {
+                         triggerMovement(joystickDirection);
+                    } else {
+                        clearInterval(moveInterval);
+                        moveInterval = null;
+                    }
+                }, moveDelay);
+             }
         });
 
         joystick.on('end', function (evt, data) {
@@ -307,14 +359,14 @@ function setupJoystick() {
             }
         });
 
-    } else {
-         const zone = document.getElementById('joystick-zone');
-         if (zone) zone.style.display = 'none';
+    } else if (zone) {
+        zone.style.display = 'none';
     }
 }
 
 function triggerMovement(direction) {
     if (!direction) return;
+
     let key;
     switch (direction) {
         case 'up':    key = 'w'; break;
@@ -326,6 +378,7 @@ function triggerMovement(direction) {
     movePlayer({ key: key });
 }
 
+// 0: grass, 1: wall, 2: path, 3: water, 4: door, 5: floor
 const map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
