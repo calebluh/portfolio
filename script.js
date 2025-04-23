@@ -14,6 +14,11 @@ const TILE_SIZE = 16;
 const MAP_WIDTH = 20;
 const MAP_HEIGHT = 15;
 
+let playerTileX = 3;
+let playerTileY = 3;
+let joystick = null;
+let joystickDirection = null;
+
 startBtn.addEventListener('click', () => {
     startScreen.style.display = 'none';
     gameMap.style.display = 'block';
@@ -25,6 +30,7 @@ async function init() {
     drawMap();
     positionElements();
     setupInteractions();
+    setupJoystick();
     window.addEventListener('resize', positionElements);
 }
 
@@ -45,7 +51,7 @@ function loadTileImages() {
             };
             img.onerror = () => {
                 console.error(`Failed to load image: assets/tiles/${tileTypes[key]}.png`);
-                imagesLoaded++; 
+                imagesLoaded++;
                  if (imagesLoaded === totalImages) {
                     resolve();
                 }
@@ -55,25 +61,21 @@ function loadTileImages() {
 }
 
 function drawMap() {
-    // Set canvas logical size based on map dimensions and original tile size
     gameCanvas.width = MAP_WIDTH * TILE_SIZE;
     gameCanvas.height = MAP_HEIGHT * TILE_SIZE;
 
-    // Draw the map using the logical TILE_SIZE
     for (let y = 0; y < MAP_HEIGHT; y++) {
         for (let x = 0; x < MAP_WIDTH; x++) {
             const tileType = map[y][x];
             if (tiles[tileType]) {
                 ctx.drawImage(tiles[tileType], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             } else {
-                 // Draw a fallback color if tile image is missing
                 ctx.fillStyle = 'grey';
                 ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
     }
 }
-
 
 function positionElements() {
     // Inside Elements
@@ -88,7 +90,7 @@ function positionElements() {
     // Spaced-out Trainers on Path/Grass
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 11, 11);
-    positionElement('experience-trainer', 18, 8);
+    positionElement('experience-trainer', 19, 8);
 }
 
 function positionElement(elementId, tileX, tileY) {
@@ -107,7 +109,6 @@ function positionElement(elementId, tileX, tileY) {
     element.style.width = actualTileWidth + 'px';
     element.style.height = actualTileHeight + 'px';
 }
-
 
 function setupInteractions() {
     // Resume Trainer
@@ -254,6 +255,79 @@ function movePlayer(event) {
     if(moved) {
         positionElement('trainer', playerTileX, playerTileY);
     }
+}
+
+function setupJoystick() {
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+    if (isTouchDevice) {
+        const zone = document.getElementById('joystick-zone');
+        if (!zone) return;
+
+        const options = {
+            zone: zone,
+            mode: 'static',
+            position: { left: '50%', top: '50%' },
+            color: 'gray',
+            size: 80
+        };
+
+        joystick = nipplejs.create(options);
+        let moveInterval = null;
+
+        joystick.on('start', function (evt, data) {
+             if (moveInterval) clearInterval(moveInterval);
+        });
+
+        joystick.on('move', function (evt, data) {
+            if (!data.direction) {
+                joystickDirection = null;
+                return;
+            }
+            const angle = data.angle.degree;
+            if (angle > 45 && angle <= 135) {
+                joystickDirection = 'up';
+            } else if (angle > 135 && angle <= 225) {
+                joystickDirection = 'left';
+            } else if (angle > 225 && angle <= 315) {
+                joystickDirection = 'down';
+            } else {
+                joystickDirection = 'right';
+            }
+
+            if (!moveInterval) {
+                triggerMovement(joystickDirection);
+                moveInterval = setInterval(() => {
+                    triggerMovement(joystickDirection);
+                }, 200);
+            }
+        });
+
+        joystick.on('end', function (evt, data) {
+            joystickDirection = null;
+            if (moveInterval) {
+                clearInterval(moveInterval);
+                moveInterval = null;
+            }
+        });
+
+    } else {
+         const zone = document.getElementById('joystick-zone');
+         if (zone) zone.style.display = 'none';
+    }
+}
+
+function triggerMovement(direction) {
+    if (!direction) return;
+    let key;
+    switch (direction) {
+        case 'up':    key = 'w'; break;
+        case 'down':  key = 's'; break;
+        case 'left':  key = 'a'; break;
+        case 'right': key = 'd'; break;
+        default: return;
+    }
+    movePlayer({ key: key });
 }
 
 const map = [
