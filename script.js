@@ -39,16 +39,28 @@ document.getElementById("experience-trainer").addEventListener("click", function
 });
 
 // PC Interaction: Redirect to Links
-document.getElementById("pc").addEventListener("click", function() {
-    const choice = confirm("Which project would you like to view?\n\nOK: Lacrosse Legends (Roblox)\nCancel: Stat Lab");
+const projectChoiceDialog = document.getElementById('project-choice-dialog');
+const robloxBtn = document.getElementById('roblox-btn');
+const statlabBtn = document.getElementById('statlab-btn');
+const linkedinBtn = document.getElementById('linkedin-btn');
 
-    if (choice) {
-        // Redirect to Lacrosse Legends Roblox page
-        window.open("https://www.roblox.com/games/<YOUR_GAME_ID>/Lacrosse-Legends", "_blank");
-    } else {
-        // Redirect to Stat Lab website
-        window.open("https://your-stat-lab-website-url.com", "_blank");
-    }
+document.getElementById("pc").addEventListener("click", function() {
+    projectChoiceDialog.style.display = 'block';
+});
+
+robloxBtn.addEventListener('click', () => {
+    window.open("https://www.roblox.com/games/113892368479986/Lacrosse-Legends", "_blank");
+    projectChoiceDialog.style.display = 'none';
+});
+
+statlabBtn.addEventListener('click', () => {
+    window.open("https://calebluh.github.io/stat-lab", "_blank");
+    projectChoiceDialog.style.display = 'none';
+});
+
+linkedinBtn.addEventListener('click', () => {
+    window.open("https://www.linkedin.com/in/calebluh/", "_blank");
+    projectChoiceDialog.style.display = 'none';
 });
 
 // Mailbox Interaction (Contact Form)
@@ -82,7 +94,7 @@ document.addEventListener("keydown", function(event) {
             break;
         case "ArrowRight":
         case "d":
-            player.x += 10;
+            player.x -= 10;
             break;
     }
     trainerElement.style.transform = `translate(${player.x}px, ${player.y}px)`;
