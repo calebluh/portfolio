@@ -6,17 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Caleb Luh's Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.1/nipplejs.min.js"></script>
     <script src="script.js" defer></script>
 </head>
 
 <body>
     <div id="start-screen">
-        <h1>Caleb's 2D Portfolio Game</h1>
+        <h1>Caleb's 2D Portfolio</h1>
         <button id="start-btn">Press Start</button>
     </div>
 
     <div id="game-map" style="display: none;">
-        <canvas id="gameCanvas" width="640" height="480"></canvas>
+        <canvas id="gameCanvas" width="320" height="240"></canvas>
 
         <div class="npc" id="resume-trainer">
             <img src="assets/sprites/npc-resume.png" alt="Resume Trainer">
@@ -81,10 +82,16 @@
 
     </div>
 
+    <div id="instructions">
+        <p>Use WASD or Arrow Keys to move. Click on objects/people to interact.</p>
+        <p>(On touch devices, use the joystick.)</p>
+    </div>
+
     <div id="dialog-box" style="display: none;">
         <p id="dialog-text"></p>
         <button id="close-dialog">Close</button>
     </div>
-</body>
 
+     <div id="joystick-zone"></div>
+</body>
 </html>
