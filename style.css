@@ -49,14 +49,15 @@ body {
 
 #game-map {
     width: 90vw;
-    height: 70vh;
     max-width: 1000px;
-    max-height: 750px;
+    aspect-ratio: 20 / 15;
     position: relative;
     overflow: hidden;
     border: 3px solid black;
     display: none;
     background-color: #fff;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #gameCanvas {
@@ -301,7 +302,7 @@ body {
 
 @keyframes shake {
     0%, 100% { transform: translate(-50%, -50%) translateX(0); }
-    25% { transform: translate(-50%, -50%) translateX(-3px); }
-    50% { transform: translate(-50%, -50%) translateX(3px); }
-    75% { transform: translate(-50%, -50%) translateX(-3px); }
+    25% { transform: translate(-50%, -50%) translateX(-1px); }
+    50% { transform: translate(-50%, -50%) translateX(1px); }
+    75% { transform: translate(-50%, -50%) translateX(-1px); }
 }
