@@ -88,7 +88,7 @@ function positionElements() {
     // Spaced-out Trainers on Path/Grass
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 11, 11);
-    positionElement('experience-trainer', 20, 8);
+    positionElement('experience-trainer', 19, 8);
 }
 
 function positionElement(elementId, tileX, tileY) {
@@ -117,7 +117,7 @@ function setupInteractions() {
 
     // Certs Trainer
     document.getElementById("skills-trainer").addEventListener("click", function() {
-        showDialog("Certs Trainer: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt");
+        showDialog("Certifications: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt");
     });
 
     // Experience Trainer
