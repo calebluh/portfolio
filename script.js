@@ -110,19 +110,19 @@ function positionElement(elementId, tileX, tileY) {
 
 
 function setupInteractions() {
-    // Resume Trainer - Link to PDF (replace with your URL)
+    // Resume Trainer
     document.getElementById("resume-trainer").addEventListener("click", function() {
-        window.open('path/to/your/resume.pdf', '_blank');
+        window.open('https://calebluh.github.io/resume/', '_blank');
     });
 
-    // Skills Trainer - Show skills in dialog (replace with your skills)
+    // Certs Trainer
     document.getElementById("skills-trainer").addEventListener("click", function() {
-        showDialog("Skills Trainer: JavaScript, HTML, CSS, React, Node.js...");
+        showDialog("Certs Trainer: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt");
     });
 
-    // Experience Trainer - Link to LinkedIn (replace with your URL)
+    // Experience Trainer
     document.getElementById("experience-trainer").addEventListener("click", function() {
-        window.open('https://www.linkedin.com/in/your-profile/', '_blank');
+        window.open('https://www.linkedin.com/in/calebluh/', '_blank');
     });
 
     // PC Interaction
