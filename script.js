@@ -545,7 +545,7 @@ function setupJoystick() {
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     console.log("Is touch device?", isTouchDevice);
     if (isTouchDevice && joystickZone) {
-        const options = { zone: joystickZone, mode: 'static', position: { left: '50%', top: '50%' }, color: 'rgba(128, 128, 128, 0.7)', size: 100, threshold: 0.1, fadeTime: 250 };
+        const options = { zone: joystickZone, mode: 'static', position: { left: '50%', top: '50%' }, color: 'rgba(128, 128, 128, 0.7)', size: 100, threshold: 0.3, fadeTime: 250 };
         if (!joystick) {
             console.log("Creating joystick instance...");
             joystick = nipplejs.create(options);
