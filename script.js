@@ -76,14 +76,19 @@ function drawMap() {
 
 
 function positionElements() {
-    positionElement('pc', 5, 3);
-    positionElement('mailbox', 2, 7);
-    positionElement('bookshelf', 8, 1);
-    positionElement('vinyl-shelf', 12, 5);
+    // Inside Elements
+    positionElement('pc', 2, 2);
+    positionElement('bookshelf', 2, 1);
+    positionElement('vinyl-shelf', 6, 1);
     positionElement('trainer', 3, 3);
+
+    // Outside Elements
+    positionElement('mailbox', 7, 8);
+
+    // Spaced-out Trainers on Path/Grass
     positionElement('resume-trainer', 7, 7);
-    positionElement('skills-trainer', 9, 9);
-    positionElement('experience-trainer', 11, 11);
+    positionElement('skills-trainer', 10, 9);
+    positionElement('experience-trainer', 13, 11);
 }
 
 function positionElement(elementId, tileX, tileY) {
@@ -193,47 +198,63 @@ function showDialog(text) {
     dialogBox.style.display = "block";
 }
 
-// Player Movement - Simple example, needs collision detection etc.
+// Player Movement
 let playerTileX = 3;
 let playerTileY = 3;
 
 function movePlayer(event) {
+    let nextX = playerTileX;
+    let nextY = playerTileY;
     let moved = false;
+
+    // Calculate proposed next position
     switch (event.key) {
         case "ArrowUp":
         case "w":
-            playerTileY -= 1;
-            moved = true;
+            nextY -= 1;
             break;
         case "ArrowDown":
         case "s":
-            playerTileY += 1;
-            moved = true;
+            nextY += 1;
             break;
         case "ArrowLeft":
         case "a":
-            playerTileX -= 1;
-            moved = true;
+            nextX -= 1;
             break;
         case "ArrowRight":
         case "d":
-            playerTileX += 1;
-            moved = true;
+            nextX += 1;
             break;
+        default:
+            return;
     }
 
-    // Basic boundary check (replace with proper collision logic)
-    if (playerTileX < 0) playerTileX = 0;
-    if (playerTileY < 0) playerTileY = 0;
-    if (playerTileX >= MAP_WIDTH) playerTileX = MAP_WIDTH - 1;
-    if (playerTileY >= MAP_HEIGHT) playerTileY = MAP_HEIGHT - 1;
+    // Check boundaries
+    if (nextX < 0 || nextX >= MAP_WIDTH || nextY < 0 || nextY >= MAP_HEIGHT) {
+        return;
+    }
+
+    // Get the type of the target tile
+    const targetTileType = map[nextY][nextX];
+
+    // Define impassable tiles (add tile type numbers here)
+    const impassableTiles = [
+        1, // Wall tile type
+        3  // Water tile type
+    ];
+
+    // Check if the target tile type is in the impassable list
+    if (!impassableTiles.includes(targetTileType)) {
+        // It's a valid move, update player's tile coordinates
+        playerTileX = nextX;
+        playerTileY = nextY;
+        moved = true;
+    }
 
     if(moved) {
-        // Reposition the player sprite based on new tile coordinates
         positionElement('trainer', playerTileX, playerTileY);
     }
 }
-
 
 const map = [
     [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
