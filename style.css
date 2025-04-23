@@ -245,7 +245,6 @@ body {
     height: 120px;
     background-color: rgba(128, 128, 128, 0.3);
     border-radius: 50%;
-    display: none;
     z-index: 150;
 }
 
