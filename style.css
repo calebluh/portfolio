@@ -49,8 +49,8 @@ body {
 /* NPCs */
 .npc {
     position: absolute;
-    width: 100px;
-    height: 100px;
+    width: 32px;
+    height: 32px;
     cursor: pointer;
 }
 
@@ -75,8 +75,8 @@ body {
     position: absolute;
     top: 400px;
     left: 200px;
-    width: 120px;
-    height: 120px;
+    width: 32px;
+    height: 32px;
     cursor: pointer;
 }
 
@@ -85,8 +85,8 @@ body {
     position: absolute;
     top: 500px;
     left: 600px;
-    width: 120px;
-    height: 120px;
+    width: 32px;
+    height: 32px;
     cursor: pointer;
 }
 
@@ -144,4 +144,38 @@ body {
     padding: 8px 16px;
     font-size: 14px;
     cursor: pointer;
+}
+
+/* Contact Form Dialog */
+#contact-form-dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 3px solid black;
+    padding: 20px;
+    z-index: 100;
+    text-align: center;
+}
+
+#contact-form-dialog label {
+    display: block;
+    margin-top: 10px;
+}
+
+#contact-form-dialog input,
+#contact-form-dialog textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+#contact-form-dialog button {
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 5px;
 }
