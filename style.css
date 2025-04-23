@@ -30,8 +30,6 @@ body {
 
 /* Game Map */
 #game-map {
-    background: url('assets/map-bg.png') no-repeat center center;
-    background-size: cover;
     height: 100vh;
     width: 100vw;
     position: relative;
