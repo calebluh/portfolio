@@ -32,7 +32,7 @@ const pcElement = document.getElementById("pc");
 
 // -=-=-=- Firebase Initialization -=-=-=-
 const firebaseConfig = {
-    apiKey: "AIzaSyD8mwbaU7Jgakj-OtH92BzAXDIIzGRIZk0", // Keep your actual key here
+    apiKey: "AIzaSyD8mwbaU7Jgakj-OtH92BzAXDIIzGRIZk0",
     authDomain: "portfolio-game-484a5.firebaseapp.com",
     projectId: "portfolio-game-484a5",
     storageBucket: "portfolio-game-484a5.appspot.com",
