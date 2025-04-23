@@ -101,14 +101,20 @@ function hideJoystick() {
 
 function showJoystickIfNeeded() {
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const anyDialogOpen = isAnyDialogOpen();
+    console.log(`showJoystickIfNeeded: isTouch=${isTouchDevice}, joystickObjExists=${!!joystick}, dialogOpen=${anyDialogOpen}`);
+    
     if (joystickZone && isTouchDevice && joystick) {
-        if (!isAnyDialogOpen()) {
-             joystickZone.style.display = 'block';
+        if (!anyDialogOpen) {
+            joystickZone.style.display = 'block';
+            console.log("--> Joystick Shown");
         } else {
-             joystickZone.style.display = 'none';
+            joystickZone.style.display = 'none';
+            console.log("--> Joystick Hidden (Dialog Open)");
         }
-    } else if (joystickZone) {
-        joystickZone.style.display = 'none';
+    } else {
+        hideJoystick();
+        console.log("--> Joystick Hidden (Not touch or no joystick obj)");
     }
 }
 // --- End Helpers ---
@@ -245,6 +251,7 @@ function setupInteractions() {
     if (submitInitialsButton) setupListener("submit-initials-btn", submitScore);
     if (closeScoreboardButton) setupListener("close-scoreboard-btn", () => { if(scoreboardDialog) scoreboardDialog.style.display = 'none'; showJoystickIfNeeded(); });
     if (toggleScoreboardButton) toggleScoreboardButton.addEventListener('click', async () => {
+        console.log("Dialog check for scores btn:", isAnyDialogOpen());
         if (scoreboardDialog?.style.display === 'block') {
             scoreboardDialog.style.display = 'none'; showJoystickIfNeeded();
         } else {
@@ -429,13 +436,35 @@ function movePlayer(event) {
 }
 
 function setupJoystick() {
-    if (typeof nipplejs === 'undefined') { console.warn("nipplejs library not found."); hideJoystick(); return; }
+    console.log("Attempting joystick setup...");
+    if (typeof nipplejs === 'undefined') { 
+        console.warn("nipplejs library not found."); 
+        hideJoystick(); 
+        return; 
+    }
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    console.log("Is touch device?", isTouchDevice);
     if (isTouchDevice && joystickZone) {
-        const options = { zone: joystickZone, mode: 'static', position: { left: '50%', top: '50%' }, color: 'rgba(128, 128, 128, 0.7)', size: 100, threshold: 0.1, fadeTime: 250 };
-        if (!joystick) { joystick = nipplejs.create(options); setupJoystickEvents(); }
+        const options = { 
+            zone: joystickZone, 
+            mode: 'static', 
+            position: { left: '50%', top: '50%' }, 
+            color: 'rgba(128, 128, 128, 0.7)', 
+            size: 100, 
+            threshold: 0.1, 
+            fadeTime: 250 
+        };
+        if (!joystick) {
+            console.log("Creating joystick instance...");
+            joystick = nipplejs.create(options);
+            console.log("Joystick object:", joystick);
+            setupJoystickEvents();
+        }
         showJoystickIfNeeded();
-    } else { hideJoystick(); }
+    } else {
+        console.log("Hiding joystick (not touch or no zone)");
+        hideJoystick();
+    }
 }
 
 function setupJoystickEvents() {

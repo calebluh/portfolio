@@ -48,9 +48,10 @@ body {
 }
 
 #game-map {
-    width: 90vw;
-    max-width: 1000px;
+    height: 85vh;
+    max-height: 750px;
     aspect-ratio: 20 / 15;
+    max-width: 100%;
     position: relative;
     overflow: hidden;
     border: 3px solid black;
@@ -250,20 +251,19 @@ body {
 
 /* --- Media Queries --- */
 
-/* Detect touch devices to show joystick */
-@media (hover: none) and (pointer: coarse) {}
-
-/* Styles for smaller screens */
 @media screen and (max-width: 600px) {
     #start-screen h1 {
         font-size: 1.5em;
     }
-
     #start-btn {
         font-size: 1em;
         padding: 10px 20px;
     }
-
+    #game-map {
+        width: 80vw;
+        max-width: 900px;
+        aspect-ratio: 20 / 15;
+    }
     .game-dialog {
         padding: 15px;
         max-width: 90vw;
