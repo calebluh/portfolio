@@ -101,7 +101,7 @@ document.addEventListener("keydown", function(event) {
             break;
         case "ArrowRight":
         case "d":
-            player.x -= 10;
+            player.x += 10;
             break;
     }
     trainerElement.style.transform = `translate(${player.x}px, ${player.y}px)`;
