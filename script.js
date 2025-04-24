@@ -250,7 +250,7 @@ function checkForWaterProximity() {
 
     if (canFishHere) {
         if (fishingPrompt) fishingPrompt.style.display = 'block';
-        hideJoystick(); // Hide joystick when prompt appears
+        hideJoystick();
     } else {
         hideFishingPrompt();
     }
@@ -266,7 +266,7 @@ function setupInteractions() {
     };
 
     setupListener("resume-trainer", () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank'));
-    setupListener("skills-trainer", () => showDialog("Certifications: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt"));
+    setupListener("skills-trainer", (event) => showDialog("Certifications: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt"));
     setupListener("experience-trainer", () => window.open('https://www.linkedin.com/in/calebluh/', '_blank'));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
 
@@ -286,9 +286,9 @@ function setupInteractions() {
     if (closeDialogButton && dialogBox) {
         closeDialogButton.addEventListener("click", () => {
             if (dialogBox) dialogBox.style.display = "none";
-            if (typewriterInterval) {
-                clearInterval(typewriterInterval);
-                typewriterInterval = null;
+            if (delay) {
+                clearInterval(delay);
+                delay = null;
             } showJoystickIfNeeded();
             checkForWaterProximity();
         });
@@ -502,7 +502,7 @@ async function submitScore() {
 
 function textDelay(element, text, speed = 50) { 
     if (delay) {
-        clearDealy(delay);
+        clearInterval(delay);
     }
 
     element.textContent = '';
@@ -522,7 +522,7 @@ function textDelay(element, text, speed = 50) {
 
 function showDialog(text, targetElement) {
     if (delay) {
-        clearDelay(delay);
+        clearInterval(delay);
         delay = null;
     }
 
