@@ -266,7 +266,7 @@ function setupInteractions() {
     };
 
     setupListener("resume-trainer", () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank'));
-    setupListener("skills-trainer", (event) => showDialog("Certifications: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt"));
+    setupListener("skills-trainer", (event) => showDialog("Certifications: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt", event.currentTarget));
     setupListener("experience-trainer", () => window.open('https://www.linkedin.com/in/calebluh/', '_blank'));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
 
