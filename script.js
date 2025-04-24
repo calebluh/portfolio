@@ -54,7 +54,7 @@ let playerTileX = 3;
 let playerTileY = 3;
 let joystick = null;
 let joystickDirection = null;
-let textDelay = null;
+let delay = null;
 
 // -=-=-=- Fishing Game State -=-=-=-
 let isFishingActive = false;
