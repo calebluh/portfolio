@@ -45,7 +45,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// -=-=-=- Map and player initialization -=-=-=-
+// -=-=-=- Global vars -=-=-=-
 const TILE_SIZE = 16;
 const MAP_WIDTH = 20;
 const MAP_HEIGHT = 15;
@@ -54,6 +54,7 @@ let playerTileX = 3;
 let playerTileY = 3;
 let joystick = null;
 let joystickDirection = null;
+let textDelay = null;
 
 // -=-=-=- Fishing Game State -=-=-=-
 let isFishingActive = false;
@@ -283,7 +284,14 @@ function setupInteractions() {
         if (closeContactFormButton) setupListener("close-contact-form", () => { if(contactFormDialog) contactFormDialog.style.display = "none"; showJoystickIfNeeded(); });
     }
     if (closeDialogButton && dialogBox) {
-        setupListener("close-dialog", () => { if(dialogBox) dialogBox.style.display = "none"; showJoystickIfNeeded(); checkForWaterProximity(); });
+        closeDialogButton.addEventListener("click", () => {
+            if (dialogBox) dialogBox.style.display = "none";
+            if (typewriterInterval) {
+                clearInterval(typewriterInterval);
+                typewriterInterval = null;
+            } showJoystickIfNeeded();
+            checkForWaterProximity();
+        });
     }
     if (bookshelfElement && bookshelfDialog) {
         const closeBookshelfButton = document.getElementById('close-bookshelf-dialog');
@@ -291,7 +299,6 @@ function setupInteractions() {
         if (closeBookshelfButton) setupListener("close-bookshelf-dialog", () => { if(bookshelfDialog) bookshelfDialog.style.display = 'none'; showJoystickIfNeeded(); });
     }
 
-    // Setup fishing listeners
     if (startFishingButton) setupListener("start-fishing-btn", startFishing);
     if (cancelFishingButton) setupListener("cancel-fishing-btn", () => { hideFishingPrompt(); showJoystickIfNeeded(); });
     if (stopFishingButton) setupListener("stop-fishing-btn", () => stopFishing('stopped'));
@@ -493,43 +500,65 @@ async function submitScore() {
     }
 }
 
-function showDialog(text) {
-    if (dialogText && dialogBox) {
-        dialogText.textContent = text;
+function textDelay(element, text, speed = 50) { 
+    if (delay) {
+        clearDealy(delay);
+    }
+
+    element.textContent = '';
+    let i = 0;
+    element.style.minHeight = '1.2em';
+
+    delay = setInterval(() => {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+        } else {
+            clearInterval(delay);
+            delay = null; 
+        }
+    }, speed);
+}
+
+function showDialog(text, targetElement) {
+    if (delay) {
+        clearDelay(delay);
+        delay = null;
+    }
+
+    if (dialogText && dialogBox && targetElement) {
+        const targetRect = targetElement.getBoundingClientRect();
+        const mapRect = gameMap.getBoundingClientRect();
+        const dialogStyle = window.getComputedStyle(dialogBox); 
+
+        const estDialogHeight = parseFloat(dialogStyle.height) || 50;
+        const estDialogWidth = parseFloat(dialogStyle.width) || 150;
+
+        // Position above target
+        let top = targetRect.top - mapRect.top - estDialogHeight - 15;
+        let left = targetRect.left - mapRect.left + (targetRect.width / 2) - (estDialogWidth / 2);
+
+         if (top < 0) { 
+             top = targetRect.bottom - mapRect.top + 10;
+         }
+         left = Math.max(5, Math.min(left, mapRect.width - estDialogWidth - 5));
+
+        dialogBox.style.top = `${top}px`;
+        dialogBox.style.left = `${left}px`;
+
         dialogBox.style.display = "block";
+
+        textDelay(dialogText, text, 50);
+
         hideJoystick();
     } else {
-        console.error("Dialog elements not found.");
+        console.error("Dialog elements or targetElement not found for showDialog.");
     }
 }
 
-/* function movePlayer(event) {
-    console.log("Checking dialogs in movePlayer:", isAnyDialogOpen());  
-    if (isFishingActive || isAnyDialogOpen()) return;
-    let nextX = playerTileX, nextY = playerTileY, moved = false;
-    switch (event.key) {
-        case "ArrowUp": case "w": nextY -= 1; break;
-        case "ArrowDown": case "s": nextY += 1; break;
-        case "ArrowLeft": case "a": nextX -= 1; break;
-        case "ArrowRight": case "d": nextX += 1; break;
-        default: return;
-    }
-    if (nextX < 0 || nextX >= MAP_WIDTH || nextY < 0 || nextY >= MAP_HEIGHT) return;
-    const targetTileType = map[nextY]?.[nextX];
-    const impassableTiles = [ 1, 3 ];
-    if (targetTileType !== undefined && !impassableTiles.includes(targetTileType)) {
-        playerTileX = nextX; playerTileY = nextY; moved = true;
-    }
-    if (moved) {
-        positionElement('trainer', playerTileX, playerTileY);
-        checkForWaterProximity(); // Call the correctly defined function
-    }
-} */
-
 function setupJoystick() {
     console.log("Attempting joystick setup...");
-    // Check if the toggle is checked
-    const joystickEnabled = joystickToggleCheckbox ? joystickToggleCheckbox.checked : true; // Default to true if element not found
+    const joystickEnabled = joystickToggleCheckbox ? joystickToggleCheckbox.checked : true;
 
     if (!joystickEnabled) {
         console.log("Joystick explicitly disabled by user.");
@@ -561,7 +590,7 @@ function setupJoystick() {
 function setupJoystickEvents() {
     if (!joystick) return;
     let moveInterval = null;
-    const moveDelay = 180; // Your current delay
+    const moveDelay = 180; 
     joystick.on('start', () => {
         console.log("Joystick Start");
         if (moveInterval) clearInterval(moveInterval);
@@ -606,7 +635,7 @@ function setupJoystickEvents() {
     });
     joystick.on('end', () => {
         console.log("Joystick End");
-        joystickDirection = null; // Clear direction
+        joystickDirection = null;
         if (moveInterval) {
             console.log("   Clearing Interval on End");
             clearInterval(moveInterval);
@@ -618,7 +647,7 @@ function setupJoystickEvents() {
 // Replace the existing triggerMovement function
 function triggerMovement(direction) {
      console.log(`  triggerMovement called with direction: ${direction}`);
-     if (isFishingActive || isAnyDialogOpen()) { // Check for blocking states
+     if (isFishingActive || isAnyDialogOpen()) { 
          console.log(`  triggerMovement blocked: Fishing=${isFishingActive}, DialogOpen=${isAnyDialogOpen()}`);
          return;
      }
@@ -627,7 +656,6 @@ function triggerMovement(direction) {
          return;
      }
      let key;
-     // Map direction to keyboard key
      switch (direction) {
          case 'up': key = 'w'; break;
          case 'down': key = 's'; break;
@@ -638,13 +666,13 @@ function triggerMovement(direction) {
              return;
      }
      console.log(`   Mapping direction '${direction}' to key '${key}'`);
-     movePlayer({ key: key }); // Simulate key press
+     movePlayer({ key: key });
 }
 
 function movePlayer(event) {
     console.log(` movePlayer called with key: ${event.key}`);
 
-    if (isFishingActive || isAnyDialogOpen()) { // Check for blocking states
+    if (isFishingActive || isAnyDialogOpen()) {
         console.log(` movePlayer blocked: Fishing=${isFishingActive}, DialogOpen=${isAnyDialogOpen()}`);
         return;
     }
