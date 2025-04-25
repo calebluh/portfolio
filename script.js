@@ -30,6 +30,9 @@ const projectChoiceDialog = document.getElementById('project-choice-dialog');
 const contactFormDialog = document.getElementById("contact-form-dialog");
 const pcElement = document.getElementById("pc");
 const joystickToggleCheckbox = document.getElementById('joystick-toggle-checkbox');
+const serverObjectElement = document.getElementById('server-object'); // If needed directly
+const itExperienceDialog = document.getElementById('it-experience-dialog');
+const closeItExperienceButton = document.getElementById('close-it-experience-dialog');
 
 // -=-=-=- Firebase Initialization -=-=-=-
 const firebaseConfig = {
@@ -187,11 +190,12 @@ function positionElements() {
     positionElement('pc', 4, 1);
     positionElement('bookshelf', 1, 1);
     positionElement('vinyl-shelf', 6, 1);
-    positionElement('trainer', playerTileX, playerTileY);
+    positionElement('player', playerTileX, playerTileY);
     positionElement('mailbox', 6, 14);
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 11, 11);
-    positionElement('experience-trainer', 19, 8);
+    positionElement('fisher', 19, 8);
+    positionElement('server-object', 3, 1);
 }
 
 function positionElement(elementId, tileX, tileY) {
@@ -223,29 +227,18 @@ function startFishing() {
 }
 
 function checkForWaterProximity() {
-    // Check if any potentially interfering dialog is already open
     if (isAnyDialogOpen() || isFishingActive) {
         canFishHere = false;
         hideFishingPrompt();
         return;
     }
 
-    const waterTileType = 3;
+    const dockTileType = 6; 
     canFishHere = false;
-    const tilesToCheck = [
-        { x: playerTileX, y: playerTileY - 1 }, // North
-        { x: playerTileX, y: playerTileY + 1 }, // South
-        { x: playerTileX + 1, y: playerTileY }, // East
-        { x: playerTileX - 1, y: playerTileY }  // West
-    ];
 
-    for (const tile of tilesToCheck) {
-        if (tile.y >= 0 && tile.y < MAP_HEIGHT && tile.x >= 0 && tile.x < MAP_WIDTH) {
-            if (map[tile.y]?.[tile.x] === waterTileType) {
-                canFishHere = true;
-                break;
-            }
-        }
+    const currentTileType = map[playerTileY]?.[playerTileX];
+    if (currentTileType === dockTileType) {
+        canFishHere = true;
     }
 
     if (canFishHere) {
@@ -253,6 +246,7 @@ function checkForWaterProximity() {
         hideJoystick();
     } else {
         hideFishingPrompt();
+        showJoystickIfNeeded();
     }
 }
 
@@ -267,8 +261,21 @@ function setupInteractions() {
 
     setupListener("resume-trainer", () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank'));
     setupListener("skills-trainer", (event) => showDialog("Certifications: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt", event.currentTarget));
-    setupListener("experience-trainer", () => window.open('https://www.linkedin.com/in/calebluh/', '_blank'));
+    setupListener("fisher", (event) => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!", '_blank'));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
+    const serverObject = document.getElementById('server-object');
+    if (serverObject && itExperienceDialog) {
+        serverObject.addEventListener('click', () => {
+            if (itExperienceDialog) itExperienceDialog.style.display = 'block';
+            hideJoystick();
+        });
+    }
+    if (closeItExperienceButton && itExperienceDialog) {
+        closeItExperienceButton.addEventListener('click', () => {
+            if (itExperienceDialog) itExperienceDialog.style.display = 'none';
+            showJoystickIfNeeded();
+        });
+    }
 
     if (pcElement && projectChoiceDialog) {
         const closeBtn = document.getElementById('close-btn');
@@ -538,10 +545,16 @@ function showDialog(text, targetElement) {
         let top = targetRect.top - mapRect.top - estDialogHeight - 15;
         let left = targetRect.left - mapRect.left + (targetRect.width / 2) - (estDialogWidth / 2);
 
-         if (top < 0) { 
-             top = targetRect.bottom - mapRect.top + 10;
-         }
-         left = Math.max(5, Math.min(left, mapRect.width - estDialogWidth - 5));
+        if (top < 0) { 
+            top = targetRect.bottom - mapRect.top + 10;
+        }
+        left = Math.max(5, Math.min(left, mapRect.width - estDialogWidth - 5));
+
+        console.log(`TargetRect: T=<span class="math-inline">\{targetRect\.top\} L\=</span>{targetRect.left} W=${targetRect.width}`);
+        console.log(`MapRect: T=<span class="math-inline">\{mapRect\.top\} L\=</span>{mapRect.left}`);
+        console.log(`Dialog Est Dims: W=<span class="math-inline">\{estDialogWidth\} H\=</span>{estDialogHeight}`);
+        console.log(`Calculated: top=<span class="math-inline">\{top\} left\=</span>{left}`);
+
 
         dialogBox.style.top = `${top}px`;
         dialogBox.style.left = `${left}px`;
@@ -708,7 +721,7 @@ function movePlayer(event) {
     }
 
     if (moved) {
-        positionElement('trainer', playerTileX, playerTileY); // Update player position visually
+        positionElement('player', playerTileX, playerTileY); // Update player position visually
         checkForWaterProximity(); // Check if near water for fishing prompt
     }
 }
@@ -727,9 +740,9 @@ const map = [
     [1, 1, 1, 1, 4, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 3],
     [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 3, 3, 3, 3, 3, 3],
     [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 2, 2, 2, 3, 3, 3, 3, 3, 3],
-    [0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3],
+    [0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 3, 3, 3, 3, 3],
     [0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3],
     [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3, 3],
 ];
-const tileTypes = { 0: "grass", 1: "wall", 2: "path", 3: "water", 4: "door", 5: "floor" };
+const tileTypes = { 0: "grass", 1: "wall", 2: "path", 3: "water", 4: "door", 5: "floor", 6: "dock" };
 const tiles = {};

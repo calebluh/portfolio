@@ -36,8 +36,8 @@
         <div class="npc" id="skills-trainer">
             <img src="assets/sprites/npc-skills.png" alt="Skills Trainer">
         </div>
-        <div class="npc" id="experience-trainer">
-            <img src="assets/sprites/npc-experience.png" alt="Experience Trainer">
+        <div class="npc" id="fisher">
+            <img src="assets/sprites/fisher.png" alt="Fisher">
         </div>
         <div id="pc">
             <img src="assets/sprites/pc.png" alt="Projects PC">
@@ -45,8 +45,8 @@
         <div id="mailbox">
             <img src="assets/sprites/mailbox.png" alt="Mailbox">
         </div>
-        <div id="trainer">
-            <img src="assets/sprites/trainer.png" alt="Your Trainer">
+        <div id="player">
+            <img src="assets/sprites/player.png" alt="Your Player">
         </div>
         <div id="bookshelf">
             <img src="assets/sprites/bookshelf.png" alt="Bookshelf">
@@ -54,11 +54,13 @@
         <div id="vinyl-shelf">
             <img src="assets/sprites/vinyl-shelf.png" alt="Vinyl Shelf">
         </div>
-
-        <div id="dialog-box" class="game-dialog" style="display: none;">
+        <div id="server-object">
+            <img src="assets/sprites/server.png" alt="Server Object">
+        </div>
+        <div id="dialog-box" class="game-dialog speech-bubble" style="display: none;">
             <p id="dialog-text"></p>
             <button id="close-dialog">Close</button>
-        </div>
+       </div>
 
         <div id="project-choice-dialog" class="game-dialog" style="display: none;">
             <p>Which project would you like to view?</p>
@@ -124,6 +126,27 @@
             <p id="initials-score-display"></p> <p>Enter your initials (3 letters):</p>
             <input type="text" id="initials-input" maxlength="3" size="3">
             <button id="submit-initials-btn">Save Score</button>
+        </div>
+
+        <div id="it-experience-dialog" class="game-dialog" style="display: none;">
+            <h2>Active Directory / Virtualization Experience</h2>
+            <h4>Course Learning Outcomes Achieved:</h4>
+            <ul>
+                <li>Performed basic system administration tasks on Windows Server 2022.</li>
+                <li>Defined, installed, and maintained system security policies under Server 2022.</li>
+                <li>Wrote simple professional scripts (PowerShell, Python) for system administration.</li>
+                <li>Implemented and managed Active Directory under Windows Server 2022.</li>
+                <li>Designed and analyzed Active Directory architectures.</li>
+                <li>Performed user administration tasks.</li>
+                <li>Conducted feasibility studies for virtualization environments.</li>
+            </ul>
+            <h4>Project Setup Details:</h4>
+            <p>
+                Created and administered a virtual network using Oracle VirtualBox (on an x64 host) with multiple Windows Server 2022 and 
+                Windows 10/11 systems simultaneously to implement Active Directory Domain Services, configure policies, manage users, and 
+                practice system administration tasks. Required careful resource management (RAM, CPU) within the virtual environment.
+            </p>
+            <button id="close-it-experience-dialog">Close</button>
         </div>
 
     </div> 
