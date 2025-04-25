@@ -528,9 +528,9 @@ function textDelay(element, text, speed = 50) {
 }
 
 function showDialog(text) {
-    if (typewriterInterval) {
-        clearInterval(typewriterInterval);
-        typewriterInterval = null;
+    if (delay) {
+        clearInterval(delay);
+        delay = null;
     }
 
     if (dialogText && dialogBox) {
