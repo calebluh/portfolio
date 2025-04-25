@@ -337,6 +337,21 @@ body {
     image-rendering: pixelated;
 }
 
+#it-experience-dialog {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 25px; 
+}
+
+#it-experience-dialog ul {
+   padding-left: 20px;
+   margin-bottom: 15px;
+}
+
+#it-experience-dialog p {
+    margin-bottom: 15px;
+}
+
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-0.5px); }

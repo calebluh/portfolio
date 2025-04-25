@@ -193,7 +193,7 @@ function positionElements() {
     positionElement('player', playerTileX, playerTileY);
     positionElement('mailbox', 6, 14);
     positionElement('resume-trainer', 3, 10);
-    positionElement('skills-trainer', 19, 18);
+    positionElement('skills-trainer', 18, 18);
     positionElement('fisher', 11, 11);
     positionElement('server-object', 3, 1);
 }
