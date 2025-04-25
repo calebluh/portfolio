@@ -260,8 +260,8 @@ function setupInteractions() {
     };
 
     setupListener("resume-trainer", () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank'));
-    setupListener("skills-trainer", (event) => showDialog("Certifications: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt", event.currentTarget));
-    setupListener("fisher", (event) => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!", '_blank'));
+    setupListener("skills-trainer", () => showDialog("Certifications: Microsoft IT Support Specialist, Autodesk Inventor Certified User, TestOut IT Fundamentals Pro, Excel Purple Belt"));    
+    setupListener("fisher", () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!"));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
     const serverObject = document.getElementById('server-object');
     if (serverObject && itExperienceDialog) {
@@ -527,45 +527,23 @@ function textDelay(element, text, speed = 50) {
     }, speed);
 }
 
-function showDialog(text, targetElement) {
-    if (delay) {
-        clearInterval(delay);
-        delay = null;
+function showDialog(text) {
+    if (typewriterInterval) {
+        clearInterval(typewriterInterval);
+        typewriterInterval = null;
     }
 
-    if (dialogText && dialogBox && targetElement) {
-        const targetRect = targetElement.getBoundingClientRect();
-        const mapRect = gameMap.getBoundingClientRect();
-        const dialogStyle = window.getComputedStyle(dialogBox); 
-
-        const estDialogHeight = parseFloat(dialogStyle.height) || 50;
-        const estDialogWidth = parseFloat(dialogStyle.width) || 150;
-
-        // Position above target
-        let top = targetRect.top - mapRect.top - estDialogHeight - 15;
-        let left = targetRect.left - mapRect.left + (targetRect.width / 2) - (estDialogWidth / 2);
-
-        if (top < 0) { 
-            top = targetRect.bottom - mapRect.top + 10;
-        }
-        left = Math.max(5, Math.min(left, mapRect.width - estDialogWidth - 5));
-
-        console.log(`TargetRect: T=<span class="math-inline">\{targetRect\.top\} L\=</span>{targetRect.left} W=${targetRect.width}`);
-        console.log(`MapRect: T=<span class="math-inline">\{mapRect\.top\} L\=</span>{mapRect.left}`);
-        console.log(`Dialog Est Dims: W=<span class="math-inline">\{estDialogWidth\} H\=</span>{estDialogHeight}`);
-        console.log(`Calculated: top=<span class="math-inline">\{top\} left\=</span>{left}`);
-
-
-        dialogBox.style.top = `${top}px`;
-        dialogBox.style.left = `${left}px`;
+    if (dialogText && dialogBox) {
+        dialogBox.style.top = '';
+        dialogBox.style.left = '';
 
         dialogBox.style.display = "block";
 
-        textDelay(dialogText, text, 50);
+        textDelay(dialogText, text, 50); 
 
-        hideJoystick();
+        hideJoystick(); 
     } else {
-        console.error("Dialog elements or targetElement not found for showDialog.");
+        console.error("Dialog elements (dialogText or dialogBox) not found for showDialog.");
     }
 }
 
