@@ -100,7 +100,7 @@ body {
 
 .game-dialog {
     position: absolute;
-    top: 50%; 
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: rgba(230, 230, 230, 0.95);
@@ -143,19 +143,6 @@ body {
 
 .game-dialog button:hover {
     background-color: #ccc;
-}
-
-.game-dialog::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #333;
 }
 
 .speech-bubble {
@@ -333,6 +320,14 @@ body {
         height: 100px;
         bottom: 15px;
     }
+}
+
+#server-object {
+    position: absolute; 
+    z-index: 2; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #server-object img {
