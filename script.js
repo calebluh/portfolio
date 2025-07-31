@@ -30,13 +30,11 @@ const projectChoiceDialog = document.getElementById('project-choice-dialog');
 const contactFormDialog = document.getElementById("contact-form-dialog");
 const pcElement = document.getElementById("pc");
 const joystickToggleCheckbox = document.getElementById('joystick-toggle-checkbox');
-const serverObjectElement = document.getElementById('server-object'); // If needed directly
+const serverObjectElement = document.getElementById('server-object');
 const itExperienceDialog = document.getElementById('it-experience-dialog');
 const closeItExperienceButton = document.getElementById('close-it-experience-dialog');
-
-// New elements for the IT Intern room
 const itInternNPC = document.getElementById('it-intern-npc');
-const serverRack = document.getElementById('server-rack');
+const serverRack = document.getElementById('server-object');
 const itInternDialog = document.getElementById('it-intern-dialog');
 const closeItInternButton = document.getElementById('close-it-intern-dialog');
 const serverRackDialog = document.getElementById('server-rack-dialog');
