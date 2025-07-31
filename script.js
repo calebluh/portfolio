@@ -287,6 +287,7 @@ function setupInteractions() {
     setupListener("skills-trainer", () => showDialog("Certifications: Practical Introduction to Quantum-Safe Cryptography, Variational Algorithm Design, Basics of Quantum Information, Quantum Business Foundations, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Excel Purple Belt, Autodesk Inventor Certified User"));
     setupListener("fisher", () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!"));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
+    
     const serverObject = document.getElementById('server-object');
     if (serverObject && itExperienceDialog) {
         serverObject.addEventListener('click', () => {
@@ -297,6 +298,20 @@ function setupInteractions() {
     if (closeItExperienceButton && itExperienceDialog) {
         closeItExperienceButton.addEventListener('click', () => {
             if (itExperienceDialog) itExperienceDialog.style.display = 'none';
+            showJoystickIfNeeded();
+        });
+    }
+
+    const serverObject2 = document.getElementById('server-object-2');
+    if (serverObject2 && internExperienceDialog) {
+        serverObject2.addEventListener('click', () => {
+            if (internExperienceDialog) internExperienceDialog.style.display = 'block';
+            hideJoystick();
+        });
+    }
+    if (closeInternExperienceButton && internExperienceDialog) {
+        closeInternExperienceButton.addEventListener('click', () => {
+            if (internExperienceDialog) internExperienceDialog.style.display = 'none';
             showJoystickIfNeeded();
         });
     }
