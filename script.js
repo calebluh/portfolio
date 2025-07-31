@@ -39,6 +39,7 @@ const itInternDialog = document.getElementById('it-intern-dialog');
 const closeItInternButton = document.getElementById('close-it-intern-dialog');
 const serverRackDialog = document.getElementById('server-rack-dialog');
 const closeServerRackButton = document.getElementById('close-server-rack-dialog');
+const musicToggleCheckbox = document.getElementById('music-toggle-checkbox');
 
 // -=-=-=- Firebase Initialization -=-=-=-
 const firebaseConfig = {
@@ -109,7 +110,7 @@ function isAnyDialogOpen() {
 // -=-=-=- Music Control -=-=-=-
 document.getElementById('start-btn').onclick = function() {
   const music = document.getElementById('bg-music');
-  if (music) {
+  if (music && (!musicToggleCheckbox || musicToggleCheckbox.checked)) {
     music.play().catch(() => {});
   }
 };
@@ -212,8 +213,8 @@ function positionElements() {
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 3, 12);
     positionElement('fisher', 11, 11);
-    positionElement('server-object', 15, 1);
-    positionElement('server-rack', 17, 1);
+    positionElement('server-ad', 15, 1);
+    positionElement('server-intern', 17, 1);
 }
 
 function positionElement(elementId, tileX, tileY) {
