@@ -398,4 +398,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-width: 48px;
+    min-height: 48px;
 }

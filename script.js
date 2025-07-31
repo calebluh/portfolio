@@ -716,46 +716,29 @@ function triggerMovement(direction) {
 }
 
 function movePlayer(event) {
-    console.log(` movePlayer called with key: ${event.key}`);
-
-    if (isFishingActive || isAnyDialogOpen()) {
-        console.log(` movePlayer blocked: Fishing=${isFishingActive}, DialogOpen=${isAnyDialogOpen()}`);
-        return;
-    }
+    // -=-=- Movement -=-=-
+    const key = (event && event.key) ? event.key : String(event);
+    if (!key) return;
+    if (isFishingActive || isAnyDialogOpen()) return;
     let nextX = playerTileX, nextY = playerTileY, moved = false;
-    // Calculate next position based on key
-    switch (event.key) {
+    switch (key) {
         case "ArrowUp": case "w": nextY -= 1; break;
         case "ArrowDown": case "s": nextY += 1; break;
         case "ArrowLeft": case "a": nextX -= 1; break;
         case "ArrowRight": case "d": nextX += 1; break;
         default: return;
     }
-
-    console.log(`  Attempting move from (${playerTileX},${playerTileY}) to (${nextX},${nextY})`);
-
-    // Check boundaries
-    if (nextX < 0 || nextX >= MAP_WIDTH || nextY < 0 || nextY >= MAP_HEIGHT) {
-        console.log(`  Move blocked: Out of map bounds.`);
-        return;
-    }
+    if (nextX < 0 || nextX >= MAP_WIDTH || nextY < 0 || nextY >= MAP_HEIGHT) return;
     const targetTileType = map[nextY]?.[nextX];
-    const impassableTiles = [ 1, 3, 8 ]; // Wall=1, Water=3, New Wall=8
-
-    console.log(`   Target tile type at (${nextX},${nextY}): ${targetTileType}`);
-
+    const impassableTiles = [ 1, 3, 8 ];
     if (targetTileType !== undefined && !impassableTiles.includes(targetTileType)) {
-        console.log(`    Move allowed.`);
         playerTileX = nextX;
         playerTileY = nextY;
         moved = true;
-    } else {
-        console.log(`    Move blocked: Impassable tile type (${targetTileType}).`);
     }
-
     if (moved) {
-        positionElement('player', playerTileX, playerTileY); // Update player position visually
-        checkForWaterProximity(); // Check if near water for fishing prompt
+        positionElement('player', playerTileX, playerTileY);
+        checkForWaterProximity();
     }
 }
 
