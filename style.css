@@ -86,6 +86,7 @@ body {
     justify-content: center;
     align-items: center;
 }
+
 #player {
     position: absolute;
     cursor: default;
