@@ -106,6 +106,11 @@ function isAnyDialogOpen() {
            itExperienceDialog?.style.display === 'block';
 }
 
+// -=-=-=- Music Control -=-=-=-
+document.getElementById('start-btn').onclick = function() {
+  document.getElementById('music').play();
+};
+
 // --- Joystick Visibility Helpers ---
 function hideJoystick() {
     if (joystickZone) {
