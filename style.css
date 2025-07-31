@@ -98,6 +98,16 @@ body {
     image-rendering: pixelated;
 }
 
+#server-rack img:hover, #bookshelf img:hover, #vinyl-shelf img:hover {
+  filter: drop-shadow(0 0 8px #00eaff);
+  transform: scale(1.05);
+  transition: 0.2s;
+}
+
+#game-map {
+  cursor: url('assets/cursor/pointer.png'), auto;
+}
+
 .game-dialog {
     position: absolute;
     top: 50%;
@@ -115,6 +125,14 @@ body {
     width: auto;
     box-sizing: border-box;
     display: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.game-dialog[style*="display: block"] {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .game-dialog h2, .game-dialog h4 {
