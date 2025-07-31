@@ -337,7 +337,7 @@ body {
     image-rendering: pixelated;
 }
 
-#server2 {
+#server-object-2 {
     position: absolute; 
     z-index: 2; 
     display: flex;
@@ -345,7 +345,7 @@ body {
     align-items: center;
 }
 
-#server2 img {
+#server-object-2 img {
     width: 100%; 
     height: 100%;
     object-fit: contain;
@@ -390,14 +390,12 @@ body {
 }
 
 /* -=-=- Gold Glow Hover for Interactables -=-=- */
-.npc img:hover,
 #pc img:hover,
 #mailbox img:hover,
-#player img:hover,
 #bookshelf img:hover,
 #vinyl-shelf img:hover,
-#server img:hover,
-#server2 img:hover {
+#server-object  img:hover,
+#server-object-2  img:hover {
   filter: drop-shadow(0 0 12px #f9d77e) brightness(1.2);
   transform: scale(1.07);
   transition: 0.2s;
