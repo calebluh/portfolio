@@ -30,15 +30,15 @@ const projectChoiceDialog = document.getElementById('project-choice-dialog');
 const contactFormDialog = document.getElementById("contact-form-dialog");
 const pcElement = document.getElementById("pc");
 const joystickToggleCheckbox = document.getElementById('joystick-toggle-checkbox');
-const serverObjectElement = document.getElementById('server-object');
+
+// -=-=- Server Dialog Elements -=-=-
+const serverAdElement = document.getElementById('server-ad');
+const serverInternElement = document.getElementById('server-intern');
 const itExperienceDialog = document.getElementById('it-experience-dialog');
 const closeItExperienceButton = document.getElementById('close-it-experience-dialog');
-const itInternNPC = document.getElementById('it-intern-npc');
-const serverRack = document.getElementById('server-object');
-const itInternDialog = document.getElementById('it-intern-dialog');
-const closeItInternButton = document.getElementById('close-it-intern-dialog');
 const serverRackDialog = document.getElementById('server-rack-dialog');
 const closeServerRackButton = document.getElementById('close-server-rack-dialog');
+const music = document.getElementById('bg-music');
 const musicToggleCheckbox = document.getElementById('music-toggle-checkbox');
 
 // -=-=-=- Firebase Initialization -=-=-=-
@@ -115,7 +115,19 @@ document.getElementById('start-btn').onclick = function() {
   }
 };
 
-// --- Joystick Visibility Helpers ---
+// -=-=- Toggle music on checkbox change -=-=-
+if (musicToggleCheckbox) {
+  musicToggleCheckbox.addEventListener('change', function() {
+    if (musicToggleCheckbox.checked) {
+      music.play().catch(() => {});
+    } else {
+      music.pause();
+      music.currentTime = 0;
+    }
+  });
+}
+
+// -=-=- Joystick Visibility Helpers -=-=-
 function hideJoystick() {
     if (joystickZone) {
         joystickZone.style.display = 'none';
@@ -204,6 +216,7 @@ function drawMap() {
     }
 }
 
+
 function positionElements() {
     positionElement('pc', 4, 1);
     positionElement('bookshelf', 1, 1);
@@ -269,6 +282,7 @@ function checkForWaterProximity() {
     }
 }
 
+
 function setupInteractions() {
     document.removeEventListener("keydown", movePlayer);
     document.addEventListener("keydown", movePlayer);
@@ -283,32 +297,41 @@ function setupInteractions() {
     setupListener("fisher", () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!"));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
 
-    setupListener("server-rack", () => {
-        if (serverRackDialog) {
-            serverRackDialog.style.display = 'block';
-            hideJoystick();
-        }
-    });
-    setupListener("close-server-rack-dialog", () => {
-        if (serverRackDialog) {
-            serverRackDialog.style.display = 'none';
-            showJoystickIfNeeded();
-        }
-    });
+    // -=-=- Server Interactions -=-=-
+    if (serverAdElement) {
+        serverAdElement.addEventListener("click", () => {
+            if (itExperienceDialog) {
+                itExperienceDialog.style.display = 'block';
+                hideJoystick();
+            }
+        });
+    }
+    if (serverInternElement) {
+        serverInternElement.addEventListener("click", () => {
+            if (serverRackDialog) {
+                serverRackDialog.style.display = 'block';
+                hideJoystick();
+            }
+        });
+    }
+    if (closeItExperienceButton) {
+        closeItExperienceButton.addEventListener("click", () => {
+            if (itExperienceDialog) {
+                itExperienceDialog.style.display = 'none';
+                showJoystickIfNeeded();
+            }
+        });
+    }
+    if (closeServerRackButton) {
+        closeServerRackButton.addEventListener("click", () => {
+            if (serverRackDialog) {
+                serverRackDialog.style.display = 'none';
+                showJoystickIfNeeded();
+            }
+        });
+    }
 
-    setupListener("server-object", () => {
-        if (itExperienceDialog) {
-            itExperienceDialog.style.display = 'block';
-            hideJoystick();
-        }
-    });
-    setupListener("close-it-experience-dialog", () => {
-        if (itExperienceDialog) {
-            itExperienceDialog.style.display = 'none';
-            showJoystickIfNeeded();
-        }
-    });
-
+    // -=-=- Other Interactions -=-=-
     if (pcElement && projectChoiceDialog) {
         const closeBtn = document.getElementById('close-btn');
         setupListener("pc", () => { if(projectChoiceDialog) projectChoiceDialog.style.display = 'block'; hideJoystick(); });
@@ -344,7 +367,6 @@ function setupInteractions() {
     if (submitInitialsButton) setupListener("submit-initials-btn", submitScore);
     if (closeScoreboardButton) setupListener("close-scoreboard-btn", () => { if(scoreboardDialog) scoreboardDialog.style.display = 'none'; showJoystickIfNeeded(); });
     if (toggleScoreboardButton) toggleScoreboardButton.addEventListener('click', async () => {
-        console.log("Dialog check for scores btn:", isAnyDialogOpen()); // Keep debug log
         if (scoreboardDialog?.style.display === 'block') {
             scoreboardDialog.style.display = 'none'; showJoystickIfNeeded();
         } else {
