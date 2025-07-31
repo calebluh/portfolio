@@ -1,4 +1,4 @@
-Const startScreen = document.getElementById("start-screen");
+const startScreen = document.getElementById("start-screen");
 const startBtn = document.getElementById("start-btn");
 const gameMap = document.getElementById("game-map");
 const gameCanvas = document.getElementById("gameCanvas");
