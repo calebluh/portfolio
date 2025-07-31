@@ -86,6 +86,14 @@ body {
     justify-content: center;
     align-items: center;
 }
+#player {
+    position: absolute;
+    cursor: default;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .npc img,
 #pc img,
