@@ -108,7 +108,10 @@ function isAnyDialogOpen() {
 
 // -=-=-=- Music Control -=-=-=-
 document.getElementById('start-btn').onclick = function() {
-  document.getElementById('music').play();
+  const music = document.getElementById('bg-music');
+  if (music) {
+    music.play().catch(() => {});
+  }
 };
 
 // --- Joystick Visibility Helpers ---
@@ -291,14 +294,19 @@ function setupInteractions() {
             showJoystickIfNeeded();
         }
     });
-    
-    const serverObject = document.getElementById('server-object');
-    if (serverObject && itExperienceDialog) {
-        serverObject.addEventListener('click', () => {
-            if (itExperienceDialog) itExperienceDialog.style.display = 'block';
+
+    setupListener("server-object", () => {
+        if (itExperienceDialog) {
+            itExperienceDialog.style.display = 'block';
             hideJoystick();
-        });
-    }
+        }
+    });
+    setupListener("close-it-experience-dialog", () => {
+        if (itExperienceDialog) {
+            itExperienceDialog.style.display = 'none';
+            showJoystickIfNeeded();
+        }
+    });
 
     if (pcElement && projectChoiceDialog) {
         const closeBtn = document.getElementById('close-btn');
