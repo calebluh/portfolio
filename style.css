@@ -386,7 +386,16 @@ body {
 #server-rack:hover,
 #server-ad img:hover,
 #server-intern img:hover {
-  filter: drop-shadow(0 0 12px #00eaff) brightness(1.2);
+  filter: drop-shadow(0 0 12px #f9d77e) brightness(1.2);
   transform: scale(1.07);
   transition: 0.2s;
+}
+
+#server-ad,
+#server-intern {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
