@@ -16,16 +16,14 @@
 <body>
     <div id="start-screen">
         <h1>Caleb's 2D Portfolio Game</h1>
+
         <p class="start-instructions">Use WASD or Arrow Keys to move.</p>
-        <p class="start-instructions">Click objects/people to interact.</p>
+        <p class="start-instructions">Click objects/people to interact.</p>        
         <div class="joystick-toggle">
             <input type="checkbox" id="joystick-toggle-checkbox" checked>
             <label for="joystick-toggle-checkbox">Enable Joystick (Touch Devices)</label>
         </div>
-        <div class="music-toggle">
-            <input type="checkbox" id="music-toggle-checkbox" checked>
-            <label for="music-toggle-checkbox">Enable Music</label>
-        </div>
+
         <button id="start-btn">Press Start</button>
     </div>
 
@@ -56,19 +54,14 @@
         <div id="vinyl-shelf">
             <img src="assets/sprites/vinyl-shelf.png" alt="Vinyl Shelf">
         </div>
-        <div id="server-ad">
-            <img src="assets/sprites/server.png" alt="Active Directory Server">
+        <div id="server-object">
+            <img src="assets/sprites/server.png" alt="Server Object">
         </div>
-        <div id="server-intern">
-            <img src="assets/sprites/server.png" alt="IT Internship Server">
-        </div>
-
-        <audio id="bg-music" src="assets/music/music.mp3" loop></audio>
-
         <div id="dialog-box" class="game-dialog" style="display: none;">
             <p id="dialog-text"></p>
             <button id="close-dialog">Close</button>
         </div>
+
         <div id="project-choice-dialog" class="game-dialog" style="display: none;">
             <p>Which project would you like to view?</p>
             <button id="roblox-btn">Lacrosse Legends (Roblox)</button>
@@ -76,6 +69,7 @@
             <button id="linkedin-btn">LinkedIn</button>
             <button id="close-btn">Close</button>
         </div>
+
         <div id="contact-form-dialog" class="game-dialog" style="display: none;">
             <h2>Contact Me</h2>
             <form id="contact-form" action="https://formspree.io/f/xjkwvwaa" method="POST">
@@ -89,19 +83,22 @@
                 <button type="button" id="close-contact-form">Close</button>
             </form>
         </div>
+
         <div id="bookshelf-dialog" class="game-dialog" style="display: none;">
             <h2>Bookshelf</h2>
             <ul>
-                <li>Currently Reading: Meditations</li>
-                <li>On My Shelf: The Illiad & The Odyssey, Memoirs of the Year 2500, The Republic, Learn Quantum Computing with Python and IBM Quantum, Ready Player One</li>
+                <li>Currently Reading: The Republic, Learn Quantum Computing with Python and IBM Quantum, Quantum Computing for Everyone</li>
+                <li>On My Shelf: The Illiad & The Odyssey, Memoirs of the Year 2500</li>
             </ul>
             <button id="close-bookshelf-dialog">Close</button>
         </div>
+
         <div id="fishing-prompt" class="game-dialog" style="display: none;">
             <p>You sense something in the water...</p>
             <button id="start-fishing-btn">Cast Line</button>
             <button id="cancel-fishing-btn">Leave</button>
         </div>
+
         <div id="fishing-game" class="game-dialog" style="display: none;">
             <h4>Fishing Time!</h4>
             <div id="fishing-area">
@@ -116,18 +113,21 @@
             <button id="reel-button">Cast / Reel</button>
             <button id="stop-fishing-btn">Stop Fishing</button>
         </div>
+
         <div id="scoreboard-dialog" class="game-dialog" style="display: none;">
             <h4>Fishing High Scores</h4>
             <ol id="score-list">
             </ol>
             <button id="close-scoreboard-btn">Close</button>
         </div>
+
         <div id="initials-prompt" class="game-dialog" style="display: none;">
             <h4>New High Score!</h4>
             <p id="initials-score-display"></p> <p>Enter your initials (3 letters):</p>
             <input type="text" id="initials-input" maxlength="3" size="3">
             <button id="submit-initials-btn">Save Score</button>
         </div>
+
         <div id="it-experience-dialog" class="game-dialog" style="display: none;">
             <h2>Active Directory / Virtualization Experience</h2>
             <h4>Course Learning Outcomes Achieved:</h4>
@@ -149,23 +149,11 @@
             <button id="close-it-experience-dialog">Close</button>
         </div>
 
-        <div id="server-rack-dialog" class="game-dialog" style="display: none;">
-            <h2>IT Internship - City of Oconomowoc</h2>
-            <p>As an IT Intern, I provided technical support for all city departments and managed device setup and deployment. I have hands-on experience in server administration and networking.</p>
-            <ul>
-                <li>Assisted the Police Department with network configuration and troubleshooting.</li>
-                <li>Configured and maintained VPN connections.</li>
-                <li>Troubleshooted and resolved WiFi connectivity issues for city facilities.</li>
-                <li>Supported the management and maintenance of the city's Active Directory Domain Controller.</li>
-                <li>Administered and configured virtual machines (VMware vSphere, Proxmox).</li>
-                <li>Managed DNS entries and implemented SSL certificates using OpenSSL and Keytool.</li>
-            </ul>
-            <button id="close-server-rack-dialog">Close</button>
-        </div>
     </div> 
     
     <div id="joystick-zone"></div>
+
     <button id="toggle-scoreboard-btn" style="position: fixed; top: 10px; right: 10px; z-index: 150;">Scores</button>
 
-</body>
+    </body>
 </html>

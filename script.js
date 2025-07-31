@@ -30,16 +30,9 @@ const projectChoiceDialog = document.getElementById('project-choice-dialog');
 const contactFormDialog = document.getElementById("contact-form-dialog");
 const pcElement = document.getElementById("pc");
 const joystickToggleCheckbox = document.getElementById('joystick-toggle-checkbox');
-
-// -=-=- Server Dialog Elements -=-=-
-const serverAdElement = document.getElementById('server-ad');
-const serverInternElement = document.getElementById('server-intern');
+const serverObjectElement = document.getElementById('server-object'); // If needed directly
 const itExperienceDialog = document.getElementById('it-experience-dialog');
 const closeItExperienceButton = document.getElementById('close-it-experience-dialog');
-const serverRackDialog = document.getElementById('server-rack-dialog');
-const closeServerRackButton = document.getElementById('close-server-rack-dialog');
-const music = document.getElementById('bg-music');
-const musicToggleCheckbox = document.getElementById('music-toggle-checkbox');
 
 // -=-=-=- Firebase Initialization -=-=-=-
 const firebaseConfig = {
@@ -101,13 +94,10 @@ function isAnyDialogOpen() {
            scoreboardDialog?.style.display === 'block' ||
            projectChoiceDialog?.style.display === 'block' ||
            contactFormDialog?.style.display === 'block' ||
-           bookshelfDialog?.style.display === 'block' ||
-           itInternDialog?.style.display === 'block' ||
-           serverRackDialog?.style.display === 'block' ||
-           itExperienceDialog?.style.display === 'block';
+           bookshelfDialog?.style.display === 'block';
 }
 
-/// -=-=- Joystick Visibility Helpers -=-=-
+// --- Joystick Visibility Helpers ---
 function hideJoystick() {
     if (joystickZone) {
         joystickZone.style.display = 'none';
@@ -132,26 +122,7 @@ function showJoystickIfNeeded() {
         console.log("--> Joystick Hidden (Not touch or no joystick obj)");
     }
 }
-
-// -=-=-=- Music Control -=-=-=-
-document.getElementById('start-btn').onclick = function() {
-  const music = document.getElementById('bg-music');
-  if (music && (!musicToggleCheckbox || musicToggleCheckbox.checked)) {
-    music.play().catch(() => {});
-  }
-};
-
-// -=-=- Toggle music on checkbox change -=-=-
-if (musicToggleCheckbox) {
-  musicToggleCheckbox.addEventListener('change', function() {
-    if (musicToggleCheckbox.checked) {
-      music.play().catch(() => {});
-    } else {
-      music.pause();
-      music.currentTime = 0;
-    }
-  });
-}
+// --- End Helpers ---
 
 startBtn.addEventListener('click', () => {
     startScreen.style.display = 'none';
@@ -177,11 +148,11 @@ async function init() {
 function loadTileImages() {
     return new Promise((resolve) => {
         let imagesLoaded = 0;
-        const tileKeys = Object.keys(tileTypes);
+        const tileKeys = Object.keys(tileTypes); // Store keys
         const totalImages = tileKeys.length;
         if (totalImages === 0) { resolve(); return; }
 
-        tileKeys.forEach(key => {
+        tileKeys.forEach(key => { // Use forEach for clarity
             const img = new Image();
             img.src = `assets/tiles/${tileTypes[key]}.png`;
             img.onload = () => {
@@ -215,7 +186,6 @@ function drawMap() {
     }
 }
 
-
 function positionElements() {
     positionElement('pc', 4, 1);
     positionElement('bookshelf', 1, 1);
@@ -225,8 +195,7 @@ function positionElements() {
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 3, 12);
     positionElement('fisher', 11, 11);
-    positionElement('server-ad', 15, 1);
-    positionElement('server-intern', 17, 1);
+    positionElement('server-object', 3, 1);
 }
 
 function positionElement(elementId, tileX, tileY) {
@@ -281,13 +250,9 @@ function checkForWaterProximity() {
     }
 }
 
-
 function setupInteractions() {
-    // Only add keydown once
-    if (!window._movePlayerListenerAdded) {
-        document.addEventListener("keydown", movePlayer);
-        window._movePlayerListenerAdded = true;
-    }
+    document.removeEventListener("keydown", movePlayer);
+    document.addEventListener("keydown", movePlayer);
 
     const setupListener = (id, action) => {
         const element = document.getElementById(id);
@@ -295,45 +260,23 @@ function setupInteractions() {
     };
 
     setupListener("resume-trainer", () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank'));
-    setupListener("skills-trainer", () => showDialog("Certifications: Variational Algorithm Design, Basics of Quantum Information, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Level 3: Excel Purple Belt, Autodesk Inventor Certified User"));
+    setupListener("skills-trainer", () => showDialog("Certifications: Practical Introduction to Quantum-Safe Cryptography, Variational Algorithm Design, Basics of Quantum Information, Quantum Business Foundations, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Excel Purple Belt, Autodesk Inventor Certified User"));
     setupListener("fisher", () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!"));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
-
-    // -=-=- Server Interactions -=-=-
-    if (serverAdElement) {
-        serverAdElement.addEventListener("click", () => {
-            if (itExperienceDialog) {
-                itExperienceDialog.style.display = 'block';
-                hideJoystick();
-            }
+    const serverObject = document.getElementById('server-object');
+    if (serverObject && itExperienceDialog) {
+        serverObject.addEventListener('click', () => {
+            if (itExperienceDialog) itExperienceDialog.style.display = 'block';
+            hideJoystick();
         });
     }
-    if (serverInternElement) {
-        serverInternElement.addEventListener("click", () => {
-            if (serverRackDialog) {
-                serverRackDialog.style.display = 'block';
-                hideJoystick();
-            }
-        });
-    }
-    if (closeItExperienceButton) {
-        closeItExperienceButton.addEventListener("click", () => {
-            if (itExperienceDialog) {
-                itExperienceDialog.style.display = 'none';
-                showJoystickIfNeeded();
-            }
-        });
-    }
-    if (closeServerRackButton) {
-        closeServerRackButton.addEventListener("click", () => {
-            if (serverRackDialog) {
-                serverRackDialog.style.display = 'none';
-                showJoystickIfNeeded();
-            }
+    if (closeItExperienceButton && itExperienceDialog) {
+        closeItExperienceButton.addEventListener('click', () => {
+            if (itExperienceDialog) itExperienceDialog.style.display = 'none';
+            showJoystickIfNeeded();
         });
     }
 
-    // -=-=- Other Interactions -=-=-
     if (pcElement && projectChoiceDialog) {
         const closeBtn = document.getElementById('close-btn');
         setupListener("pc", () => { if(projectChoiceDialog) projectChoiceDialog.style.display = 'block'; hideJoystick(); });
@@ -369,6 +312,7 @@ function setupInteractions() {
     if (submitInitialsButton) setupListener("submit-initials-btn", submitScore);
     if (closeScoreboardButton) setupListener("close-scoreboard-btn", () => { if(scoreboardDialog) scoreboardDialog.style.display = 'none'; showJoystickIfNeeded(); });
     if (toggleScoreboardButton) toggleScoreboardButton.addEventListener('click', async () => {
+        console.log("Dialog check for scores btn:", isAnyDialogOpen()); // Keep debug log
         if (scoreboardDialog?.style.display === 'block') {
             scoreboardDialog.style.display = 'none'; showJoystickIfNeeded();
         } else {
@@ -381,7 +325,6 @@ function setupInteractions() {
             if (projectChoiceDialog) projectChoiceDialog.style.display = 'none';
             if (contactFormDialog) contactFormDialog.style.display = 'none';
             if (bookshelfDialog) bookshelfDialog.style.display = 'none';
-            if (serverRackDialog) serverRackDialog.style.display = 'none';
         }
     });
 
@@ -694,27 +637,27 @@ function setupJoystickEvents() {
 
 // Replace the existing triggerMovement function
 function triggerMovement(direction) {
-    console.log(`  triggerMovement called with direction: ${direction}`);
-    if (isFishingActive || isAnyDialogOpen()) { 
-        console.log(`  triggerMovement blocked: Fishing=${isFishingActive}, DialogOpen=${isAnyDialogOpen()}`);
-        return;
-    }
-    if (!direction) {
-        console.log("  triggerMovement ignored: No direction provided.");
-        return;
-    }
-    let key;
-    switch (direction) {
-        case 'up': key = 'w'; break;
-        case 'down': key = 's'; break;
-        case 'left': key = 'a'; break;
-        case 'right': key = 'd'; break;
-        default:
-            console.log(`  triggerMovement ignored: Unknown direction '${direction}'.`);
-            return;
-    }
-    console.log(`   Mapping direction '${direction}' to key '${key}'`);
-    movePlayer({ key: key });
+     console.log(`  triggerMovement called with direction: ${direction}`);
+     if (isFishingActive || isAnyDialogOpen()) { 
+         console.log(`  triggerMovement blocked: Fishing=${isFishingActive}, DialogOpen=${isAnyDialogOpen()}`);
+         return;
+     }
+     if (!direction) {
+         console.log("  triggerMovement ignored: No direction provided.");
+         return;
+     }
+     let key;
+     switch (direction) {
+         case 'up': key = 'w'; break;
+         case 'down': key = 's'; break;
+         case 'left': key = 'a'; break;
+         case 'right': key = 'd'; break;
+         default:
+             console.log(`  triggerMovement ignored: Unknown direction '${direction}'.`);
+             return;
+     }
+     console.log(`   Mapping direction '${direction}' to key '${key}'`);
+     movePlayer({ key: key });
 }
 
 function movePlayer(event) {
@@ -742,7 +685,7 @@ function movePlayer(event) {
         return;
     }
     const targetTileType = map[nextY]?.[nextX];
-    const impassableTiles = [ 1, 3, 8 ]; // Wall=1, Water=3, New Wall=8
+    const impassableTiles = [ 1, 3 ]; // Wall=1, Water=3
 
     console.log(`   Target tile type at (${nextX},${nextY}): ${targetTileType}`);
 
@@ -763,14 +706,14 @@ function movePlayer(event) {
 
 // -=-=-=- Map Data & Tile Definitions -=-=-=-
 const map = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 1, 1, 4, 1, 1, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
     [1, 1, 1, 1, 4, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 3],
     [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 3, 3, 3, 3, 3, 3],
