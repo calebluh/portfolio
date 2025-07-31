@@ -382,7 +382,8 @@ body {
 #server-object img:hover,
 #server-rack img:hover,
 #pc img:hover,
-#mailbox img:hover {
+#mailbox img:hover,
+#server-rack:hover {
   filter: drop-shadow(0 0 12px #00eaff) brightness(1.2);
   transform: scale(1.07);
   transition: 0.2s;
