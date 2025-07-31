@@ -77,7 +77,9 @@ body {
 #mailbox,
 #player,
 #bookshelf,
-#vinyl-shelf {
+#vinyl-shelf
+#server-object,
+#server-object-2 {
     position: absolute;
     cursor: pointer;
     z-index: 2;
@@ -91,7 +93,9 @@ body {
 #mailbox img,
 #player img,
 #bookshelf img,
-#vinyl-shelf img {
+#vinyl-shelf img
+#server-object img,
+#server-object-2 img {
     width: 100%;
     height: 100%;
     object-fit: contain;
