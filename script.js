@@ -692,33 +692,25 @@ function setupJoystickEvents() {
 
 // Replace the existing triggerMovement function
 function triggerMovement(direction) {
-     console.log(`  triggerMovement called with direction: ${direction}`);
-     if (isFishingActive || isAnyDialogOpen()) { 
-         console.log(`  triggerMovement blocked: Fishing=${isFishingActive}, DialogOpen=${isAnyDialogOpen()}`);
-         return;
-     }
-     if (!direction) {
-         console.log("  triggerMovement ignored: No direction provided.");
-         return;
-     }
+     if (isFishingActive || isAnyDialogOpen()) return;
+     if (!direction) return;
      let key;
      switch (direction) {
          case 'up': key = 'w'; break;
          case 'down': key = 's'; break;
          case 'left': key = 'a'; break;
          case 'right': key = 'd'; break;
-         default:
-             console.log(`  triggerMovement ignored: Unknown direction '${direction}'.`);
-             return;
+         default: return;
      }
-     console.log(`   Mapping direction '${direction}' to key '${key}'`);
-     movePlayer({ key: key });
+     // Create a KeyboardEvent to match real keydown
+     const event = new KeyboardEvent('keydown', { key });
+     movePlayer(event);
 }
 
 function movePlayer(event) {
     // -=-=- Movement -=-=-
-    const key = (event && event.key) ? event.key : String(event);
-    if (!key) return;
+    if (!event || !event.key) return;
+    const key = event.key;
     if (isFishingActive || isAnyDialogOpen()) return;
     let nextX = playerTileX, nextY = playerTileY, moved = false;
     switch (key) {
