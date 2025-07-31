@@ -1,4 +1,4 @@
-const startScreen = document.getElementById("start-screen");
+Const startScreen = document.getElementById("start-screen");
 const startBtn = document.getElementById("start-btn");
 const gameMap = document.getElementById("game-map");
 const gameCanvas = document.getElementById("gameCanvas");
@@ -33,6 +33,14 @@ const joystickToggleCheckbox = document.getElementById('joystick-toggle-checkbox
 const serverObjectElement = document.getElementById('server-object'); // If needed directly
 const itExperienceDialog = document.getElementById('it-experience-dialog');
 const closeItExperienceButton = document.getElementById('close-it-experience-dialog');
+
+// New elements for the IT Intern room
+const itInternNPC = document.getElementById('it-intern-npc');
+const serverRack = document.getElementById('server-rack');
+const itInternDialog = document.getElementById('it-intern-dialog');
+const closeItInternButton = document.getElementById('close-it-intern-dialog');
+const serverRackDialog = document.getElementById('server-rack-dialog');
+const closeServerRackButton = document.getElementById('close-server-rack-dialog');
 
 // -=-=-=- Firebase Initialization -=-=-=-
 const firebaseConfig = {
@@ -94,7 +102,10 @@ function isAnyDialogOpen() {
            scoreboardDialog?.style.display === 'block' ||
            projectChoiceDialog?.style.display === 'block' ||
            contactFormDialog?.style.display === 'block' ||
-           bookshelfDialog?.style.display === 'block';
+           bookshelfDialog?.style.display === 'block' ||
+           itInternDialog?.style.display === 'block' ||
+           serverRackDialog?.style.display === 'block' ||
+           itExperienceDialog?.style.display === 'block';
 }
 
 // --- Joystick Visibility Helpers ---
@@ -196,6 +207,10 @@ function positionElements() {
     positionElement('skills-trainer', 3, 12);
     positionElement('fisher', 11, 11);
     positionElement('server-object', 3, 1);
+
+    // New element positions
+    positionElement('it-intern-npc', 17, 1);
+    positionElement('server-rack', 16, 3);
 }
 
 function positionElement(elementId, tileX, tileY) {
@@ -260,9 +275,37 @@ function setupInteractions() {
     };
 
     setupListener("resume-trainer", () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank'));
-    setupListener("skills-trainer", () => showDialog("Certifications: JavaScript Fundamentals, Practical Introduction to Quantum-Safe Cryptography, Variational Algorithm Design, Basics of Quantum Information, Quantum Business Foundations, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Excel Purple Belt, Autodesk Inventor Certified User"));
+    setupListener("skills-trainer", () => showDialog("Certifications: Variational Algorithm Design, Basics of Quantum Information, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Level 3: Excel Purple Belt, Autodesk Inventor Certified User"));
     setupListener("fisher", () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!"));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
+
+    // New interactions for the IT Intern room
+    setupListener("it-intern-npc", () => {
+        if (itInternDialog) {
+            itInternDialog.style.display = 'block';
+            hideJoystick();
+        }
+    });
+    setupListener("close-it-intern-dialog", () => {
+        if (itInternDialog) {
+            itInternDialog.style.display = 'none';
+            showJoystickIfNeeded();
+        }
+    });
+    setupListener("server-rack", () => {
+        if (serverRackDialog) {
+            serverRackDialog.style.display = 'block';
+            hideJoystick();
+        }
+    });
+    setupListener("close-server-rack-dialog", () => {
+        if (serverRackDialog) {
+            serverRackDialog.style.display = 'none';
+            showJoystickIfNeeded();
+        }
+    });
+    
+    // Existing interactions
     const serverObject = document.getElementById('server-object');
     if (serverObject && itExperienceDialog) {
         serverObject.addEventListener('click', () => {
@@ -325,6 +368,8 @@ function setupInteractions() {
             if (projectChoiceDialog) projectChoiceDialog.style.display = 'none';
             if (contactFormDialog) contactFormDialog.style.display = 'none';
             if (bookshelfDialog) bookshelfDialog.style.display = 'none';
+            if (itInternDialog) itInternDialog.style.display = 'none';
+            if (serverRackDialog) serverRackDialog.style.display = 'none';
         }
     });
 
@@ -685,7 +730,7 @@ function movePlayer(event) {
         return;
     }
     const targetTileType = map[nextY]?.[nextX];
-    const impassableTiles = [ 1, 3 ]; // Wall=1, Water=3
+    const impassableTiles = [ 1, 3, 8 ]; // Wall=1, Water=3, New Wall=8
 
     console.log(`   Target tile type at (${nextX},${nextY}): ${targetTileType}`);
 
@@ -710,10 +755,10 @@ const map = [
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 1, 1, 4, 1, 1, 1],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
     [1, 1, 1, 1, 4, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 3],
     [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 3, 3, 3, 3, 3, 3],
