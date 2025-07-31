@@ -260,7 +260,7 @@ function setupInteractions() {
     };
 
     setupListener("resume-trainer", () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank'));
-    setupListener("skills-trainer", () => showDialog("Certifications: Practical Introduction to Quantum-Safe Cryptography, Variational Algorithm Design, Basics of Quantum Information, Quantum Business Foundations, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Excel Purple Belt, Autodesk Inventor Certified User"));
+    setupListener("skills-trainer", () => showDialog("Certifications: JavaScript Fundamentals, Practical Introduction to Quantum-Safe Cryptography, Variational Algorithm Design, Basics of Quantum Information, Quantum Business Foundations, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Excel Purple Belt, Autodesk Inventor Certified User"));
     setupListener("fisher", () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!"));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
     const serverObject = document.getElementById('server-object');
@@ -706,12 +706,12 @@ function movePlayer(event) {
 
 // -=-=-=- Map Data & Tile Definitions -=-=-=-
 const map = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 1, 1, 4, 1, 1, 1],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
