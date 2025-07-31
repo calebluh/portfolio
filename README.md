@@ -41,9 +41,3 @@ Welcome to my interactive 2D portfolio game! This project showcases my web devel
 * [Firebase Firestore](https://firebase.google.com/docs/firestore) (for scoreboard)
 * [nipple.js](https://github.com/yoannmoinet/nipplejs) (for mobile joystick)
 * [Formspree](https://formspree.io/) (for contact form backend)
-
-## Setup (for development)
-
-1.  Clone the repository: `git clone https://github.com/calebluh/portfolio.git`
-2.  Navigate to the directory: `cd portfolio`
-3.  Open `index.html` in your web browser (preferably using a local server like VS Code's Live Server for proper asset loading).
