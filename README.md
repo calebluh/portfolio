@@ -14,7 +14,7 @@ Welcome to my interactive 2D portfolio game! This project showcases my web devel
 * **Collision Detection:** Prevents walking through walls and water.
 * **Interactive Objects & NPCs:** Click on objects and characters to trigger actions:
     * View Projects (PC)
-    * Access Resume, Skills, and Experience Info (Trainers)
+    * Access About Me, Certifications, Fisher, and **NEW** Resume (Trainers)
     * Open Contact Form (Mailbox)
     * Explore Reading List (Bookshelf)
     * Visit Discogs Collection (Vinyl Shelf)

@@ -285,7 +285,6 @@ function setupInteractions() {
     };
 
     setupListener("resume-trainer", () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank'));
-    setupListener("resume-npc", () => window.open('https://github.com/calebluh/about-me/blob/main/Caleb%20Luh%20-%20Resume%20July%202025.pdf', '_blank'));
     setupListener("skills-trainer", () => showDialog("Certifications: Practical Introduction to Quantum-Safe Cryptography, Variational Algorithm Design, Basics of Quantum Information, Quantum Business Foundations, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Excel Purple Belt, Autodesk Inventor Certified User"));
     setupListener("fisher", () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!"));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
@@ -315,6 +314,13 @@ function setupInteractions() {
         closeInternExperienceButton.addEventListener('click', () => {
             if (internExperienceDialog) internExperienceDialog.style.display = 'none';
             showJoystickIfNeeded();
+        });
+    }
+
+    if (resumeNpc) {
+        resumeNpc.addEventListener('click', () => {
+            console.log('Resume NPC clicked!');
+            window.open('assets/resume.pdf', '_blank');
         });
     }
 
