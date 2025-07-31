@@ -77,7 +77,9 @@ body {
 #mailbox,
 #player,
 #bookshelf,
-#vinyl-shelf {
+#vinyl-shelf,
+#server-ad,
+#server-intern {
     position: absolute;
     cursor: pointer;
     z-index: 2;

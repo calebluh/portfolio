@@ -691,45 +691,70 @@ function setupJoystickEvents() {
 
 // Replace the existing triggerMovement function
 function triggerMovement(direction) {
-     if (isFishingActive || isAnyDialogOpen()) return;
-     if (!direction) return;
-     let key;
-     switch (direction) {
-         case 'up': key = 'w'; break;
-         case 'down': key = 's'; break;
-         case 'left': key = 'a'; break;
-         case 'right': key = 'd'; break;
-         default: return;
-     }
-     // Create a KeyboardEvent to match real keydown
-     const event = new KeyboardEvent('keydown', { key });
-     movePlayer(event);
+    console.log(`  triggerMovement called with direction: ${direction}`);
+    if (isFishingActive || isAnyDialogOpen()) { 
+        console.log(`  triggerMovement blocked: Fishing=${isFishingActive}, DialogOpen=${isAnyDialogOpen()}`);
+        return;
+    }
+    if (!direction) {
+        console.log("  triggerMovement ignored: No direction provided.");
+        return;
+    }
+    let key;
+    switch (direction) {
+        case 'up': key = 'w'; break;
+        case 'down': key = 's'; break;
+        case 'left': key = 'a'; break;
+        case 'right': key = 'd'; break;
+        default:
+            console.log(`  triggerMovement ignored: Unknown direction '${direction}'.`);
+            return;
+    }
+    console.log(`   Mapping direction '${direction}' to key '${key}'`);
+    movePlayer({ key: key });
 }
 
 function movePlayer(event) {
-    // -=-=- Movement -=-=-
-    if (!event || !event.key) return;
-    const key = event.key;
-    if (isFishingActive || isAnyDialogOpen()) return;
+    console.log(` movePlayer called with key: ${event.key}`);
+
+    if (isFishingActive || isAnyDialogOpen()) {
+        console.log(` movePlayer blocked: Fishing=${isFishingActive}, DialogOpen=${isAnyDialogOpen()}`);
+        return;
+    }
     let nextX = playerTileX, nextY = playerTileY, moved = false;
-    switch (key) {
+    // Calculate next position based on key
+    switch (event.key) {
         case "ArrowUp": case "w": nextY -= 1; break;
         case "ArrowDown": case "s": nextY += 1; break;
         case "ArrowLeft": case "a": nextX -= 1; break;
         case "ArrowRight": case "d": nextX += 1; break;
         default: return;
     }
-    if (nextX < 0 || nextX >= MAP_WIDTH || nextY < 0 || nextY >= MAP_HEIGHT) return;
+
+    console.log(`  Attempting move from (${playerTileX},${playerTileY}) to (${nextX},${nextY})`);
+
+    // Check boundaries
+    if (nextX < 0 || nextX >= MAP_WIDTH || nextY < 0 || nextY >= MAP_HEIGHT) {
+        console.log(`  Move blocked: Out of map bounds.`);
+        return;
+    }
     const targetTileType = map[nextY]?.[nextX];
-    const impassableTiles = [ 1, 3, 8 ];
+    const impassableTiles = [ 1, 3, 8 ]; // Wall=1, Water=3, New Wall=8
+
+    console.log(`   Target tile type at (${nextX},${nextY}): ${targetTileType}`);
+
     if (targetTileType !== undefined && !impassableTiles.includes(targetTileType)) {
+        console.log(`    Move allowed.`);
         playerTileX = nextX;
         playerTileY = nextY;
         moved = true;
+    } else {
+        console.log(`    Move blocked: Impassable tile type (${targetTileType}).`);
     }
+
     if (moved) {
-        positionElement('player', playerTileX, playerTileY);
-        checkForWaterProximity();
+        positionElement('player', playerTileX, playerTileY); // Update player position visually
+        checkForWaterProximity(); // Check if near water for fishing prompt
     }
 }
 
