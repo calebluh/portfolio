@@ -204,11 +204,8 @@ function positionElements() {
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 3, 12);
     positionElement('fisher', 11, 11);
-    positionElement('server-object', 3, 1);
-
-    // New element positions
-    positionElement('it-intern-npc', 17, 1);
-    positionElement('server-rack', 16, 3);
+    positionElement('server-object', 15, 1);
+    positionElement('server-rack', 17, 1);
 }
 
 function positionElement(elementId, tileX, tileY) {
@@ -277,19 +274,6 @@ function setupInteractions() {
     setupListener("fisher", () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!"));
     setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
 
-    // New interactions for the IT Intern room
-    setupListener("it-intern-npc", () => {
-        if (itInternDialog) {
-            itInternDialog.style.display = 'block';
-            hideJoystick();
-        }
-    });
-    setupListener("close-it-intern-dialog", () => {
-        if (itInternDialog) {
-            itInternDialog.style.display = 'none';
-            showJoystickIfNeeded();
-        }
-    });
     setupListener("server-rack", () => {
         if (serverRackDialog) {
             serverRackDialog.style.display = 'block';
@@ -303,18 +287,11 @@ function setupInteractions() {
         }
     });
     
-    // Existing interactions
     const serverObject = document.getElementById('server-object');
     if (serverObject && itExperienceDialog) {
         serverObject.addEventListener('click', () => {
             if (itExperienceDialog) itExperienceDialog.style.display = 'block';
             hideJoystick();
-        });
-    }
-    if (closeItExperienceButton && itExperienceDialog) {
-        closeItExperienceButton.addEventListener('click', () => {
-            if (itExperienceDialog) itExperienceDialog.style.display = 'none';
-            showJoystickIfNeeded();
         });
     }
 
@@ -366,7 +343,6 @@ function setupInteractions() {
             if (projectChoiceDialog) projectChoiceDialog.style.display = 'none';
             if (contactFormDialog) contactFormDialog.style.display = 'none';
             if (bookshelfDialog) bookshelfDialog.style.display = 'none';
-            if (itInternDialog) itInternDialog.style.display = 'none';
             if (serverRackDialog) serverRackDialog.style.display = 'none';
         }
     });
