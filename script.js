@@ -212,8 +212,8 @@ function positionElements() {
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 3, 12);
     positionElement('fisher', 11, 11);
-    positionElement('server-object', 15, 1);
-    positionElement('server-rack', 17, 1);
+    positionElement('server-ad', 15, 1);
+    positionElement('server-intern', 17, 1);
 }
 
 function positionElement(elementId, tileX, tileY) {
