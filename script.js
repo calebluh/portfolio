@@ -107,27 +107,7 @@ function isAnyDialogOpen() {
            itExperienceDialog?.style.display === 'block';
 }
 
-// -=-=-=- Music Control -=-=-=-
-document.getElementById('start-btn').onclick = function() {
-  const music = document.getElementById('bg-music');
-  if (music && (!musicToggleCheckbox || musicToggleCheckbox.checked)) {
-    music.play().catch(() => {});
-  }
-};
-
-// -=-=- Toggle music on checkbox change -=-=-
-if (musicToggleCheckbox) {
-  musicToggleCheckbox.addEventListener('change', function() {
-    if (musicToggleCheckbox.checked) {
-      music.play().catch(() => {});
-    } else {
-      music.pause();
-      music.currentTime = 0;
-    }
-  });
-}
-
-// -=-=- Joystick Visibility Helpers -=-=-
+/// -=-=- Joystick Visibility Helpers -=-=-
 function hideJoystick() {
     if (joystickZone) {
         joystickZone.style.display = 'none';
@@ -152,7 +132,26 @@ function showJoystickIfNeeded() {
         console.log("--> Joystick Hidden (Not touch or no joystick obj)");
     }
 }
-// --- End Helpers ---
+
+// -=-=-=- Music Control -=-=-=-
+document.getElementById('start-btn').onclick = function() {
+  const music = document.getElementById('bg-music');
+  if (music && (!musicToggleCheckbox || musicToggleCheckbox.checked)) {
+    music.play().catch(() => {});
+  }
+};
+
+// -=-=- Toggle music on checkbox change -=-=-
+if (musicToggleCheckbox) {
+  musicToggleCheckbox.addEventListener('change', function() {
+    if (musicToggleCheckbox.checked) {
+      music.play().catch(() => {});
+    } else {
+      music.pause();
+      music.currentTime = 0;
+    }
+  });
+}
 
 startBtn.addEventListener('click', () => {
     startScreen.style.display = 'none';
@@ -178,11 +177,11 @@ async function init() {
 function loadTileImages() {
     return new Promise((resolve) => {
         let imagesLoaded = 0;
-        const tileKeys = Object.keys(tileTypes); // Store keys
+        const tileKeys = Object.keys(tileTypes);
         const totalImages = tileKeys.length;
         if (totalImages === 0) { resolve(); return; }
 
-        tileKeys.forEach(key => { // Use forEach for clarity
+        tileKeys.forEach(key => {
             const img = new Image();
             img.src = `assets/tiles/${tileTypes[key]}.png`;
             img.onload = () => {

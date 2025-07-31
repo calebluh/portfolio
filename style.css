@@ -91,18 +91,15 @@ body {
 #mailbox img,
 #player img,
 #bookshelf img,
-#vinyl-shelf img {
+#vinyl-shelf img,
+#server-ad img,
+#server-intern img {
     width: 100%;
     height: 100%;
     object-fit: contain;
     image-rendering: pixelated;
 }
 
-#server-rack img:hover, #bookshelf img:hover, #vinyl-shelf img:hover {
-  filter: drop-shadow(0 0 8px #00eaff);
-  transform: scale(1.05);
-  transition: 0.2s;
-}
 
 #game-map {
   cursor: url('assets/cursor/pointer.png'), auto;
@@ -389,21 +386,4 @@ body {
   filter: drop-shadow(0 0 12px #f9d77e) brightness(1.2);
   transform: scale(1.07);
   transition: 0.2s;
-}
-
-#server-ad,
-#server-intern {
-    position: absolute;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-#server-ad img,
-#server-intern img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    image-rendering: pixelated;
 }
