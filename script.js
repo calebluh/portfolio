@@ -30,9 +30,13 @@ const projectChoiceDialog = document.getElementById('project-choice-dialog');
 const contactFormDialog = document.getElementById("contact-form-dialog");
 const pcElement = document.getElementById("pc");
 const joystickToggleCheckbox = document.getElementById('joystick-toggle-checkbox');
-const serverObjectElement = document.getElementById('server-object'); // If needed directly
+const serverObjectElement = document.getElementById('server-object');
 const itExperienceDialog = document.getElementById('it-experience-dialog');
 const closeItExperienceButton = document.getElementById('close-it-experience-dialog');
+const internExperienceDialog = document.getElementById('intern-experience-dialog');
+const closeInternExperienceButton = document.getElementById('close-intern-experience-dialog');
+const music = document.getElementById('bg-music');
+const musicToggleCheckbox = document.getElementById('music-toggle-checkbox');
 
 // -=-=-=- Firebase Initialization -=-=-=-
 const firebaseConfig = {
@@ -97,7 +101,7 @@ function isAnyDialogOpen() {
            bookshelfDialog?.style.display === 'block';
 }
 
-// --- Joystick Visibility Helpers ---
+// -=-=- Joystick Visibility Helpers -=-=-
 function hideJoystick() {
     if (joystickZone) {
         joystickZone.style.display = 'none';
@@ -122,7 +126,26 @@ function showJoystickIfNeeded() {
         console.log("--> Joystick Hidden (Not touch or no joystick obj)");
     }
 }
-// --- End Helpers ---
+
+// -=-=-=- Music Control -=-=-=-
+document.getElementById('start-btn').onclick = function() {
+  const music = document.getElementById('bg-music');
+  if (music && (!musicToggleCheckbox || musicToggleCheckbox.checked)) {
+    music.play().catch(() => {});
+  }
+};
+
+// -=-=- Toggle music on checkbox change -=-=-
+if (musicToggleCheckbox) {
+  musicToggleCheckbox.addEventListener('change', function() {
+    if (musicToggleCheckbox.checked) {
+      music.play().catch(() => {});
+    } else {
+      music.pause();
+      music.currentTime = 0;
+    }
+  });
+}
 
 startBtn.addEventListener('click', () => {
     startScreen.style.display = 'none';
@@ -195,7 +218,8 @@ function positionElements() {
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 3, 12);
     positionElement('fisher', 11, 11);
-    positionElement('server-object', 3, 1);
+    positionElement('server-object', 15, 1);
+    positionElement('server-object-2', 17, 1);
 }
 
 function positionElement(elementId, tileX, tileY) {
@@ -706,14 +730,14 @@ function movePlayer(event) {
 
 // -=-=-=- Map Data & Tile Definitions -=-=-=-
 const map = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 1, 1, 4, 1, 1, 1],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2],
+    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
     [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
     [1, 1, 1, 1, 4, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 3],
     [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 3, 3, 3, 3, 3, 3],

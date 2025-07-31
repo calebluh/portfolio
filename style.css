@@ -352,9 +352,38 @@ body {
     margin-bottom: 15px;
 }
 
+#intern-experience-dialog {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 25px; 
+}
+
+#intern-experience-dialog ul {
+   padding-left: 20px;
+   margin-bottom: 15px;
+}
+
+#intern-experience-dialog p {
+    margin-bottom: 15px;
+}
+
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-0.5px); }
     50% { transform: translateX(0.5px); }
     75% { transform: translateX(-0.5px); }
+}
+
+/* -=-=- Gold Glow Hover for Interactables -=-=- */
+.npc img:hover,
+#pc img:hover,
+#mailbox img:hover,
+#player img:hover,
+#bookshelf img:hover,
+#vinyl-shelf img:hover,
+#server-ad img:hover,
+#server-intern img:hover {
+  filter: drop-shadow(0 0 12px #f9d77e) brightness(1.2);
+  transform: scale(1.07);
+  transition: 0.2s;
 }

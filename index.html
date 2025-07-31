@@ -23,7 +23,10 @@
             <input type="checkbox" id="joystick-toggle-checkbox" checked>
             <label for="joystick-toggle-checkbox">Enable Joystick (Touch Devices)</label>
         </div>
-
+        <div class="music-toggle">
+            <input type="checkbox" id="music-toggle-checkbox" checked>
+            <label for="music-toggle-checkbox">Enable Background Music</label>
+        </div>
         <button id="start-btn">Press Start</button>
     </div>
 
@@ -56,6 +59,9 @@
         </div>
         <div id="server-object">
             <img src="assets/sprites/server.png" alt="Server Object">
+        </div>
+        <div id="server-object-2">
+            <img src="assets/sprites/server2.png" alt="Server Object 2">
         </div>
         <div id="dialog-box" class="game-dialog" style="display: none;">
             <p id="dialog-text"></p>
@@ -147,6 +153,22 @@
                 practice system administration tasks. Required careful resource management (RAM, CPU) within the virtual environment.
             </p>
             <button id="close-it-experience-dialog">Close</button>
+        </div>
+
+        <div id="intern-experience-dialog" class="game-dialog" style="display: none;">
+            <h2>IT Internship Experience</h2>
+            <h4>Key Responsibilities:</h4>
+            <p>During my internship with the City of Oconomowoc my responsibilities included:</p>
+            <ul>
+                <li>Provide technical support and troubleshooting for all city departments, managing device setup and deployment.</li>
+                <li>Assist the Police Department with network configuration, device setup, and troubleshooting.</li>
+                <li>Configure and maintain VPN connections.</li>
+                <li>Troubleshoot and resolve WiFi connectivity issues for city facilities.</li>
+                <li>Support the management and maintenance of city Active Directory Domain Controller.</li>
+                <li>Administer and configure virtual machines.</li>
+                <li>Manage DNS entries and implement SSL certificates using OpenSSL and Keytool.</li>
+            </ul>
+            <button id="close-intern-experience-dialog">Close</button>
         </div>
 
     </div> 
