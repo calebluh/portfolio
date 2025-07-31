@@ -35,7 +35,7 @@ const itExperienceDialog = document.getElementById('it-experience-dialog');
 const closeItExperienceButton = document.getElementById('close-it-experience-dialog');
 const internExperienceDialog = document.getElementById('intern-experience-dialog');
 const closeInternExperienceButton = document.getElementById('close-intern-experience-dialog');
-const music = document.getElementById('bg-music');
+const music = document.getElementById('music');
 const musicToggleCheckbox = document.getElementById('music-toggle-checkbox');
 
 // -=-=-=- Firebase Initialization -=-=-=-
@@ -129,7 +129,7 @@ function showJoystickIfNeeded() {
 
 // -=-=-=- Music Control -=-=-=-
 document.getElementById('start-btn').onclick = function() {
-  const music = document.getElementById('bg-music');
+  const music = document.getElementById('music');
   if (music && (!musicToggleCheckbox || musicToggleCheckbox.checked)) {
     music.play().catch(() => {});
   }
