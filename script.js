@@ -217,6 +217,7 @@ function positionElements() {
     positionElement('mailbox', 6, 14);
     positionElement('resume-trainer', 3, 10);
     positionElement('skills-trainer', 3, 12);
+    positionElement('resume-npc', 3, 2);
     positionElement('fisher', 11, 11);
     positionElement('server-object', 15, 1);
     positionElement('server-object-2', 17, 1);
@@ -313,6 +314,13 @@ function setupInteractions() {
         closeInternExperienceButton.addEventListener('click', () => {
             if (internExperienceDialog) internExperienceDialog.style.display = 'none';
             showJoystickIfNeeded();
+        });
+    }
+
+    const resumeNpc = document.getElementById('resume-npc');
+    if (resumeNpc) {
+        resumeNpc.addEventListener('click', () => {
+            window.open('assets/resume.pdf', '_blank');
         });
     }
 
