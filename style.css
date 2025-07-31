@@ -339,21 +339,6 @@ body {
     }
 }
 
-#server-object {
-    position: absolute; 
-    z-index: 2; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#server-object img {
-    width: 100%; 
-    height: 100%;
-    object-fit: contain;
-    image-rendering: pixelated;
-}
-
 #it-experience-dialog {
     max-height: 70vh;
     overflow-y: auto;

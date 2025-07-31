@@ -283,8 +283,11 @@ function checkForWaterProximity() {
 
 
 function setupInteractions() {
-    document.removeEventListener("keydown", movePlayer);
-    document.addEventListener("keydown", movePlayer);
+    // Only add keydown once
+    if (!window._movePlayerListenerAdded) {
+        document.addEventListener("keydown", movePlayer);
+        window._movePlayerListenerAdded = true;
+    }
 
     const setupListener = (id, action) => {
         const element = document.getElementById(id);
