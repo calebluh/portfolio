@@ -75,9 +75,8 @@ body {
 .npc,
 #pc,
 #mailbox,
-#player,
 #bookshelf,
-#vinyl-shelf
+#vinyl-shelf,
 #server-object,
 #server-object-2 {
     position: absolute;
@@ -93,7 +92,7 @@ body {
 #mailbox img,
 #player img,
 #bookshelf img,
-#vinyl-shelf img
+#vinyl-shelf img,
 #server-object img,
 #server-object-2 img {
     width: 100%;
