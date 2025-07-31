@@ -317,10 +317,10 @@ function setupInteractions() {
         });
     }
 
+    const resumeNpc = document.getElementById('resume-npc');
     if (resumeNpc) {
         resumeNpc.addEventListener('click', () => {
-            console.log('Resume NPC clicked!');
-            window.open('assets/resume.pdf', '_blank');
+        window.open('assets/resume.pdf', '_blank');
         });
     }
 
