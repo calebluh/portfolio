@@ -2,6 +2,15 @@
  scoreboard.js - Scoreboard and Firebase logic
 */
 
+// -=-=-=- DOM Elements -=-=-=-
+const submitInitialsButton = document.getElementById('submit-initials-btn');
+const closeScoreboardButton = document.getElementById('close-scoreboard-btn');
+const toggleScoreboardButton = document.getElementById('toggle-scoreboard-btn');
+const scoreList = document.getElementById('score-list');
+const initialsInput = document.getElementById('initials-input');
+const initialsPrompt = document.getElementById('initials-prompt');
+const scoreboardDialog = document.getElementById('scoreboard-dialog');
+
 // -=-=-=- Firebase Initialization -=-=-=-
 const firebaseConfig = {
     apiKey: "AIzaSyD8mwbaU7Jgakj-OtH92BzAXDIIzGRIZk0",

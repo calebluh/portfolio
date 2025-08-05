@@ -1,22 +1,58 @@
+const hideJoystick = window.hideJoystick || function(){};
+const showJoystickIfNeeded = window.showJoystickIfNeeded || function(){};
+const dialogBox = document.getElementById('dialog-box');
+const dialogText = document.getElementById("dialog-text");
+const closeDialogButton = document.getElementById("close-dialog");
+const bookshelfDialog = document.getElementById('bookshelf-dialog');
+const closeBookshelfButton = document.getElementById('close-bookshelf-dialog');
+const bookshelfElement = document.getElementById('bookshelf');
+const projectChoiceDialog = document.getElementById('project-choice-dialog');
+const itExperienceDialog = document.getElementById('it-experience-dialog');
+const internExperienceDialog = document.getElementById('intern-experience-dialog');
+const contactFormDialog = document.getElementById('contact-form-dialog');
+const closeItExperienceButton = document.getElementById('close-it-experience-dialog');
+const closeInternExperienceButton = document.getElementById('close-intern-experience-dialog');
+const pcElement = document.getElementById('pc');
+const mailbox = document.getElementById('mailbox');
+
 /*
 interactions.js - DOM event listeners, dialogs, click logic
 */
 
-// -=-=-=- setupInteractions -=-=-=-
+// -=-=-=- isAnyDialogOpen -=-=-=-
+function isAnyDialogOpen() {
+    return dialogBox?.style.display === 'block' ||
+           initialsPrompt?.style.display === 'block' ||
+           scoreboardDialog?.style.display === 'block' ||
+           projectChoiceDialog?.style.display === 'block' ||
+           contactFormDialog?.style.display === 'block' ||
+           bookshelfDialog?.style.display === 'block' || 
+           itExperienceDialog?.style.display === 'block' ||
+           internExperienceDialog?.style.display === 'block';
+}
+
 function setupInteractions() {
-    document.removeEventListener("keydown", movePlayer);
-    document.addEventListener("keydown", movePlayer);
+    document.removeEventListener("keydown", window.movePlayer);
+    document.addEventListener("keydown", window.movePlayer);
 
     const setupListener = (id, action) => {
         const element = document.getElementById(id);
         if (element) element.addEventListener("click", action);
     };
 
-    setupListener("resume-trainer", () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank'));
-    setupListener("skills-trainer", () => showDialog("Certifications: Practical Introduction to Quantum-Safe Cryptography, Variational Algorithm Design, Basics of Quantum Information, Quantum Business Foundations, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Excel Purple Belt, Autodesk Inventor Certified User"));
-    setupListener("fisher", () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!"));
-    setupListener("vinyl-shelf", () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank'));
-    
+    [
+        { id: "resume-trainer", action: () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank') },
+        { id: "skills-trainer", action: () => showDialog("Certifications: Practical Introduction to Quantum-Safe Cryptography, Variational Algorithm Design, Basics of Quantum Information, Quantum Business Foundations, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Excel Purple Belt, Autodesk Inventor Certified User") },
+        { id: "fisher", action: () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!") },
+        { id: "vinyl-shelf", action: () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank') },
+        { id: "resume-npc", action: () => window.open('assets/resume.pdf', '_blank') },
+        { id: "bookshelf", action: () => { if(bookshelfDialog) bookshelfDialog.style.display = 'block'; hideJoystick(); } },
+        { id: "mailbox", action: () => { if(contactFormDialog) contactFormDialog.style.display = "block"; hideJoystick(); } },
+        { id: "pc", action: () => { if(projectChoiceDialog) projectChoiceDialog.style.display = 'block'; hideJoystick(); } },
+        { id: "server-object", action: () => { if(itExperienceDialog) itExperienceDialog.style.display = 'block'; hideJoystick(); } },
+        { id: "server-object-2", action: () => { if(internExperienceDialog) internExperienceDialog.style.display = 'block'; hideJoystick(); } }
+    ].forEach(({id, action}) => setupListener(id, action));
+
     const serverObject = document.getElementById('server-object');
     if (serverObject && itExperienceDialog) {
         serverObject.addEventListener('click', () => {
@@ -155,14 +191,5 @@ function textDelay(element, text, speed = 50) {
     }, speed);
 }
 
-// -=-=-=- isAnyDialogOpen -=-=-=-
-function isAnyDialogOpen() {
-    return dialogBox?.style.display === 'block' ||
-           fishingPrompt?.style.display === 'block' ||
-           fishingGameDisplay?.style.display === 'block' ||
-           initialsPrompt?.style.display === 'block' ||
-           scoreboardDialog?.style.display === 'block' ||
-           projectChoiceDialog?.style.display === 'block' ||
-           contactFormDialog?.style.display === 'block' ||
-           bookshelfDialog?.style.display === 'block';
-}
+// Export setupInteractions to global scope for main.js
+window.setupInteractions = setupInteractions;

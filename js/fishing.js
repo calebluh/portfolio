@@ -2,8 +2,19 @@
 fishing.js - Fishing minigame logic
 */ 
 
-// -=-=-=- Initialize Vars -=-=-=-
+const fishingPrompt = document.getElementById('fishing-prompt');
+const startFishingButton = document.getElementById('start-fishing-btn');
+const cancelFishingButton = document.getElementById('cancel-fishing-btn');
+const fishingGameDisplay = document.getElementById('fishing-game');
+const fishingStatus = document.getElementById('fishing-status');
+const tensionBarContainer = document.getElementById('tension-bar-container');
+const tensionBar = document.getElementById('tension-bar');
+const reelButton = document.getElementById('reel-button');
+const stopFishingButton = document.getElementById('stop-fishing-btn');
+
+// -=-=-=- Fishing Game State Vars -=-=-=-
 let isFishingActive = false;
+window.isFishingActive = isFishingActive;
 let canFishHere = false;
 let fishingState = 'idle';
 let tension = 0;
@@ -19,7 +30,6 @@ const REEL_SPEED = 3;
 const START_FISH_DISTANCE = 100;
 let fishDistance = 0;
 let currentFishScore = 0;
-
 let gameLoopInterval = null;
 let biteTimeout = null;
 let isReeling = false;
@@ -63,6 +73,9 @@ function checkForWaterProximity() {
         showJoystickIfNeeded();
     }
 }
+
+// Export to global scope
+window.checkForWaterProximity = checkForWaterProximity;
 
 // -=-=-=- hideFishingPrompt -=-=-=-
 function hideFishingPrompt() {

@@ -63,23 +63,23 @@ function setupJoystickEvents() {
 
         if (newDirection !== joystickDirection || !moveInterval) {
             console.log(`   Direction Changed/Interval Start: New=${newDirection}, Old=${joystickDirection}`);
-            joystickDirection = newDirection; // Store the new direction
+            if (getIsFishingActive() || isAnyDialogOpen()) return;
             triggerMovement(joystickDirection); // Trigger immediate movement
 
             // Clear any existing interval and start a new one
             if (moveInterval) clearInterval(moveInterval);
             moveInterval = setInterval(() => {
-                 console.log(`   Interval Tick: Stored Dir=${joystickDirection}`);
-                 // Use the stored direction for continuous movement
-                 if (joystickDirection) {
-                     triggerMovement(joystickDirection);
-                 } else {
-                     console.log("   Interval Cleared (No Direction)");
-                     clearInterval(moveInterval);
-                     moveInterval = null;
-                 }
+                console.log(`   Interval Tick: Stored Dir=${joystickDirection}`);
+                // Use the stored direction for continuous movement
+                if (joystickDirection) {
+                    triggerMovement(joystickDirection);
+                } else {
+                    console.log("   Interval Cleared (No Direction)");
+                    clearInterval(moveInterval);
+                    moveInterval = null;
+                }
             }, moveDelay);
-         }
+        }
     });
     joystick.on('end', () => {
         console.log("Joystick End");
@@ -94,35 +94,35 @@ function setupJoystickEvents() {
 
 // -=-=-=- triggerMovement -=-=-=-
 function triggerMovement(direction) {
-     console.log(`  triggerMovement called with direction: ${direction}`);
-     if (isFishingActive || isAnyDialogOpen()) { 
-         console.log(`  triggerMovement blocked: Fishing=${isFishingActive}, DialogOpen=${isAnyDialogOpen()}`);
-         return;
-     }
-     if (!direction) {
-         console.log("  triggerMovement ignored: No direction provided.");
-         return;
-     }
-     let key;
-     switch (direction) {
-         case 'up': key = 'w'; break;
-         case 'down': key = 's'; break;
-         case 'left': key = 'a'; break;
-         case 'right': key = 'd'; break;
-         default:
-             console.log(`  triggerMovement ignored: Unknown direction '${direction}'.`);
-             return;
-     }
-     console.log(`   Mapping direction '${direction}' to key '${key}'`);
-     movePlayer({ key: key });
+    console.log(`  triggerMovement called with direction: ${direction}`);
+    if (getIsFishingActive() || isAnyDialogOpen()) {
+        console.log(`  triggerMovement blocked: Fishing=${getIsFishingActive()}, DialogOpen=${isAnyDialogOpen()}`);
+        return;
+    }
+    if (!direction) {
+        console.log("  triggerMovement ignored: No direction provided.");
+        return;
+    }
+    let key;
+    switch (direction) {
+        case 'up': key = 'w'; break;
+        case 'down': key = 's'; break;
+        case 'left': key = 'a'; break;
+        case 'right': key = 'd'; break;
+        default:
+            console.log(`  triggerMovement ignored: Unknown direction '${direction}'.`);
+            return;
+    }
+    console.log(`   Mapping direction '${direction}' to key '${key}'`);
+    movePlayer({ key: key });
 }
 
 // -=-=-=- movePlayer -=-=-=-
 function movePlayer(event) {
     console.log(` movePlayer called with key: ${event.key}`);
 
-    if (isFishingActive || isAnyDialogOpen()) {
-        console.log(` movePlayer blocked: Fishing=${isFishingActive}, DialogOpen=${isAnyDialogOpen()}`);
+    if (getIsFishingActive() || isAnyDialogOpen()) {
+        console.log(` movePlayer blocked: Fishing=${getIsFishingActive()}, DialogOpen=${isAnyDialogOpen()}`);
         return;
     }
     let nextX = playerTileX, nextY = playerTileY, moved = false;
@@ -161,29 +161,8 @@ function movePlayer(event) {
     }
 }
 
-// -=-=-=- hideJoystick -=-=-=-
-function hideJoystick() {
-    if (joystickZone) {
-        joystickZone.style.display = 'none';
-    }
+function getIsFishingActive() {
+    return typeof window.isFishingActive !== 'undefined' ? window.isFishingActive : false;
 }
 
-// -=-=-=- showJoystickIfNeeded -=-=-=-
-function showJoystickIfNeeded() {
-    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    const anyDialogOpen = isAnyDialogOpen();
-    console.log(`showJoystickIfNeeded: isTouch=${isTouchDevice}, joystickObjExists=${!!joystick}, dialogOpen=${anyDialogOpen}`);
-
-    if (joystickZone && isTouchDevice && joystick) {
-        if (!anyDialogOpen) {
-             joystickZone.style.display = 'block';
-             console.log("--> Joystick Shown");
-        } else {
-             joystickZone.style.display = 'none';
-             console.log("--> Joystick Hidden (Dialog Open)");
-        }
-    } else {
-        hideJoystick();
-        console.log("--> Joystick Hidden (Not touch or no joystick obj)");
-    }
-}
+window.movePlayer = movePlayer;
