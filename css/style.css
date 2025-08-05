@@ -1,3 +1,161 @@
+
+#main-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-height: 0;
+    box-sizing: border-box;
+    position: relative;
+    height: auto;
+}
+
+/* Side controls panel */
+#side-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 22px;
+    margin-left: 32px;
+    margin-top: 0;
+    position: relative;
+    z-index: 10;
+    min-width: 240px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    padding: 24px 18px 24px 18px;
+    border: 1.5px solid #e0e7ef;
+}
+/* Background controls styling */
+#background-controls {
+    background: transparent;
+    border-radius: 10px;
+    box-shadow: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1rem;
+    z-index: 2;
+    margin-bottom: 0;
+    margin-top: 0;
+    width: 100%;
+    min-width: 200px;
+}
+/* Modern button for scores and controls */
+.modern-score-btn {
+    background: rgba(248,249,250,0.96);
+    color: #222;
+    border: 2px solid #222;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    font-family: inherit;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    cursor: pointer;
+    margin: 0 0 0 0;
+    display: block;
+    transition: background 0.2s, box-shadow 0.2s;
+    width: 100%;
+    min-width: 180px;
+    letter-spacing: 0.03em;
+}
+.modern-score-btn:hover {
+    background: linear-gradient(90deg, #38e8ff 0%, #4f8cff 100%);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+}
+/* --- Unified control group for background controls --- */
+.background-control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(248,249,250,0.96);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    border: 2px solid #222;
+    padding: 7px 14px;
+    margin: 0;
+    min-width: 0;
+}
+
+/* Hide native color input, use a custom swatch */
+#background-color-picker {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid #222;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    padding: 0;
+    margin: 0 0 0 2px;
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    z-index: 1;
+}
+#background-color-picker::-webkit-color-swatch {
+    border-radius: 6px;
+    border: 2px solid #222;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
+#background-color-picker::-moz-color-swatch {
+    border-radius: 6px;
+    border: 2px solid #222;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
+#background-color-picker:focus {
+    outline: 2px solid #222;
+    box-shadow: 0 0 0 2px #b3b3b3;
+}
+#background-color-picker:hover {
+    filter: brightness(1.08) drop-shadow(0 2px 8px #2222);
+}
+
+/* Style the select dropdown to match the button */
+#background-tile-select {
+    background: #fff;
+    color: #222;
+    border: 2px solid #222;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 1.05rem;
+    font-family: inherit;
+    font-weight: bold;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+    min-width: 110px;
+    margin: 0 0 0 2px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    z-index: 1;
+}
+#background-tile-select:focus, #background-tile-select:hover {
+    background: #f4f4f4;
+    color: #111;
+    box-shadow: 0 2px 8px #2222;
+}
+#background-tile-select option {
+    color: #222;
+    background: #fff;
+    font-weight: normal;
+}
+/* Optional: style the label for the color picker for better alignment */
+#background-controls label {
+    font-size: 1em;
+    font-weight: 500;
+    margin-right: 8px;
+    color: #222;
+    text-shadow: none;
+    letter-spacing: 0.01em;
+}
 body {
     font-family: 'Press Start 2P', sans-serif;
     margin: 0;
@@ -6,8 +164,7 @@ body {
     overflow: hidden;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding-top: 5vh;
+    align-items: center;
     min-height: 100vh;
     box-sizing: border-box;
 }
@@ -108,6 +265,15 @@ body {
     height: 100%;
     object-fit: contain;
     image-rendering: pixelated;
+}
+
+.cert-div {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .game-dialog {

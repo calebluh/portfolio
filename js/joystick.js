@@ -2,13 +2,31 @@
 joystick.js - Joystick setup and movement logic
 */ 
 
+// -=-=-=- Joystick DOM Elements -=-=-=-
+let joystickToggleCheckbox = null;
+let joystickZone = null;
+
 // -=-=-=- setupJoystick -=-=-=-
 function setupJoystick() {
+    // Ensure DOM elements are available
+    if (!joystickToggleCheckbox) {
+        joystickToggleCheckbox = document.getElementById("joystick-toggle-checkbox");
+    }
+    if (!joystickZone) {
+        joystickZone = document.getElementById("joystick-zone");
+    }
     console.log("Attempting joystick setup...");
     const joystickEnabled = joystickToggleCheckbox ? joystickToggleCheckbox.checked : true;
 
     if (!joystickEnabled) {
-        console.log("Joystick explicitly disabled by user.");
+        if (joystickZone) {
+            joystickZone.style.display = 'none';
+            joystickZone.innerHTML = '';
+        }
+        if (joystick) {
+            joystick.destroy();
+            joystick = null;
+        }
         hideJoystick();
         return;
     }
@@ -18,20 +36,42 @@ function setupJoystick() {
          hideJoystick();
          return;
     }
-    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-    console.log("Is touch device?", isTouchDevice);
-    if (isTouchDevice && joystickZone) {
-        const options = { zone: joystickZone, mode: 'static', position: { left: '50%', top: '50%' }, color: 'rgba(128, 128, 128, 0.7)', size: 100, threshold: 0.3, fadeTime: 250 };
+    if (joystickZone) {
+        joystickZone.style.display = 'block';
         if (!joystick) {
+            const options = { zone: joystickZone, mode: 'static', position: { left: '50%', top: '50%' }, color: 'rgba(128, 128, 128, 0.7)', size: 100, threshold: 0.3, fadeTime: 250 };
             console.log("Creating joystick instance...");
             joystick = nipplejs.create(options);
             console.log("Joystick object:", joystick);
             setupJoystickEvents();
-       }
-       showJoystickIfNeeded();
-       console.log("Hiding joystick (not touch or no zone)");
-       hideJoystick();
-   }
+        }
+        showJoystickIfNeeded();
+    } else {
+        hideJoystick();
+    }
+
+// Joystick toggle event listener setup
+function setupJoystickToggleListener() {
+    if (!joystickToggleCheckbox) {
+        joystickToggleCheckbox = document.getElementById("joystick-toggle-checkbox");
+    }
+    if (joystickToggleCheckbox) {
+        // Remove any previous listeners to avoid stacking
+        joystickToggleCheckbox.onchange = null;
+        joystickToggleCheckbox.addEventListener("change", setupJoystick, { once: false });
+    }
+}
+
+// Only run this ONCE on page load
+    if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+        setupJoystickToggleListener();
+        setupJoystick();
+        });
+    } else {
+        setupJoystickToggleListener();
+        setupJoystick();
+    }
 }
 
 // -=-=-=- setupJoystickEvents -=-=-=-
@@ -64,6 +104,7 @@ function setupJoystickEvents() {
         if (newDirection !== joystickDirection || !moveInterval) {
             console.log(`   Direction Changed/Interval Start: New=${newDirection}, Old=${joystickDirection}`);
             if (getIsFishingActive() || isAnyDialogOpen()) return;
+            joystickDirection = newDirection;
             triggerMovement(joystickDirection); // Trigger immediate movement
 
             // Clear any existing interval and start a new one
@@ -156,7 +197,8 @@ function movePlayer(event) {
     }
 
     if (moved) {
-        positionElement('player', playerTileX, playerTileY); // Update player position visually
+        drawMap(); // Redraw map so camera follows player
+        positionElements(); // Update all elements' positions
         checkForWaterProximity(); // Check if near water for fishing prompt
     }
 }

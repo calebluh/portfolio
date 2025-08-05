@@ -4,26 +4,13 @@ map.js - Map data, tile definitions, rendering
 
 // -=-=-=- Constants -=-=-=-
 const TILE_SIZE = 16;
-const MAP_WIDTH = 20;
-const MAP_HEIGHT = 15;
+const VIEWPORT_WIDTH = 20; // visible tiles horizontally
+const VIEWPORT_HEIGHT = 15; // visible tiles vertically
+const MAP_WIDTH = 60; // total map width in tiles
+const MAP_HEIGHT = 45; // total map height in tiles
 
-const map = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 5, 5, 5, 5, 5, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 1, 1, 1, 4, 1, 1, 1],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
-    [1, 5, 5, 5, 5, 5, 5, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
-    [1, 1, 1, 1, 4, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 3],
-    [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 3, 3, 3, 3, 3, 3],
-    [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 2, 2, 2, 3, 3, 3, 3, 3, 3],
-    [0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 3, 3, 3, 3, 3],
-    [0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3],
-    [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3, 3],
-];
+// --- Use mapData from mapdata.js as the world map ---
+const map = mapData.map(row => row.slice());
 const tileTypes = { 0: "grass", 1: "wall", 2: "path", 3: "water", 4: "door", 5: "floor", 6: "dock" };
 const tiles = {};
 
@@ -53,13 +40,28 @@ function loadTileImages() {
 }
 
 // -=-=-=- drawMap -=-=-=-
+// Camera variables
+let cameraX = 0;
+let cameraY = 0;
+
+function updateCamera() {
+    // Center camera on player, but clamp to map edges
+    cameraX = playerTileX - Math.floor(VIEWPORT_WIDTH / 2);
+    cameraY = playerTileY - Math.floor(VIEWPORT_HEIGHT / 2);
+    cameraX = Math.max(0, Math.min(MAP_WIDTH - VIEWPORT_WIDTH, cameraX));
+    cameraY = Math.max(0, Math.min(MAP_HEIGHT - VIEWPORT_HEIGHT, cameraY));
+}
+
 function drawMap() {
     if (!gameCanvas || !ctx) return;
-    gameCanvas.width = MAP_WIDTH * TILE_SIZE;
-    gameCanvas.height = MAP_HEIGHT * TILE_SIZE;
-    for (let y = 0; y < MAP_HEIGHT; y++) {
-        for (let x = 0; x < MAP_WIDTH; x++) {
-            const tileType = map[y]?.[x];
+    gameCanvas.width = VIEWPORT_WIDTH * TILE_SIZE;
+    gameCanvas.height = VIEWPORT_HEIGHT * TILE_SIZE;
+    updateCamera();
+    for (let y = 0; y < VIEWPORT_HEIGHT; y++) {
+        for (let x = 0; x < VIEWPORT_WIDTH; x++) {
+            const mapX = cameraX + x;
+            const mapY = cameraY + y;
+            const tileType = map[mapY]?.[mapX];
             if (tileType !== undefined && tiles[tileType]) {
                 ctx.drawImage(tiles[tileType], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             } else {
@@ -72,17 +74,21 @@ function drawMap() {
 
 // -=-=-=- positionElements -=-=-=-
 function positionElements() {
-    positionElement('pc', 4, 1);
-    positionElement('bookshelf', 1, 1);
-    positionElement('vinyl-shelf', 6, 1);
+    positionElement('pc', 5, 4);
+    positionElement('bookshelf', 9, 39);
+    positionElement('vinyl-shelf', 13, 39);
     positionElement('player', playerTileX, playerTileY);
-    positionElement('mailbox', 6, 14);
-    positionElement('resume-trainer', 3, 10);
-    positionElement('skills-trainer', 3, 12);
-    positionElement('resume-npc', 13, 6);
-    positionElement('fisher', 11, 11);
-    positionElement('server-object', 15, 1);
-    positionElement('server-object-2', 17, 1);
+    positionElement('mailbox', 13, 32);
+    positionElement('mailbox', 8, 10);
+    positionElement('mailbox', 38, 11);
+    positionElement('mailbox', 43, 35);
+    positionElement('about-me-npc', 9, 35);
+    positionElement('cert-npc', 34, 21);
+    positionElement('resume-npc', 37, 23);
+    positionElement('fisher', 21, 16);
+    positionElement('fisher-2', 49, 1);
+    positionElement('server-object', 7, 4);
+    positionElement('server-object-2', 8, 4);
 }
 
 // -=-=-=- positionElement -=-=-=-
@@ -92,10 +98,13 @@ function positionElement(elementId, tileX, tileY) {
     const canvas = document.getElementById('gameCanvas');
     if (!canvas) return;
     const canvasRect = canvas.getBoundingClientRect();
-    const actualTileWidth = canvasRect.width / MAP_WIDTH;
-    const actualTileHeight = canvasRect.height / MAP_HEIGHT;
-    element.style.left = tileX * actualTileWidth + 'px';
-    element.style.top = tileY * actualTileHeight + 'px';
+    const actualTileWidth = canvasRect.width / VIEWPORT_WIDTH;
+    const actualTileHeight = canvasRect.height / VIEWPORT_HEIGHT;
+    // Offset by camera position
+    const screenX = (tileX - cameraX) * actualTileWidth;
+    const screenY = (tileY - cameraY) * actualTileHeight;
+    element.style.left = screenX + 'px';
+    element.style.top = screenY + 'px';
     element.style.width = actualTileWidth + 'px';
     element.style.height = actualTileHeight + 'px';
 }

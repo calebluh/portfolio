@@ -21,6 +21,7 @@
     
     <script src="js/scoreboard.js" defer></script>
     <script src="js/fishing.js" defer></script>
+    <script src="js/mapdata.js" defer></script>
     <script src="js/map.js" defer></script>
     <script src="js/joystick.js" defer></script>
     <script src="js/interactions.js" defer></script>
@@ -46,20 +47,23 @@
         <button id="start-btn">Press Start</button>
     </div>
 
-    <div id="game-map" style="display: none;">
+    <div id="main-flex-row" style="display: flex; flex-direction: row; align-items: center; justify-content: center; min-height: 100vh; padding-left: 5vw; padding-right: 5vw;">
+      <div id="game-map" style="display: none;">
         <canvas id="gameCanvas" width="320" height="240"></canvas>
-
-        <div class="npc" id="resume-trainer">
-            <img src="assets/sprites/npc-resume.png" alt="Resume Trainer">
+        <div class="npc" id="about-me-npc">
+            <img src="assets/sprites/about-me-npc.png" alt="About Me NPC">
         </div>
-        <div class="npc" id="skills-trainer">
-            <img src="assets/sprites/npc-skills.png" alt="Skills Trainer">
+        <div class="npc" id="cert-npc">
+            <img src="assets/sprites/cert-npc.png" alt="Certifications NPC">
         </div>
         <div class="npc" id="resume-npc">
             <img src="assets/sprites/resume-npc.png" alt="Resume NPC">
         </div>
         <div class="npc" id="fisher">
             <img src="assets/sprites/fisher.png" alt="Fisher">
+        </div>
+        <div class="npc" id="fisher-2">
+            <img src="assets/sprites/fisher.png" alt="Fisher 2">
         </div>
         <div id="pc">
             <img src="assets/sprites/pc.png" alt="Projects PC">
@@ -86,7 +90,6 @@
             <p id="dialog-text"></p>
             <button id="close-dialog">Close</button>
         </div>
-
         <div id="project-choice-dialog" class="game-dialog" style="display: none;">
             <p>Which project would you like to view?</p>
             <button id="roblox-btn">Lacrosse Legends (Roblox)</button>
@@ -94,7 +97,6 @@
             <button id="linkedin-btn">LinkedIn</button>
             <button id="close-btn">Close</button>
         </div>
-
         <div id="contact-form-dialog" class="game-dialog" style="display: none;">
             <h2>Contact Me</h2>
             <form id="contact-form" action="https://formspree.io/f/xjkwvwaa" method="POST">
@@ -108,7 +110,6 @@
                 <button type="button" id="close-contact-form">Close</button>
             </form>
         </div>
-
         <div id="bookshelf-dialog" class="game-dialog" style="display: none;">
             <h2>Bookshelf</h2>
             <ul>
@@ -117,13 +118,16 @@
             </ul>
             <button id="close-bookshelf-dialog">Close</button>
         </div>
-
+        <div id="resume-dialog" class="game-dialog" style="display: none; max-width: 90vw; max-height: 90vh;">
+            <h2>My Resume</h2>
+            <iframe id="resume-frame" src="assets/resume.pdf" width="100%" height="500px" style="border:none;"></iframe>
+            <button id="close-resume-dialog">Close</button>
+        </div>
         <div id="fishing-prompt" class="game-dialog" style="display: none;">
             <p>You sense something in the water...</p>
             <button id="start-fishing-btn">Cast Line</button>
             <button id="cancel-fishing-btn">Leave</button>
         </div>
-
         <div id="fishing-game" class="game-dialog" style="display: none;">
             <h4>Fishing Time!</h4>
             <div id="fishing-area">
@@ -138,21 +142,18 @@
             <button id="reel-button">Cast / Reel</button>
             <button id="stop-fishing-btn">Stop Fishing</button>
         </div>
-
         <div id="scoreboard-dialog" class="game-dialog" style="display: none;">
             <h4>Fishing High Scores</h4>
             <ol id="score-list">
             </ol>
             <button id="close-scoreboard-btn">Close</button>
         </div>
-
         <div id="initials-prompt" class="game-dialog" style="display: none;">
             <h4>New High Score!</h4>
             <p id="initials-score-display"></p> <p>Enter your initials (3 letters):</p>
             <input type="text" id="initials-input" maxlength="3" size="3">
             <button id="submit-initials-btn">Save Score</button>
         </div>
-
         <div id="it-experience-dialog" class="game-dialog" style="display: none;">
             <h2>Active Directory / Virtualization Experience</h2>
             <h4>Course Learning Outcomes Achieved:</h4>
@@ -173,7 +174,6 @@
             </p>
             <button id="close-it-experience-dialog">Close</button>
         </div>
-
         <div id="intern-experience-dialog" class="game-dialog" style="display: none;">
             <h2>IT Internship Experience</h2>
             <h4>Key Responsibilities:</h4>
@@ -189,14 +189,24 @@
             </ul>
             <button id="close-intern-experience-dialog">Close</button>
         </div>
-
-    </div> 
-    
-    <div id="joystick-zone"></div>
-
-    <button id="toggle-scoreboard-btn" style="position: fixed; top: 10px; right: 10px; z-index: 150;">Scores</button>
+        <div id="joystick-zone"></div>
+      </div>
+      <div id="side-controls" style="margin-left: 32px; display: flex; flex-direction: column; align-items: flex-start;">
+        <button id="toggle-scoreboard-btn" class="modern-score-btn">Scores</button>
+        <div id="background-controls" style="display: none;">
+          <div class="background-control-group">
+              <label for="bg-type">Background: </label>
+              <select id="bg-type">
+                  <option value="color">Solid Color</option>
+                  <option value="tile">Repeated Tile</option>
+              </select>
+              <input type="color" id="bg-color-picker" value="#f4f4f4" style="vertical-align: middle;">
+              <select id="bg-tile-picker" style="display:none; vertical-align: middle;"></select>
+          </div>
+        </div>
+      </div>
+    </div>
     
     <audio id="music" src="assets/music/music.mp3" loop></audio>
-    
     </body>
 </html>

@@ -40,18 +40,96 @@ function setupInteractions() {
         if (element) element.addEventListener("click", action);
     };
 
+
     [
-        { id: "resume-trainer", action: () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank') },
-        { id: "skills-trainer", action: () => showDialog("Certifications: Practical Introduction to Quantum-Safe Cryptography, Variational Algorithm Design, Basics of Quantum Information, Quantum Business Foundations, JavaScript Fundamentals, Microsoft IT Support Specialist, TestOut IT Fundamentals Pro, Excel Purple Belt, Autodesk Inventor Certified User") },
+        { id: "about-me-npc", action: () => window.open('https://github.com/calebluh/about-me/blob/main/README.md', '_blank') },
+        { id: "cert-npc", action: () => {
+            showDialog(`
+                <div style="max-height:62vh;overflow-y:auto;box-sizing:border-box;padding:0 8px 0 0;scrollbar-gutter:stable;">
+                  <h2 style="margin-bottom:10px;">My Certifications</h2>
+                  <div style="display:flex;justify-content:center;margin-bottom:18px;">
+                    <div class="cert-div" data-locale="en_US" data-size="large" data-theme="light" data-type="HORIZONTAL" data-vanity="calebluh" data-version="v1"></div>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:480px;margin:0 auto;">
+                    <a href="https://www.credly.com/badges/fb980ed4-c569-46bb-b843-cbc3c7f6a242/linked_in_profile" target="_blank" class="cert-card" style="text-decoration:none;width:210px;">
+                      <div style="background:#fff;border:1.5px solid #b3b3b3;border-radius:8px;padding:12px 16px;width:100%;height:80px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px #0001;box-sizing:border-box;">
+                        <img src="../assets/logos/IBM.jfif" alt="Quantum-Safe" style="width:38px;height:38px;border-radius:6px;flex-shrink:0;">
+                        <div style="flex:1;"><b>Quantum-Safe Cryptography</b><br><span style="font-size:0.9em;color:#444;">Credly</span></div>
+                      </div>
+                    </a>
+                    <a href="https://www.linkedin.com/learning/certificates/c9474d3b75c38aff7b6702ce5d6d3ca157d85ae69e3473d17b30e7a0853da7f4" target="_blank" class="cert-card" style="text-decoration:none;width:210px;">
+                      <div style="background:#fff;border:1.5px solid #b3b3b3;border-radius:8px;padding:12px 16px;width:100%;height:80px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px #0001;box-sizing:border-box;">
+                        <img src="../assets/logos/IBM.jfif" alt="LinkedIn Learning" style="width:38px;height:38px;border-radius:6px;flex-shrink:0;">
+                        <div style="flex:1;"><b>Variational Algorithm Design</b><br><span style="font-size:0.9em;color:#444;">Credly</span></div>
+                      </div>
+                    </a>
+                    <a href="https://www.credly.com/badges/f01b3027-f88a-4258-98db-eef436d64ca4/linked_in_profile" target="_blank" class="cert-card" style="text-decoration:none;width:210px;">
+                      <div style="background:#fff;border:1.5px solid #b3b3b3;border-radius:8px;padding:12px 16px;width:100%;height:80px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px #0001;box-sizing:border-box;">
+                        <img src="../assets/logos/IBM.jfif" alt="Quantum Info" style="width:38px;height:38px;border-radius:6px;flex-shrink:0;">
+                        <div style="flex:1;"><b>Basics of Quantum Information</b><br><span style="font-size:0.9em;color:#444;">Credly</span></div>
+                      </div>
+                    </a>
+                    <a href="https://www.credly.com/badges/8cec31a6-9f6d-401d-865e-65ec05ecd514/linked_in_profile" target="_blank" class="cert-card" style="text-decoration:none;width:210px;">
+                      <div style="background:#fff;border:1.5px solid #b3b3b3;border-radius:8px;padding:12px 16px;width:100%;height:80px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px #0001;box-sizing:border-box;">
+                        <img src="../assets/logos/IBM.jfif" alt="Quantum Business" style="width:38px;height:38px;border-radius:6px;flex-shrink:0;">
+                        <div style="flex:1;"><b>Quantum Business Foundations</b><br><span style="font-size:0.9em;color:#444;">Credly</span></div>
+                      </div>
+                    </a>
+                    <a href="https://www.credly.com/badges/7f6a61a0-dbe5-48d1-a018-0f78dd2a3681/linked_in_profile" target="_blank" class="cert-card" style="text-decoration:none;width:210px;">
+                      <div style="background:#fff;border:1.5px solid #b3b3b3;border-radius:8px;padding:12px 16px;width:100%;height:80px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px #0001;box-sizing:border-box;">
+                        <img src="../assets/logos/mozilla.jfif" alt="JS Fundamentals" style="width:38px;height:38px;border-radius:6px;flex-shrink:0;">
+                        <div style="flex:1;"><b>JavaScript Fundamentals</b><br><span style="font-size:0.9em;color:#444;">Credly</span></div>
+                      </div>
+                    </a>
+                    <a href="https://certification.testout.com/verifycert/6-1C6-VL7WXP" target="_blank" class="cert-card" style="text-decoration:none;width:210px;">
+                      <div style="background:#fff;border:1.5px solid #b3b3b3;border-radius:8px;padding:12px 16px;width:100%;height:80px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px #0001;box-sizing:border-box;">
+                        <img src="../assets/logos/TestOut.jfif" alt="TestOut" style="width:38px;height:38px;border-radius:6px;background:#eee;flex-shrink:0;">
+                        <div style="flex:1;"><b>IT Fundamentals Pro</b><br><span style="font-size:0.9em;color:#444;">TestOut</span></div>
+                      </div>
+                    </a>
+                    <a href="https://certificates.simnetonline.com/eea8917e-e750-4625-b5dc-8a47a814f47c#acc.J5Koeawi" target="_blank" class="cert-card" style="text-decoration:none;width:210px;">
+                      <div style="background:#fff;border:1.5px solid #b3b3b3;border-radius:8px;padding:12px 16px;width:100%;height:80px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px #0001;box-sizing:border-box;">
+                        <img src="../assets/logos/McGrawHill.jfif" alt="SimNet" style="width:38px;height:38px;border-radius:6px;background:#eee;flex-shrink:0;">
+                        <div style="flex:1;"><b>Excel Purple Belt</b><br><span style="font-size:0.9em;color:#444;">SimNet</span></div>
+                      </div>
+                    </a>
+                    <a href="https://www.credly.com/badges/59e4f265-c8db-44a4-96cb-aaa35528406d?source=linked_in_profile" target="_blank" class="cert-card" style="text-decoration:none;width:210px;">
+                      <div style="background:#fff;border:1.5px solid #b3b3b3;border-radius:8px;padding:12px 16px;width:100%;height:80px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px #0001;box-sizing:border-box;">
+                        <img src="../assets/logos/Autodesk.jfif" alt="Inventor" style="width:38px;height:38px;border-radius:6px;flex-shrink:0;">
+                        <div style="flex:1;"><b>Autodesk Inventor Certified User</b><br><span style="font-size:0.9em;color:#444;">Credly</span></div>
+                      </div>
+                    </a>
+                  </div>
+                  <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
+                </div>
+            `, true);
+        } },
         { id: "fisher", action: () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!") },
+        { id: "fisher-2", action: () => showDialog("To fish, proceed to the dock. The calmer the fish the better the score!") },
         { id: "vinyl-shelf", action: () => window.open('https://www.discogs.com/user/calebluh/collection', '_blank') },
-        { id: "resume-npc", action: () => window.open('assets/resume.pdf', '_blank') },
+        { id: "resume-npc", action: () => { 
+            const resumeDialog = document.getElementById('resume-dialog');
+            if (resumeDialog) resumeDialog.style.display = 'block';
+            hideJoystick();
+        } },
         { id: "bookshelf", action: () => { if(bookshelfDialog) bookshelfDialog.style.display = 'block'; hideJoystick(); } },
         { id: "mailbox", action: () => { if(contactFormDialog) contactFormDialog.style.display = "block"; hideJoystick(); } },
         { id: "pc", action: () => { if(projectChoiceDialog) projectChoiceDialog.style.display = 'block'; hideJoystick(); } },
         { id: "server-object", action: () => { if(itExperienceDialog) itExperienceDialog.style.display = 'block'; hideJoystick(); } },
         { id: "server-object-2", action: () => { if(internExperienceDialog) internExperienceDialog.style.display = 'block'; hideJoystick(); } }
     ].forEach(({id, action}) => setupListener(id, action));
+
+    // Resume dialog close button
+    const resumeDialog = document.getElementById('resume-dialog');
+    const closeResumeBtn = document.getElementById('close-resume-dialog');
+    if (closeResumeBtn && resumeDialog) {
+        closeResumeBtn.addEventListener('click', function() {
+            resumeDialog.style.display = 'none';
+            showJoystickIfNeeded();
+        });
+    }
+// Expose setupInteractions globally for main.js
+window.setupInteractions = setupInteractions;
 
     const serverObject = document.getElementById('server-object');
     if (serverObject && itExperienceDialog) {
@@ -78,13 +156,6 @@ function setupInteractions() {
         closeInternExperienceButton.addEventListener('click', () => {
             if (internExperienceDialog) internExperienceDialog.style.display = 'none';
             showJoystickIfNeeded();
-        });
-    }
-
-    const resumeNpc = document.getElementById('resume-npc');
-    if (resumeNpc) {
-        resumeNpc.addEventListener('click', () => {
-        window.open('assets/resume.pdf', '_blank');
         });
     }
 
@@ -150,7 +221,7 @@ function setupInteractions() {
 }
 
 // -=-=-=- showDialog -=-=-=-
-function showDialog(text) {
+function showDialog(text, isHtml) {
     if (delay) {
         clearInterval(delay);
         delay = null;
@@ -159,11 +230,12 @@ function showDialog(text) {
     if (dialogText && dialogBox) {
         dialogBox.style.top = '';
         dialogBox.style.left = '';
-
         dialogBox.style.display = "block";
-
-        textDelay(dialogText, text, 50); 
-
+        if (isHtml) {
+            dialogText.innerHTML = text;
+        } else {
+            textDelay(dialogText, text, 50);
+        }
         hideJoystick(); 
     } else {
         console.error("Dialog elements (dialogText or dialogBox) not found for showDialog.");
