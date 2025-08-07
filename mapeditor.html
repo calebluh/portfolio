@@ -21,61 +21,73 @@
     <label><input type="radio" name="tool" value="single" checked> Single Tile</label>
     <label><input type="radio" name="tool" value="fill"> Filled Rectangle</label>
     <label><input type="radio" name="tool" value="outline"> Rectangle Outline</label>
+    <label><input type="radio" name="tool" value="random-grass"> Random Grass Brush</label>
+    <label><input type="radio" name="tool" value="eraser"> Eraser</label>
+    <label><input type="radio" name="tool" value="rect-random-grass"> Rectangle Random Grass</label>
+    <label><input type="radio" name="tool" value="flood"> Flood Fill</label>
   </div>
   <div id="map"></div>
   <button id="exportBtn">Export as JS Array</button>
   <textarea id="output" readonly></textarea>
   <script>
     // Tile types and colors (replace with images if desired)
-    // Tiles (0-6) and objects (7+)
+    // Tiles (0-8: grass variants, 9-14: other tiles) and objects (15+)
     const tileTypes = [
-      { id: 0, name: 'grass', img: 'assets/tiles/grass.png' },
+      { id: 0, name: 'grass1', img: 'assets/tiles/grass1.png' },
       { id: 1, name: 'wall', img: 'assets/tiles/wall.png' },
       { id: 2, name: 'path', img: 'assets/tiles/path.png' },
       { id: 3, name: 'water', img: 'assets/tiles/water.png' },
       { id: 4, name: 'door', img: 'assets/tiles/door.png' },
       { id: 5, name: 'floor', img: 'assets/tiles/floor.png' },
       { id: 6, name: 'dock', img: 'assets/tiles/dock.png' },
+      { id: 7, name: 'grass2', img: 'assets/tiles/grass2.png' },
+      { id: 8, name: 'grass3', img: 'assets/tiles/grass3.png' },
+      { id: 9, name: 'grass4', img: 'assets/tiles/grass4.png' },
+      { id: 10, name: 'grass5', img: 'assets/tiles/grass5.png' },
+      { id: 11, name: 'grass6', img: 'assets/tiles/grass6.png' },
+      { id: 12, name: 'grass7', img: 'assets/tiles/grass7.png' },
+      { id: 13, name: 'grass8', img: 'assets/tiles/grass8.png' },
+      { id: 14, name: 'grass9', img: 'assets/tiles/grass9.png' },
       // Objects (sprites)
-      { id: 7, name: 'bookshelf', img: 'assets/sprites/bookshelf.png' },
-      { id: 8, name: 'fisher', img: 'assets/sprites/fisher.png' },
-      { id: 9, name: 'mailbox', img: 'assets/sprites/mailbox.png' },
-      { id: 10, name: 'npc-resume', img: 'assets/sprites/npc-resume.png' },
-      { id: 11, name: 'npc-skills', img: 'assets/sprites/npc-skills.png' },
-      { id: 12, name: 'pc', img: 'assets/sprites/pc.png' },
-      { id: 13, name: 'player', img: 'assets/sprites/player.png' },
-      { id: 14, name: 'resume-npc', img: 'assets/sprites/resume-npc.png' },
-      { id: 15, name: 'server-rack', img: 'assets/sprites/server-rack.png' },
-      { id: 16, name: 'server', img: 'assets/sprites/server.png' },
-      { id: 17, name: 'server2', img: 'assets/sprites/server2.png' },
-      { id: 18, name: 'trainer', img: 'assets/sprites/trainer.png' },
-      { id: 19, name: 'vinyl-shelf', img: 'assets/sprites/vinyl-shelf.png' }
+      { id: 15, name: 'bookshelf', img: 'assets/sprites/bookshelf.png' },
+      { id: 16, name: 'fisher', img: 'assets/sprites/fisher.png' },
+      { id: 17, name: 'mailbox', img: 'assets/sprites/mailbox.png' },
+      { id: 18, name: 'about-me-npc', img: 'assets/sprites/about-me-npc.png' },
+      { id: 19, name: 'cert-npc', img: 'assets/sprites/cert-npc.png' },
+      { id: 20, name: 'pc', img: 'assets/sprites/pc.png' },
+      { id: 21, name: 'player', img: 'assets/sprites/player.png' },
+      { id: 22, name: 'resume-npc', img: 'assets/sprites/resume-npc.png' },
+      { id: 23, name: 'server-rack', img: 'assets/sprites/server-rack.png' },
+      { id: 24, name: 'server', img: 'assets/sprites/server.png' },
+      { id: 25, name: 'server2', img: 'assets/sprites/server2.png' },
+      { id: 26, name: 'trainer', img: 'assets/sprites/trainer.png' },
+      { id: 27, name: 'vinyl-shelf', img: 'assets/sprites/vinyl-shelf.png' }
     ];
     const WIDTH = 60, HEIGHT = 45;
     // Use provided mapData as the initial map
     const mapData = [
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
+      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,6,6,6,6,3,3,3,3,3,3],
       [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,1,5,12,5,15,16,17,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
+      [0,0,0,1,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,1,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,1,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,5,5,5,1,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,1,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,5,5,5,1,0,0,0,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,1,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,5,5,5,1,0,0,0,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,1,1,1,4,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,5,5,14,1,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,1,1,1,1,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,9,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
+      [0,0,0,1,1,1,4,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,5,5,5,1,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
+      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,1,1,1,1,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
+      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,8,3,3,3,3,3,3,3,3,3,0,0,0,0,2,2,2,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
+      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,0,0,0,0,2,2,2,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,2,2,6,6,6,3,3,3,3,3,3,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,3,3,3,3,3,3,3,3,3,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,3,3,3,3,3,3,3,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,2,2,2,3,3,3,3,3,3,3,3,3,3],
       [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,3,3,3,3,3,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,11,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3],
+      [0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3],
       [0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3],
       [0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3],
       [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,3,3,3,3],
@@ -84,17 +96,17 @@
       [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2],
       [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2],
       [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,9,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,1,1,4,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,10,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,1,1,4,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,7,5,5,5,19,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,4,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2],
+      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,1,1,1,4,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,1,4,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,1,1,1,4,1,1,1,1,4,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0,0,1,5,5,5,5,5,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -133,28 +145,82 @@
 
     function renderMap() {
       mapDiv.innerHTML = '';
+      // Rectangle outline preview
+      let previewRect = null;
+      if (dragStart && (tool === 'fill' || tool === 'outline' || tool === 'rect-random-grass')) {
+        previewRect = dragStart;
+      }
       for (let y = 0; y < HEIGHT; y++) {
         for (let x = 0; x < WIDTH; x++) {
           const tile = document.createElement('div');
           tile.className = 'tile';
-          tile.title = tileTypes[map[y][x]] ? tileTypes[map[y][x]].name + ` (${x},${y})` : `(${x},${y})`;
-          const img = document.createElement('img');
-          img.src = tileTypes[map[y][x]] ? tileTypes[map[y][x]].img : '';
-          img.alt = tileTypes[map[y][x]] ? tileTypes[map[y][x]].name : '';
-          img.style.width = '20px';
-          img.style.height = '20px';
-          tile.appendChild(img);
+          let tileId = map[y][x];
+          let baseId = tileId;
+          if (tileId >= 15) baseId = 0;
+          const baseImg = document.createElement('img');
+          baseImg.src = tileTypes[baseId] ? tileTypes[baseId].img : '';
+          baseImg.alt = tileTypes[baseId] ? tileTypes[baseId].name : '';
+          baseImg.style.width = '20px';
+          baseImg.style.height = '20px';
+          baseImg.style.position = 'absolute';
+          baseImg.style.zIndex = '1';
+          tile.style.position = 'relative';
+          tile.appendChild(baseImg);
+          if (tileId >= 15) {
+            const spriteImg = document.createElement('img');
+            spriteImg.src = tileTypes[tileId] ? tileTypes[tileId].img : '';
+            spriteImg.alt = tileTypes[tileId] ? tileTypes[tileId].name : '';
+            spriteImg.style.width = '20px';
+            spriteImg.style.height = '20px';
+            spriteImg.style.position = 'absolute';
+            spriteImg.style.zIndex = '2';
+            tile.appendChild(spriteImg);
+          }
+          // Rectangle outline preview
+          if (previewRect) {
+            const x0 = Math.min(previewRect.x, x), x1 = Math.max(previewRect.x, x);
+            const y0 = Math.min(previewRect.y, y), y1 = Math.max(previewRect.y, y);
+            if (tool === 'fill' || tool === 'rect-random-grass') {
+              if (x >= x0 && x <= x1 && y >= y0 && y <= y1) {
+                tile.style.outline = '2px dashed #f90';
+              }
+            } else if (tool === 'outline') {
+              if ((y === y0 || y === y1) && x >= x0 && x <= x1) {
+                tile.style.outline = '2px dashed #f90';
+              } else if ((x === x0 || x === x1) && y >= y0 && y <= y1) {
+                tile.style.outline = '2px dashed #f90';
+              }
+            }
+          }
+          tile.title = tileTypes[tileId] ? tileTypes[tileId].name + ` (${x},${y})` : `(${x},${y})`;
           tile.onmousedown = (e) => {
             e.preventDefault();
             if (tool === 'single') {
               if (e.button === 2) {
-                map[y][x] = 0; // right click erase
+                map[y][x] = 0;
               } else {
                 map[y][x] = selectedTile;
               }
               renderMap();
+            } else if (tool === 'random-grass') {
+              const grassIds = [0,7,8,9,10,11,12,13,14];
+              map[y][x] = grassIds[Math.floor(Math.random() * grassIds.length)];
+              renderMap();
+            } else if (tool === 'eraser') {
+              map[y][x] = 0;
+              renderMap();
             } else {
               dragStart = {x, y, button: e.button};
+            }
+          };
+          tile.onmouseenter = (e) => {
+            if (tool === 'random-grass' && e.buttons === 1) {
+              const grassIds = [0,7,8,9,10,11,12,13,14];
+              map[y][x] = grassIds[Math.floor(Math.random() * grassIds.length)];
+              renderMap();
+            } else if (tool === 'eraser' && e.buttons === 1) {
+              map[y][x] = 0;
+              renderMap();
             }
           };
           tile.onmouseup = (e) => {
@@ -177,6 +243,17 @@
                   map[yy][x0] = value;
                   map[yy][x1] = value;
                 }
+              } else if (tool === 'rect-random-grass') {
+                const grassIds = [0,7,8,9,10,11,12,13,14];
+                for (let yy = y0; yy <= y1; yy++) {
+                  for (let xx = x0; xx <= x1; xx++) {
+                    map[yy][xx] = grassIds[Math.floor(Math.random() * grassIds.length)];
+                  }
+                }
+              } else if (tool === 'flood') {
+                const target = map[y][x];
+                const fillValue = selectedTile;
+                if (target !== fillValue) floodFill(x, y, target, fillValue);
               }
               dragStart = null;
               renderMap();
@@ -185,6 +262,18 @@
           tile.oncontextmenu = (e) => { e.preventDefault(); };
           mapDiv.appendChild(tile);
         }
+      }
+    }
+    // Flood fill algorithm
+    function floodFill(x, y, target, fillValue) {
+      if (target === fillValue) return;
+      const stack = [[x, y]];
+      while (stack.length) {
+        const [cx, cy] = stack.pop();
+        if (cx < 0 || cy < 0 || cx >= WIDTH || cy >= HEIGHT) continue;
+        if (map[cy][cx] !== target) continue;
+        map[cy][cx] = fillValue;
+        stack.push([cx+1, cy], [cx-1, cy], [cx, cy+1], [cx, cy-1]);
       }
     }
     renderMap();

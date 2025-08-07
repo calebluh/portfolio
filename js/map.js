@@ -11,7 +11,10 @@ const MAP_HEIGHT = 45; // total map height in tiles
 
 // --- Use mapData from mapdata.js as the world map ---
 const map = mapData.map(row => row.slice());
-const tileTypes = { 0: "grass", 1: "wall", 2: "path", 3: "water", 4: "door", 5: "floor", 6: "dock" };
+const tileTypes = {
+    0: "grass1", 7: "grass2", 8: "grass3", 9: "grass4", 10: "grass5", 11: "grass6", 12: "grass7", 13: "grass8", 14: "grass9",
+    1: "wall", 2: "path", 3: "water", 4: "door", 5: "floor", 6: "dock"
+};
 const tiles = {};
 
 // -=-=-=- loadTileImages -=-=-=-
