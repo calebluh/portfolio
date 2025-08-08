@@ -24,6 +24,10 @@
     <label><input type="radio" name="tool" value="random-grass"> Random Grass Brush</label>
     <label><input type="radio" name="tool" value="eraser"> Eraser</label>
     <label><input type="radio" name="tool" value="rect-random-grass"> Rectangle Random Grass</label>
+    <label><input type="radio" name="tool" value="rect-dirt"> Rectangle Dirt Brush</label>
+    <label><input type="radio" name="tool" value="ellipse-water"> Ellipse Water Tool</label>
+    <label><input type="radio" name="tool" value="random-coastline"> Random Coastline Tool</label>
+    <label><input type="radio" name="tool" value="random-water"> Random Water Tool</label>
     <label><input type="radio" name="tool" value="flood"> Flood Fill</label>
   </div>
   <div id="map"></div>
@@ -33,85 +37,152 @@
     // Tile types and colors (replace with images if desired)
     // Tiles (0-8: grass variants, 9-14: other tiles) and objects (15+)
     const tileTypes = [
-      { id: 0, name: 'grass1', img: 'assets/tiles/grass1.png' },
-      { id: 1, name: 'wall', img: 'assets/tiles/wall.png' },
-      { id: 2, name: 'path', img: 'assets/tiles/path.png' },
-      { id: 3, name: 'water', img: 'assets/tiles/water.png' },
-      { id: 4, name: 'door', img: 'assets/tiles/door.png' },
-      { id: 5, name: 'floor', img: 'assets/tiles/floor.png' },
-      { id: 6, name: 'dock', img: 'assets/tiles/dock.png' },
-      { id: 7, name: 'grass2', img: 'assets/tiles/grass2.png' },
-      { id: 8, name: 'grass3', img: 'assets/tiles/grass3.png' },
-      { id: 9, name: 'grass4', img: 'assets/tiles/grass4.png' },
-      { id: 10, name: 'grass5', img: 'assets/tiles/grass5.png' },
-      { id: 11, name: 'grass6', img: 'assets/tiles/grass6.png' },
-      { id: 12, name: 'grass7', img: 'assets/tiles/grass7.png' },
-      { id: 13, name: 'grass8', img: 'assets/tiles/grass8.png' },
-      { id: 14, name: 'grass9', img: 'assets/tiles/grass9.png' },
-      // Objects (sprites)
-      { id: 15, name: 'bookshelf', img: 'assets/sprites/bookshelf.png' },
-      { id: 16, name: 'fisher', img: 'assets/sprites/fisher.png' },
-      { id: 17, name: 'mailbox', img: 'assets/sprites/mailbox.png' },
-      { id: 18, name: 'about-me-npc', img: 'assets/sprites/about-me-npc.png' },
-      { id: 19, name: 'cert-npc', img: 'assets/sprites/cert-npc.png' },
-      { id: 20, name: 'pc', img: 'assets/sprites/pc.png' },
-      { id: 21, name: 'player', img: 'assets/sprites/player.png' },
-      { id: 22, name: 'resume-npc', img: 'assets/sprites/resume-npc.png' },
-      { id: 23, name: 'server-rack', img: 'assets/sprites/server-rack.png' },
-      { id: 24, name: 'server', img: 'assets/sprites/server.png' },
-      { id: 25, name: 'server2', img: 'assets/sprites/server2.png' },
-      { id: 26, name: 'trainer', img: 'assets/sprites/trainer.png' },
-      { id: 27, name: 'vinyl-shelf', img: 'assets/sprites/vinyl-shelf.png' }
+      // Grass 1-9
+      { id: 1, name: 'grass1', img: 'assets/tiles/grass1.png' },
+      { id: 2, name: 'grass2', img: 'assets/tiles/grass2.png' },
+      { id: 3, name: 'grass3', img: 'assets/tiles/grass3.png' },
+      { id: 4, name: 'grass4', img: 'assets/tiles/grass4.png' },
+      { id: 5, name: 'grass5', img: 'assets/tiles/grass5.png' },
+      { id: 6, name: 'grass6', img: 'assets/tiles/grass6.png' },
+      { id: 7, name: 'grass7', img: 'assets/tiles/grass7.png' },
+      { id: 8, name: 'grass8', img: 'assets/tiles/grass8.png' },
+      { id: 9, name: 'grass9', img: 'assets/tiles/grass9.png' },
+      // Dirt 11-19
+      { id: 11, name: 'dirt1', img: 'assets/tiles/dirt1.png' },
+      { id: 12, name: 'dirt2', img: 'assets/tiles/dirt2.png' },
+      { id: 13, name: 'dirt3', img: 'assets/tiles/dirt3.png' },
+      { id: 14, name: 'dirt4', img: 'assets/tiles/dirt4.png' },
+      { id: 15, name: 'dirt5', img: 'assets/tiles/dirt5.png' },
+      { id: 16, name: 'dirt6', img: 'assets/tiles/dirt6.png' },
+      { id: 17, name: 'dirt7', img: 'assets/tiles/dirt7.png' },
+      { id: 18, name: 'dirt8', img: 'assets/tiles/dirt8.png' },
+      { id: 19, name: 'dirt9', img: 'assets/tiles/dirt9.png' },
+      // Water 21-29
+      { id: 21, name: 'water1', img: 'assets/tiles/water1.png' },
+      { id: 22, name: 'water2', img: 'assets/tiles/water2.png' },
+      { id: 23, name: 'water3', img: 'assets/tiles/water3.png' },
+      { id: 24, name: 'water4', img: 'assets/tiles/water4.png' },
+      { id: 25, name: 'water5', img: 'assets/tiles/water5.png' },
+      { id: 26, name: 'water6', img: 'assets/tiles/water6.png' },
+      { id: 27, name: 'water7', img: 'assets/tiles/water7.png' },
+      { id: 28, name: 'water8', img: 'assets/tiles/water8.png' },
+      { id: 29, name: 'water9', img: 'assets/tiles/water9.png' },
+      // Dock 30
+      { id: 30, name: 'dock', img: 'assets/tiles/dock.png' },
+      // Walls 31-39
+      { id: 31, name: 'wall1', img: 'assets/tiles/wall1.png' },
+      { id: 32, name: 'wall2', img: 'assets/tiles/wall2.png' },
+      { id: 33, name: 'wall3', img: 'assets/tiles/wall3.png' },
+      { id: 34, name: 'wall4', img: 'assets/tiles/wall4.png' },
+      { id: 35, name: 'wall5', img: 'assets/tiles/wall5.png' },
+      { id: 36, name: 'wall6', img: 'assets/tiles/wall6.png' },
+      { id: 37, name: 'wall7', img: 'assets/tiles/wall7.png' },
+      { id: 38, name: 'wall8', img: 'assets/tiles/wall8.png' },
+      { id: 39, name: 'wall9', img: 'assets/tiles/wall9.png' },
+      // Doors 41-49
+      { id: 41, name: 'door1', img: 'assets/tiles/door1.png' },
+      { id: 42, name: 'door2', img: 'assets/tiles/door2.png' },
+      { id: 43, name: 'door3', img: 'assets/tiles/door3.png' },
+      { id: 44, name: 'door4', img: 'assets/tiles/door4.png' },
+      { id: 45, name: 'door5', img: 'assets/tiles/door5.png' },
+      { id: 46, name: 'door6', img: 'assets/tiles/door6.png' },
+      { id: 47, name: 'door7', img: 'assets/tiles/door7.png' },
+      { id: 48, name: 'door8', img: 'assets/tiles/door8.png' },
+      { id: 49, name: 'door9', img: 'assets/tiles/door9.png' },
+      // Coasts 51-59
+      { id: 51, name: 'coast1', img: 'assets/tiles/coast1.png' },
+      { id: 52, name: 'coast2', img: 'assets/tiles/coast2.png' },
+      { id: 53, name: 'coast3', img: 'assets/tiles/coast3.png' },
+      { id: 54, name: 'coast4', img: 'assets/tiles/coast4.png' },
+      { id: 55, name: 'coast5', img: 'assets/tiles/coast5.png' },
+      { id: 56, name: 'coast6', img: 'assets/tiles/coast6.png' },
+      { id: 57, name: 'coast7', img: 'assets/tiles/coast7.png' },
+      { id: 58, name: 'coast8', img: 'assets/tiles/coast8.png' },
+      { id: 59, name: 'coast9', img: 'assets/tiles/coast9.png' },
+      // Doors 61-69
+      { id: 61, name: 'door1', img: 'assets/tiles/door1.png' },
+      { id: 62, name: 'door2', img: 'assets/tiles/door2.png' },
+      { id: 63, name: 'door3', img: 'assets/tiles/door3.png' },
+      { id: 64, name: 'door4', img: 'assets/tiles/door4.png' },
+      { id: 65, name: 'door5', img: 'assets/tiles/door5.png' },
+      { id: 66, name: 'door6', img: 'assets/tiles/door6.png' },
+      { id: 67, name: 'door7', img: 'assets/tiles/door7.png' },
+      { id: 68, name: 'door8', img: 'assets/tiles/door8.png' },
+      { id: 69, name: 'door9', img: 'assets/tiles/door9.png' },
+      // Floor 71-79
+      { id: 71, name: 'floor1', img: 'assets/tiles/floor1.png' },
+      { id: 72, name: 'floor2', img: 'assets/tiles/floor2.png' },
+      { id: 73, name: 'floor3', img: 'assets/tiles/floor3.png' },
+      { id: 74, name: 'floor4', img: 'assets/tiles/floor4.png' },
+      { id: 75, name: 'floor5', img: 'assets/tiles/floor5.png' },
+      { id: 76, name: 'floor6', img: 'assets/tiles/floor6.png' },
+      { id: 77, name: 'floor7', img: 'assets/tiles/floor7.png' },
+      { id: 78, name: 'floor8', img: 'assets/tiles/floor8.png' },
+      { id: 79, name: 'floor9', img: 'assets/tiles/floor9.png' },
+      // Sprites 100+
+      { id: 100, name: 'bookshelf', img: 'assets/sprites/bookshelf.png' },
+      { id: 101, name: 'fisher', img: 'assets/sprites/fisher.png' },
+      { id: 102, name: 'mailbox', img: 'assets/sprites/mailbox.png' },
+      { id: 103, name: 'about-me-npc', img: 'assets/sprites/about-me-npc.png' },
+      { id: 104, name: 'cert-npc', img: 'assets/sprites/cert-npc.png' },
+      { id: 105, name: 'pc', img: 'assets/sprites/pc.png' },
+      { id: 106, name: 'player', img: 'assets/sprites/player.png' },
+      { id: 107, name: 'resume-npc', img: 'assets/sprites/resume-npc.png' },
+      { id: 108, name: 'server-rack', img: 'assets/sprites/server-rack.png' },
+      { id: 109, name: 'server', img: 'assets/sprites/server.png' },
+      { id: 110, name: 'server2', img: 'assets/sprites/server2.png' },
+      { id: 111, name: 'trainer', img: 'assets/sprites/trainer.png' },
+      { id: 112, name: 'vinyl-shelf', img: 'assets/sprites/vinyl-shelf.png' }
     ];
     const WIDTH = 60, HEIGHT = 45;
     // Use provided mapData as the initial map
-    const mapData = [
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,6,6,6,6,3,3,3,3,3,3],
-      [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,1,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,1,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,1,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,5,5,5,1,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,1,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,5,5,5,1,0,0,0,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,1,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,5,5,5,1,0,0,0,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,1,1,1,4,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,5,5,5,1,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,1,1,1,1,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,0,0,0,0,2,2,2,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,2,2,6,6,6,3,3,3,3,3,3,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,3,3,3,3,3,3,3,3,3,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,3,3,3,3,3,3,3,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,2,2,2,3,3,3,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,3,3,3,3,3,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3],
-      [0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3],
-      [0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,3,3,3,3],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,3,3,3],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,3,3,3],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-      [0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,1,1,4,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,1,1,4,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,5,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,1,1,4,1,1,1,1,4,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,5,5,5,5,5,1,5,5,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    ];
+const mapData = [
+  [2,7,2,3,2,9,2,9,8,7,2,9,3,7,7,9,2,2,7,7,7,7,1,5,5,1,1,1,2,1,2,1,7,6,5,2,5,8,9,1,3,2,11,12,13,11,54,21,21,26,26,25,26,22,22,29,26,22,29,25],
+  [9,1,8,7,3,6,4,5,5,9,4,7,5,2,4,4,2,9,7,1,2,4,9,7,5,9,6,5,5,3,9,3,3,4,3,7,6,1,5,5,5,6,14,15,16,14,15,30,30,30,28,26,22,22,23,26,23,23,28,22],
+  [8,2,1,5,5,2,9,2,7,2,8,8,7,4,1,4,1,7,7,3,7,1,6,9,7,4,7,4,2,6,9,1,9,2,2,8,5,7,5,4,1,8,17,18,19,17,54,21,21,25,23,23,29,23,26,25,26,29,28,26],
+  [6,9,1,31,31,31,31,31,31,31,5,1,6,7,6,6,2,4,5,3,3,1,3,3,2,7,5,5,3,3,7,9,3,2,4,3,8,6,5,2,7,2,11,12,13,11,54,21,26,22,25,23,25,29,22,23,25,22,23,28],
+  [8,4,7,31,76,76,76,76,76,31,3,4,8,7,3,9,4,9,3,4,1,7,3,11,12,13,11,12,7,2,6,4,2,1,1,1,1,1,1,1,1,6,14,15,16,11,54,22,21,22,29,26,26,22,23,26,23,26,25,29],
+  [4,9,7,31,76,76,76,76,76,31,4,8,2,7,6,7,8,9,8,3,2,11,12,14,15,16,14,15,2,5,6,2,1,1,31,31,31,31,31,31,31,8,17,18,19,51,21,28,29,29,23,23,23,23,28,29,29,25,29,29],
+  [9,9,5,31,76,76,76,76,76,31,3,7,1,1,6,9,5,9,1,3,5,14,15,51,52,52,53,11,12,13,11,3,6,6,31,75,75,75,75,75,31,3,11,12,13,54,28,21,22,29,23,28,26,23,23,25,23,26,28,29],
+  [5,8,3,31,76,76,76,76,76,31,1,9,6,9,1,3,6,3,3,3,3,17,18,54,28,22,56,14,15,16,14,3,2,8,31,75,75,75,75,75,31,6,14,15,16,54,21,28,26,23,29,29,23,26,23,22,23,28,29,23],
+  [8,4,3,31,31,41,31,31,31,31,6,4,7,8,9,2,8,6,8,11,12,13,51,22,23,23,22,53,11,12,13,7,1,9,31,75,75,75,75,75,31,8,17,18,19,54,23,23,25,29,23,23,23,28,22,22,26,26,25,25],
+  [6,2,4,1,11,12,13,3,2,1,6,6,4,1,9,8,3,2,1,14,15,16,54,23,23,23,29,56,14,15,16,6,8,4,31,75,75,75,75,75,31,3,11,12,13,54,25,22,23,26,22,26,23,23,29,26,22,26,23,25],
+  [7,2,2,7,14,15,16,3,3,8,6,4,2,2,4,5,11,12,13,17,18,19,54,23,23,23,23,56,17,18,19,7,7,5,31,41,31,31,31,31,31,8,14,15,16,54,28,22,22,22,23,25,23,23,26,29,23,23,23,29],
+  [9,3,6,8,17,18,19,9,6,9,3,4,8,1,11,12,14,15,16,11,12,13,54,23,23,23,23,56,11,12,13,5,5,3,11,12,13,1,4,8,4,9,17,18,19,54,22,23,23,25,23,22,23,25,25,23,28,26,25,22],
+  [1,8,9,3,11,12,13,1,3,1,4,5,4,4,14,15,51,52,52,52,52,52,29,28,28,23,23,56,14,15,16,6,2,9,14,15,16,4,9,5,3,6,11,12,13,54,23,23,23,25,23,29,22,25,28,23,29,23,26,25],
+  [1,5,7,9,14,15,16,6,3,1,2,9,7,11,12,51,29,29,23,23,22,29,23,23,29,28,29,56,17,18,19,4,3,7,17,18,19,5,5,7,9,4,14,15,16,54,21,23,23,28,23,26,25,26,26,23,23,26,29,28],
+  [2,6,5,2,17,18,19,1,8,4,3,6,5,11,51,29,23,23,22,23,22,23,23,25,28,23,23,56,11,12,13,6,5,2,11,12,13,2,8,8,8,6,17,18,19,54,21,23,29,23,23,23,26,23,23,29,22,23,25,25],
+  [6,7,3,9,11,12,13,7,5,6,7,2,5,14,54,26,23,22,29,25,23,26,28,28,23,23,23,56,14,15,16,8,9,7,14,15,16,8,3,1,6,5,11,12,13,54,21,23,25,23,25,22,22,22,23,29,23,26,26,23],
+  [3,3,1,5,14,15,16,6,3,4,1,9,2,13,54,22,25,23,26,28,26,30,30,30,30,30,30,30,74,74,74,7,8,7,17,18,19,3,4,7,2,7,14,15,16,54,21,25,22,23,23,23,23,23,23,23,29,25,25,29],
+  [6,3,5,1,17,18,19,3,8,1,5,3,5,11,54,23,29,23,25,23,23,28,25,28,23,29,23,23,74,74,74,4,3,9,11,12,13,7,7,4,4,9,17,18,19,54,21,26,23,23,23,23,25,25,26,23,23,23,22,28],
+  [4,2,9,9,11,12,13,7,8,5,3,4,1,14,57,28,25,23,26,29,25,29,23,25,22,23,25,59,74,74,74,7,7,3,14,15,16,8,2,3,2,9,11,12,13,54,21,26,29,23,23,29,23,26,23,23,26,22,23,29],
+  [8,3,9,3,14,15,16,7,1,5,3,9,8,17,13,57,28,26,26,23,25,23,29,22,23,22,59,19,74,74,74,9,1,5,17,18,19,7,3,6,8,8,14,15,16,57,21,25,23,23,29,23,23,29,26,23,22,23,26,25],
+  [4,5,6,1,17,18,19,6,7,8,3,6,8,19,13,13,57,58,58,58,58,58,58,58,59,19,19,19,74,74,74,5,2,1,11,12,13,4,6,5,5,6,17,18,19,17,54,26,23,23,28,23,23,28,23,25,23,23,29,28],
+  [3,7,5,2,11,12,13,11,12,13,11,12,13,11,12,13,11,12,13,11,12,13,11,12,13,11,12,13,11,12,13,11,12,13,11,12,13,11,12,13,11,12,13,11,12,13,54,22,23,23,23,23,25,23,26,23,23,26,25,23],
+  [8,6,5,7,14,15,16,14,15,16,14,15,16,14,15,16,14,15,16,14,15,16,14,15,16,14,15,16,14,15,16,14,15,16,14,15,16,14,15,16,14,15,16,14,15,16,54,28,29,25,23,23,23,25,23,25,23,25,22,23],
+  [3,4,8,8,17,18,19,17,18,19,17,18,19,17,18,19,17,18,19,17,18,19,17,18,19,17,18,19,17,18,19,17,18,19,17,18,19,17,18,19,17,18,19,17,18,19,57,29,23,28,23,23,23,23,28,25,23,28,25,28],
+  [8,7,4,3,3,1,9,3,8,5,11,12,13,7,5,5,1,8,8,3,5,8,2,5,4,1,9,3,7,7,1,4,7,4,11,12,13,7,8,6,5,8,11,13,11,12,13,54,28,26,23,23,23,22,26,25,29,26,25,29],
+  [3,6,4,8,9,9,1,8,8,6,14,15,16,9,1,8,2,4,2,5,4,4,1,1,3,5,9,3,5,7,6,6,5,7,14,15,16,9,2,6,8,2,14,16,14,15,16,54,25,23,23,28,29,23,22,23,58,58,59,19],
+  [6,6,5,6,2,1,7,6,3,9,17,18,19,4,2,5,5,4,2,8,9,4,1,4,2,2,8,9,8,6,5,1,4,6,17,18,19,2,1,5,2,6,17,19,17,18,11,12,13,57,26,28,23,25,28,59,11,12,13,11],
+  [6,4,4,4,1,1,1,4,6,1,11,12,13,2,8,5,4,3,1,1,6,3,5,7,9,5,7,5,1,9,8,4,1,8,11,12,13,7,6,5,4,8,4,4,6,1,14,15,16,11,12,57,58,59,12,13,14,15,16,14],
+  [6,8,1,3,7,1,8,9,7,8,14,15,16,6,6,3,3,6,9,6,1,7,8,6,6,2,9,8,3,4,8,2,4,6,14,15,16,1,1,8,7,7,6,8,2,2,17,18,19,14,15,16,11,14,15,16,17,18,19,17],
+  [7,4,9,2,4,1,6,3,7,7,17,18,19,2,2,7,1,4,1,6,4,4,9,2,6,4,2,2,8,1,6,3,2,9,17,18,19,8,1,1,2,9,5,4,2,3,1,8,4,2,1,3,9,2,3,4,2,3,7,7],
+  [1,3,2,3,2,1,2,5,9,8,11,12,13,3,4,8,3,8,7,9,6,9,7,3,5,5,5,4,1,8,1,8,9,7,11,12,13,6,2,31,31,31,31,8,3,8,6,7,1,2,3,8,5,4,4,7,2,9,7,5],
+  [6,2,1,8,9,1,4,5,3,5,14,15,16,8,2,5,3,6,1,6,9,8,7,3,3,2,2,8,5,5,7,5,5,9,14,15,16,8,8,31,71,71,31,9,8,6,7,8,5,6,1,1,1,4,8,4,9,5,6,8],
+  [6,6,3,5,6,1,2,5,5,6,17,18,19,6,1,5,6,3,4,8,9,7,4,9,9,6,9,6,5,1,6,3,6,4,17,18,19,5,7,31,71,71,31,6,9,1,8,3,5,6,4,4,3,9,5,6,7,2,2,2],
+  [8,3,7,3,2,1,31,31,31,31,31,41,31,31,31,31,31,31,3,6,5,4,5,6,3,8,4,3,9,7,8,9,8,3,11,12,13,9,4,31,71,71,31,3,2,6,3,7,5,5,5,4,5,5,5,4,8,2,4,1],
+  [4,3,4,3,1,1,31,74,74,74,74,74,74,74,74,74,74,31,8,8,7,5,9,9,6,9,4,9,8,7,6,1,1,9,14,15,16,7,6,31,71,71,31,3,3,4,3,6,6,7,9,6,5,5,3,9,4,7,7,3],
+  [3,5,8,3,1,1,31,74,74,74,74,74,74,74,74,74,74,31,5,9,8,9,9,7,1,8,3,6,3,1,3,3,3,6,17,18,19,3,1,31,41,31,31,7,6,2,8,3,7,8,6,8,4,6,7,6,5,2,6,6],
+  [9,6,1,3,1,1,31,74,74,74,74,74,74,74,74,74,74,31,1,9,9,7,8,4,5,5,4,3,6,3,8,9,5,9,11,12,13,11,12,13,11,12,13,5,2,3,6,8,5,7,7,1,2,7,2,3,9,9,4,2],
+  [3,4,4,2,1,1,31,31,41,31,31,31,31,41,31,31,31,31,8,2,6,2,5,2,1,2,2,7,2,1,6,5,1,3,14,15,16,14,15,16,14,15,16,6,7,2,9,8,7,9,1,8,2,9,8,4,5,1,6,7],
+  [4,3,6,6,1,1,31,76,76,76,76,31,73,73,73,73,73,31,3,9,8,3,2,5,1,6,6,4,8,5,2,5,1,8,17,18,19,17,18,19,17,18,19,2,3,1,1,5,9,3,3,9,7,5,5,2,1,2,4,4],
+  [3,6,1,1,1,1,31,76,76,76,76,31,73,73,73,73,73,31,9,9,8,6,8,4,9,4,8,2,8,9,3,1,8,4,7,3,6,7,9,4,3,4,2,6,5,3,2,6,6,9,1,6,8,6,3,8,5,2,5,3],
+  [7,9,1,6,1,1,31,76,76,76,76,31,73,73,73,73,73,31,4,7,4,5,4,3,2,8,5,7,5,9,1,5,1,1,1,5,6,4,6,5,8,3,8,4,1,7,8,2,9,7,8,8,6,6,6,4,5,7,8,9],
+  [5,6,1,3,1,1,31,31,31,31,31,31,31,31,31,31,31,31,8,7,8,1,1,2,3,4,1,6,9,8,7,3,1,3,8,6,3,1,2,9,6,5,3,6,6,3,8,9,2,2,5,3,4,8,5,4,2,8,8,4],
+  [9,4,6,8,2,3,6,1,2,1,3,3,1,3,7,6,4,4,9,8,4,3,5,9,3,6,9,6,6,2,1,8,8,9,2,8,6,8,6,8,6,3,5,7,1,3,7,8,8,9,6,5,5,8,9,4,6,9,6,3],
+  [3,1,9,6,3,5,3,6,9,3,1,3,5,8,9,2,3,9,5,9,3,6,1,9,8,5,2,8,4,3,3,8,9,3,9,3,8,4,9,2,7,4,1,8,5,1,6,7,4,4,5,8,5,7,2,6,2,1,9,4],
+  [6,2,1,2,7,1,7,6,7,8,1,9,3,9,1,4,8,3,2,6,2,6,7,5,5,9,1,2,3,6,3,5,9,9,5,2,6,3,7,7,3,4,1,4,2,1,2,1,1,6,5,6,4,6,6,5,6,1,2,8]
+];
     let map = mapData.map(row => row.slice());
     let selectedTile = 0;
 
@@ -147,7 +218,7 @@
       mapDiv.innerHTML = '';
       // Rectangle outline preview
       let previewRect = null;
-      if (dragStart && (tool === 'fill' || tool === 'outline' || tool === 'rect-random-grass')) {
+      if (dragStart && (tool === 'fill' || tool === 'outline' || tool === 'rect-random-grass' || tool === 'ellipse-water')) {
         previewRect = dragStart;
       }
       for (let y = 0; y < HEIGHT; y++) {
@@ -155,28 +226,51 @@
           const tile = document.createElement('div');
           tile.className = 'tile';
           let tileId = map[y][x];
-          let baseId = tileId;
-          if (tileId >= 15) baseId = 0;
-          const baseImg = document.createElement('img');
-          baseImg.src = tileTypes[baseId] ? tileTypes[baseId].img : '';
-          baseImg.alt = tileTypes[baseId] ? tileTypes[baseId].name : '';
-          baseImg.style.width = '20px';
-          baseImg.style.height = '20px';
-          baseImg.style.position = 'absolute';
-          baseImg.style.zIndex = '1';
           tile.style.position = 'relative';
-          tile.appendChild(baseImg);
-          if (tileId >= 15) {
+          // If grass (1-9), show grass image
+          if (tileId >= 1 && tileId <= 9) {
+            const grassTile = tileTypes.find(t => t.id === tileId);
+            const baseImg = document.createElement('img');
+            baseImg.src = grassTile ? grassTile.img : '';
+            baseImg.alt = grassTile ? grassTile.name : '';
+            baseImg.style.width = '20px';
+            baseImg.style.height = '20px';
+            baseImg.style.position = 'absolute';
+            baseImg.style.zIndex = '1';
+            tile.appendChild(baseImg);
+          } else if (tileId >= 100) {
+            // Sprites: show grass base, then sprite overlay
+            const grassTile = tileTypes.find(t => t.id === 1);
+            const baseImg = document.createElement('img');
+            baseImg.src = grassTile ? grassTile.img : '';
+            baseImg.alt = grassTile ? grassTile.name : '';
+            baseImg.style.width = '20px';
+            baseImg.style.height = '20px';
+            baseImg.style.position = 'absolute';
+            baseImg.style.zIndex = '1';
+            tile.appendChild(baseImg);
+            const spriteTile = tileTypes.find(t => t.id === tileId);
             const spriteImg = document.createElement('img');
-            spriteImg.src = tileTypes[tileId] ? tileTypes[tileId].img : '';
-            spriteImg.alt = tileTypes[tileId] ? tileTypes[tileId].name : '';
+            spriteImg.src = spriteTile ? spriteTile.img : '';
+            spriteImg.alt = spriteTile ? spriteTile.name : '';
             spriteImg.style.width = '20px';
             spriteImg.style.height = '20px';
             spriteImg.style.position = 'absolute';
             spriteImg.style.zIndex = '2';
             tile.appendChild(spriteImg);
+          } else {
+            // All other tiles: show their own image
+            const tileType = tileTypes.find(t => t.id === tileId);
+            const baseImg = document.createElement('img');
+            baseImg.src = tileType ? tileType.img : '';
+            baseImg.alt = tileType ? tileType.name : '';
+            baseImg.style.width = '20px';
+            baseImg.style.height = '20px';
+            baseImg.style.position = 'absolute';
+            baseImg.style.zIndex = '1';
+            tile.appendChild(baseImg);
           }
-          // Rectangle outline preview
+          // Rectangle/ellipse outline preview
           if (previewRect) {
             const x0 = Math.min(previewRect.x, x), x1 = Math.max(previewRect.x, x);
             const y0 = Math.min(previewRect.y, y), y1 = Math.max(previewRect.y, y);
@@ -189,6 +283,19 @@
                 tile.style.outline = '2px dashed #f90';
               } else if ((x === x0 || x === x1) && y >= y0 && y <= y1) {
                 tile.style.outline = '2px dashed #f90';
+              }
+            } else if (tool === 'ellipse-water') {
+              // Ellipse preview: highlight tiles inside ellipse
+              const cx = (x0 + x1) / 2;
+              const cy = (y0 + y1) / 2;
+              const rx = Math.abs(x1 - x0) / 2;
+              const ry = Math.abs(y1 - y0) / 2;
+              if (rx > 0 && ry > 0) {
+                const dx = x - cx;
+                const dy = y - cy;
+                if ((dx*dx)/(rx*rx) + (dy*dy)/(ry*ry) <= 1) {
+                  tile.style.outline = '2px dashed #00f';
+                }
               }
             }
           }
@@ -203,8 +310,16 @@
               }
               renderMap();
             } else if (tool === 'random-grass') {
-              const grassIds = [0,7,8,9,10,11,12,13,14];
+              const grassIds = [1,2,3,4,5,6,7,8,9];
               map[y][x] = grassIds[Math.floor(Math.random() * grassIds.length)];
+              renderMap();
+            } else if (tool === 'random-coastline') {
+              const coastIds = [51,52,53,54,55,56,57,58,59];
+              map[y][x] = coastIds[Math.floor(Math.random() * coastIds.length)];
+              renderMap();
+            } else if (tool === 'random-water') {
+              const waterIds = [21,22,23,24,25,26,27,28,29];
+              map[y][x] = waterIds[Math.floor(Math.random() * waterIds.length)];
               renderMap();
             } else if (tool === 'eraser') {
               map[y][x] = 0;
@@ -215,8 +330,16 @@
           };
           tile.onmouseenter = (e) => {
             if (tool === 'random-grass' && e.buttons === 1) {
-              const grassIds = [0,7,8,9,10,11,12,13,14];
+              const grassIds = [1,2,3,4,5,6,7,8,9];
               map[y][x] = grassIds[Math.floor(Math.random() * grassIds.length)];
+              renderMap();
+            } else if (tool === 'random-coastline' && e.buttons === 1) {
+              const coastIds = [51,52,53,54,55,56,57,58,59];
+              map[y][x] = coastIds[Math.floor(Math.random() * coastIds.length)];
+              renderMap();
+            } else if (tool === 'random-water' && e.buttons === 1) {
+              const waterIds = [21,22,23,24,25,26,27,28,29];
+              map[y][x] = waterIds[Math.floor(Math.random() * waterIds.length)];
               renderMap();
             } else if (tool === 'eraser' && e.buttons === 1) {
               map[y][x] = 0;
@@ -244,10 +367,47 @@
                   map[yy][x1] = value;
                 }
               } else if (tool === 'rect-random-grass') {
-                const grassIds = [0,7,8,9,10,11,12,13,14];
+                const grassIds = [1,2,3,4,5,6,7,8,9];
                 for (let yy = y0; yy <= y1; yy++) {
                   for (let xx = x0; xx <= x1; xx++) {
                     map[yy][xx] = grassIds[Math.floor(Math.random() * grassIds.length)];
+                  }
+                }
+              } else if (tool === 'rect-dirt') {
+                // Seamless dirt pattern using 3x3 grid, repeat as needed
+                // Dirt IDs: 11-19, arranged as:
+                // 11 12 13
+                // 14 15 16
+                // 17 18 19
+                const dirtGrid = [
+                  [11,12,13],
+                  [14,15,16],
+                  [17,18,19]
+                ];
+                for (let yy = y0; yy <= y1; yy++) {
+                  for (let xx = x0; xx <= x1; xx++) {
+                    // Repeat the 3x3 pattern
+                    const dirtId = dirtGrid[(yy-y0)%3][(xx-x0)%3];
+                    map[yy][xx] = dirtId;
+                  }
+                }
+              } else if (tool === 'ellipse-water') {
+                // Fill ellipse with water tiles (IDs 21-29)
+                const waterIds = [21,22,23,24,25,26,27,28,29];
+                const cx = (x0 + x1) / 2;
+                const cy = (y0 + y1) / 2;
+                const rx = Math.abs(x1 - x0) / 2;
+                const ry = Math.abs(y1 - y0) / 2;
+                for (let yy = y0; yy <= y1; yy++) {
+                  for (let xx = x0; xx <= x1; xx++) {
+                    if (rx > 0 && ry > 0) {
+                      const dx = xx - cx;
+                      const dy = yy - cy;
+                      if ((dx*dx)/(rx*rx) + (dy*dy)/(ry*ry) <= 1) {
+                        // Use a random water tile for variety
+                        map[yy][xx] = waterIds[Math.floor(Math.random() * waterIds.length)];
+                      }
+                    }
                   }
                 }
               } else if (tool === 'flood') {

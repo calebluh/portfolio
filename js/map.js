@@ -12,8 +12,26 @@ const MAP_HEIGHT = 45; // total map height in tiles
 // --- Use mapData from mapdata.js as the world map ---
 const map = mapData.map(row => row.slice());
 const tileTypes = {
-    0: "grass1", 7: "grass2", 8: "grass3", 9: "grass4", 10: "grass5", 11: "grass6", 12: "grass7", 13: "grass8", 14: "grass9",
-    1: "wall", 2: "path", 3: "water", 4: "door", 5: "floor", 6: "dock"
+    // Grass 1-9
+    1: "grass1", 2: "grass2", 3: "grass3", 4: "grass4", 5: "grass5", 6: "grass6", 7: "grass7", 8: "grass8", 9: "grass9",
+    // Dirt 11-19
+    11: "dirt1", 12: "dirt2", 13: "dirt3", 14: "dirt4", 15: "dirt5", 16: "dirt6", 17: "dirt7", 18: "dirt8", 19: "dirt9",
+    // Water 21-29
+    21: "water1", 22: "water2", 23: "water3", 24: "water4", 25: "water5", 26: "water6", 27: "water7", 28: "water8", 29: "water9",
+    // Dock 30
+    30: "dock",
+    // Walls 31-39
+    31: "wall1", 32: "wall2", 33: "wall3", 34: "wall4", 35: "wall5", 36: "wall6", 37: "wall7", 38: "wall8", 39: "wall9",
+    // Doors 41-49
+    41: "door1", 42: "door2", 43: "door3", 44: "door4", 45: "door5", 46: "door6", 47: "door7", 48: "door8", 49: "door9",
+    // Coasts 51-59
+    51: "coast1", 52: "coast2", 53: "coast3", 54: "coast4", 55: "coast5", 56: "coast6", 57: "coast7", 58: "coast8", 59: "coast9",
+    // Doors 61-69
+    61: "door1", 62: "door2", 63: "door3", 64: "door4", 65: "door5", 66: "door6", 67: "door7", 68: "door8", 69: "door9",
+    // Floor 71-79
+    71: "floor1", 72: "floor2", 73: "floor3", 74: "floor4", 75: "floor5", 76: "floor6", 77: "floor7", 78: "floor8", 79: "floor9",
+    // Sprites 100+
+    100: "bookshelf", 101: "fisher", 102: "mailbox", 103: "about-me-npc", 104: "cert-npc", 105: "pc", 106: "player", 107: "resume-npc", 108: "server-rack", 109: "server", 110: "server2", 111: "trainer", 112: "vinyl-shelf"
 };
 const tiles = {};
 
@@ -65,7 +83,14 @@ function drawMap() {
             const mapX = cameraX + x;
             const mapY = cameraY + y;
             const tileType = map[mapY]?.[mapX];
-            if (tileType !== undefined && tiles[tileType]) {
+            // Draw player sprite if this is the player position
+            if (mapX === playerTileX && mapY === playerTileY) {
+                if (typeof drawPlayerSprite === 'function') {
+                    drawPlayerSprite(ctx, x * TILE_SIZE, y * TILE_SIZE);
+                } else if (tiles[106]) {
+                    ctx.drawImage(tiles[106], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+            } else if (tileType !== undefined && tiles[tileType]) {
                 ctx.drawImage(tiles[tileType], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             } else {
                 ctx.fillStyle = 'grey';
@@ -78,13 +103,13 @@ function drawMap() {
 // -=-=-=- positionElements -=-=-=-
 function positionElements() {
     positionElement('pc', 5, 4);
-    positionElement('bookshelf', 9, 39);
-    positionElement('vinyl-shelf', 13, 39);
+    positionElement('bookshelf', 12, 38);
+    positionElement('vinyl-shelf', 15, 38);
     positionElement('player', playerTileX, playerTileY);
     positionElement('mailbox', 13, 32);
-    positionElement('mailbox', 8, 10);
+    positionElement('mailbox', 6, 9);
     positionElement('mailbox', 38, 11);
-    positionElement('mailbox', 43, 35);
+    positionElement('mailbox', 41, 36);
     positionElement('about-me-npc', 9, 35);
     positionElement('cert-npc', 34, 21);
     positionElement('resume-npc', 37, 23);

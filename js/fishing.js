@@ -57,7 +57,7 @@ function checkForWaterProximity() {
         return;
     }
 
-    const dockTileType = 6; 
+    const dockTileType = 30; 
     canFishHere = false;
 
     const currentTileType = map[playerTileY]?.[playerTileX];

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tileset Splitter</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    #preview { margin-top: 1em; }
+    .tile-preview { display: inline-block; margin: 2px; border: 1px solid #ccc; }
+    .download-link { display: block; margin: 4px 0; }
+  </style>
+</head>
+<body>
+  <h2>Image Splitter</h2>
+  <p>Upload a PNG. Choose mode:</p>
+  <select id="modeSelect">
+    <option value="tileset">Tileset (3x3 grid, 48x48)</option>
+    <option value="player">Player Sprite (3x4 grid, 48x64, 16x16 sprites)</option>
+  </select>
+  <br>
+  <input type="file" id="fileInput" accept="image/png">
+  <input type="text" id="baseName" placeholder="Base name (e.g. grass or player)">
+  <button id="splitBtn">Split & Download</button>
+  <div id="preview"></div>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const baseNameInput = document.getElementById('baseName');
+    const splitBtn = document.getElementById('splitBtn');
+    const previewDiv = document.getElementById('preview');
+    let img = new Image();
+    let loaded = false;
+    let tiles = [];
+
+    fileInput.onchange = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        img = new Image();
+        img.onload = function() {
+          loaded = true;
+          previewDiv.innerHTML = '<b>Preview:</b><br>';
+          const canvas = document.createElement('canvas');
+          canvas.width = 48;
+          canvas.height = 48;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          previewDiv.appendChild(canvas);
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    splitBtn.onclick = function() {
+      if (!loaded) {
+        alert('Please upload a PNG first.');
+        return;
+      }
+      const baseName = baseNameInput.value.trim() || 'tile';
+      const mode = document.getElementById('modeSelect').value;
+      tiles = [];
+      previewDiv.innerHTML += '<br><b>Tiles:</b><br>';
+      if (mode === 'tileset') {
+        // 3x3 grid, 48x48 image, 16x16 tiles
+        for (let row = 0; row < 3; row++) {
+          for (let col = 0; col < 3; col++) {
+            const tileCanvas = document.createElement('canvas');
+            tileCanvas.width = 16;
+            tileCanvas.height = 16;
+            const ctx = tileCanvas.getContext('2d');
+            ctx.drawImage(img, col*16, row*16, 16, 16, 0, 0, 16, 16);
+            const tileNum = row*3 + col + 1;
+            const fileName = `${baseName}${tileNum}.png`;
+            tileCanvas.className = 'tile-preview';
+            previewDiv.appendChild(tileCanvas);
+            tileCanvas.toBlob(function(blob) {
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = fileName;
+              link.textContent = `Download ${fileName}`;
+              link.className = 'download-link';
+              previewDiv.appendChild(link);
+            }, 'image/png');
+          }
+        }
+      } else if (mode === 'player') {
+        // 3 rows by 4 columns, 16x16 sprites, 48x64 image
+        const directions = ['down', 'right', 'left', 'up'];
+        for (let row = 0; row < 4; row++) {
+          for (let col = 0; col < 3; col++) {
+            const spriteCanvas = document.createElement('canvas');
+            spriteCanvas.width = 16;
+            spriteCanvas.height = 16;
+            const ctx = spriteCanvas.getContext('2d');
+            ctx.drawImage(img, col*16, row*16, 16, 16, 0, 0, 16, 16);
+            const frameNum = col + 1;
+            const dir = directions[row];
+            const fileName = `${baseName}_${dir}${frameNum}.png`;
+            spriteCanvas.className = 'tile-preview';
+            previewDiv.appendChild(spriteCanvas);
+            spriteCanvas.toBlob(function(blob) {
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = fileName;
+              link.textContent = `Download ${fileName}`;
+              link.className = 'download-link';
+              previewDiv.appendChild(link);
+            }, 'image/png');
+          }
+        }
+      }
+    };
+  </script>
+</body>
+</html>

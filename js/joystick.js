@@ -45,7 +45,8 @@ function setupJoystick() {
             console.log("Joystick object:", joystick);
             setupJoystickEvents();
         }
-        showJoystickIfNeeded();
+        // REMOVE or comment out this line to break recursion:
+        // showJoystickIfNeeded();
     } else {
         hideJoystick();
     }
@@ -167,12 +168,17 @@ function movePlayer(event) {
         return;
     }
     let nextX = playerTileX, nextY = playerTileY, moved = false;
+    let moveDir = null;
     switch (event.key) {
-        case "ArrowUp": case "w": nextY -= 1; break;
-        case "ArrowDown": case "s": nextY += 1; break;
-        case "ArrowLeft": case "a": nextX -= 1; break;
-        case "ArrowRight": case "d": nextX += 1; break;
+        case "ArrowUp": case "w": nextY -= 1; moveDir = 'up'; break;
+        case "ArrowDown": case "s": nextY += 1; moveDir = 'down'; break;
+        case "ArrowLeft": case "a": nextX -= 1; moveDir = 'left'; break;
+        case "ArrowRight": case "d": nextX += 1; moveDir = 'right'; break;
         default: return;
+    }
+    // Set animation direction
+    if (typeof setPlayerAnimDirection === 'function') {
+        setPlayerAnimDirection(moveDir);
     }
 
     console.log(`  Attempting move from (${playerTileX},${playerTileY}) to (${nextX},${nextY})`);
@@ -183,7 +189,7 @@ function movePlayer(event) {
         return;
     }
     const targetTileType = map[nextY]?.[nextX];
-    const impassableTiles = [ 1, 3 ]; // Wall=1, Water=3
+    const impassableTiles = [ 21,22,23,24,25,26,27,28,29,31,32,33,34,35,36,37,38,39,51,52,53,54,55,56,57,58,59]; // Water 21-29, Walls 31-39, Coasts 51-59
 
     console.log(`   Target tile type at (${nextX},${nextY}): ${targetTileType}`);
 
@@ -197,9 +203,18 @@ function movePlayer(event) {
     }
 
     if (moved) {
+        // Advance animation frame
+        if (typeof advancePlayerAnimFrame === 'function') {
+            advancePlayerAnimFrame(true);
+        }
         drawMap(); // Redraw map so camera follows player
         positionElements(); // Update all elements' positions
         checkForWaterProximity(); // Check if near water for fishing prompt
+    } else {
+        // If not moved, set idle frame
+        if (typeof advancePlayerAnimFrame === 'function') {
+            advancePlayerAnimFrame(false);
+        }
     }
 }
 
